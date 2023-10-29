@@ -1,24 +1,22 @@
-# frontend
+# Online School
+### (Can't think of a name)
 
-## Project setup
-```
-npm install
-```
+---
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+This is client part of my project
 
-### Compiles and minifies for production
-```
-npm run build
-```
+Written on TypeScript, Vue.js
 
-### Lints and fixes files
-```
-npm run lint
-```
+Using REST API for interaction with server
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+All used technologies:
+- TypeScript
+- HTML
+- SCSS
+- Vue.js
+- Vue routes
+- Pinia
+- REST API
+
+[Repository](https://github.com/gl4zis/Online_school_backend)
+of backend app, written on Java Spring
