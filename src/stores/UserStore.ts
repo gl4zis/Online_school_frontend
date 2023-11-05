@@ -1,6 +1,7 @@
 import {defineStore, StoreDefinition} from "pinia";
 import {Ref, ref} from "vue";
 import {User} from "@/modules/user";
+import {login} from "@/modules/serverApi";
 
 export const useUserStore: StoreDefinition = defineStore('userStore', () => {
     const user: Ref<User> = ref({
@@ -10,10 +11,12 @@ export const useUserStore: StoreDefinition = defineStore('userStore', () => {
 
     const jwt: Ref<string> = ref('')
 
-    function loadSavedUser(): void {
+    async function loadSavedUser(): Promise<void> {
         const userJson: string|null = localStorage.getItem('user')
         if (userJson)
             user.value = JSON.parse(userJson)
+
+        jwt.value = await login(user.value) ?? ''
     }
 
     function setUser(newUser: User): void {
