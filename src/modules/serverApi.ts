@@ -1,13 +1,13 @@
 import { User } from '@/modules/user'
 import {useAlertStore} from "@/stores/AlertStore";
 import {useUserStore} from "@/stores/UserStore";
-import router from "@/router";
 
 const SERVER_HOST = 'http://localhost:3030'
 
-export async function login(user: User): Promise<string|null> {
+export async function login(user: User): Promise<void> {
+    const userStore = useUserStore()
     try {
-        const res = await fetch(`${SERVER_HOST}/login`, {
+        const res: Response = await fetch(`${SERVER_HOST}/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -15,15 +15,15 @@ export async function login(user: User): Promise<string|null> {
             body: JSON.stringify(user)
         });
 
-        if (res.ok)
-            return (await res.json()).token
-        else {
+        if (res.ok) {
+            userStore.jwt = (await res.json()).token
+            userStore.authorized = true
+        } else {
+            userStore.authorized = false
             badCredentials()
-            return null
         }
     } catch (err) {
         noConnection()
-        return null
     }
 }
 
@@ -37,26 +37,11 @@ function noConnection(): void {
 }
 
 function badCredentials(): void {
+
     const alertStore = useAlertStore()
     alertStore.setAlert({
         type: 'error',
         header: 'Failed',
         message: 'Incorrect username or password'
     })
-}
-
-function unathorized(): void {
-    const userStore = useUserStore()
-    login(userStore.user)
-        .then(token => {
-            if (!token)
-                reLog()
-            else {
-                userStore.setToken(token)
-            }
-        })
-}
-
-async function reLog(): Promise<void> {
-    await router.push('/login')
 }

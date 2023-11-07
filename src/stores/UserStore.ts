@@ -4,40 +4,32 @@ import {User} from "@/modules/user";
 import {login} from "@/modules/serverApi";
 
 export const useUserStore: StoreDefinition = defineStore('userStore', () => {
-    const user: Ref<User> = ref({
-        username: '',
-        password: ''
-    })
-
-    const jwt: Ref<string> = ref('')
+    const user: Ref<User|null> = ref(null)
+    const jwt: Ref<string|null> = ref(null)
+    const authorized: Ref<boolean> = ref(false)
 
     async function loadSavedUser(): Promise<void> {
         const userJson: string|null = localStorage.getItem('user')
-        if (userJson)
+        if (userJson) {
             user.value = JSON.parse(userJson)
-
-        jwt.value = await login(user.value) ?? ''
-    }
-
-    function setUser(newUser: User): void {
-        user.value.username = newUser.username
-        user.value.password = newUser.password
-    }
-
-    function setToken(token: string): void {
-        jwt.value = token
+            await login(<User> user.value)
+        }
     }
 
     function saveUser(): void {
         localStorage.setItem('user', JSON.stringify(user.value))
     }
 
+    function resetUserInStorage(): void {
+        localStorage.removeItem('user')
+    }
+
     return {
         user,
         jwt,
+        authorized,
         loadSavedUser,
-        setUser,
-        setToken,
-        saveUser
+        saveUser,
+        resetUserInStorage
     }
 })

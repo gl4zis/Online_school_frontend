@@ -1,14 +1,14 @@
 <template>
   <section class="form">
     <h2>Sign In</h2>
-    <input type="text" placeholder="Username|Email" v-model="username" @change="isValid = true"/>
-    <input type="password" placeholder="Password" v-model="password" @change="isValid = true"/>
+    <input type="text" placeholder="Username|Email" v-model="username"/>
+    <input type="password" placeholder="Password" v-model="password"/>
     <div class="checkbox">
       <input type="checkbox" v-model="needSaving" id="saving">
       <label for="saving">Remember me</label>
     </div>
     <p>Don't have an account? </p>
-    <a href="/signup">Sign Up</a>
+    <router-link to="/signup">Sign Up</router-link>
     <button type="submit"
             @click="signIn({ username, password })"
     >Sign in</button>
@@ -31,25 +31,25 @@ const userStore = useUserStore()
 const alertStore = useAlertStore()
 
 async function signIn(user: User): Promise<void> {
+
   if (!validate(user)) {
     alertStore.setAlert({
       type: 'error',
       header: 'Failed',
-      message: 'incorrect username or password'
+      message: 'Incorrect username or password'
     })
     return
   }
 
-  const token: string|null = await login(user)
-  if (!token)
-    return
-
-  userStore.setUser(user)
-  userStore.setToken(token)
-  if (needSaving.value)
-    userStore.saveUser()
-
-  router.push('/')
+  await login(user)
+  if (userStore.authorized) {
+    userStore.user = user
+    if (needSaving.value)
+      userStore.saveUser()
+    else
+      userStore.resetUserInStorage()
+    router.push('/')
+  }
 }
 </script>
 

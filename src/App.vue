@@ -1,8 +1,8 @@
 <template>
-  <AlertBlock v-if="alertStore.curAlert"
-              :message="alertStore.curAlert.message"
-              :header="alertStore.curAlert.header"
-              :alert-type="alertStore.curAlert.type"/>
+  <AlertBlock v-if="curAlert"
+              :message="curAlert.message"
+              :header="curAlert.header"
+              :alert-type="curAlert.type"/>
   <router-view/>
 </template>
 
@@ -10,9 +10,10 @@
 import {useUserStore} from './stores/UserStore'
 import AlertBlock from "@/components/AlertBlock.vue";
 import {useAlertStore} from "@/stores/AlertStore";
+import {storeToRefs} from "pinia";
 
 const userStore = useUserStore()
-const alertStore = useAlertStore()
+const {curAlert} = storeToRefs(useAlertStore())
 userStore.loadSavedUser()
 </script>
 
