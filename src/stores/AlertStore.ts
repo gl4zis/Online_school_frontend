@@ -10,22 +10,22 @@ export type Alert = {
 }
 
 export const useAlertStore: StoreDefinition = defineStore('alertStore', () =>{
-    const curAlert: Ref<Alert|null> = ref(null)
-    let deleteIdx = 0
+    const alert: Ref<Alert|null> = ref(null)
+    let processIndex: number
 
-    function setAlert(alert: Alert): void {
-        curAlert.value = alert
-        if (deleteIdx != 0)
-            clearTimeout(deleteIdx)
-        deleteIdx = setTimeout(removeAlert, 5000)
+    function setAlert(newAlert: Alert): void {
+        alert.value = newAlert
+        if (processIndex)
+            clearTimeout(processIndex)
+        processIndex = setTimeout(removeAlert, 5000)
     }
 
     function removeAlert(): void {
-        curAlert.value = null
+        alert.value = null
     }
 
     return {
-        curAlert,
+        alert,
         setAlert,
         removeAlert
     }

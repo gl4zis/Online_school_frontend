@@ -1,28 +1,17 @@
 <template>
-  <div class="alert"
-        :class="{
-          'ok': alertType == 'ok',
-          'message': alertType == 'message',
-          'warning': alertType == 'warning',
-          'error': alertType == 'error'
-        }"
-        @click="remove">
+  <div class="alert" @click="alertStore.removeAlert()">
     <h3 v-text="props.header"></h3>
     <p v-text="props.message"></p>
   </div>
 </template>
 
 <script setup lang="ts">
-import {PropType, defineProps} from "vue";
-import {Alert, AlertType, useAlertStore} from "@/stores/AlertStore";
+import {defineProps} from "vue";
+import {useAlertStore} from "@/stores/AlertStore";
 
 const alertStore = useAlertStore()
 
 const props = defineProps({
-  alertType: {
-    type: String as PropType<AlertType>,
-    required: true
-  },
   header: {
     type: String,
     required: true
@@ -32,26 +21,16 @@ const props = defineProps({
     required: true
   }
 })
-
-function remove() {
-  const thisAlert: Alert = {
-    type: props.alertType,
-    header: props.header,
-    message: props.message
-  }
-  alertStore.removeAlert(thisAlert)
-}
 </script>
 
 <style scoped lang="scss">
 .alert {
-  width: 512px;
   padding: 16px;
-  max-width: 25%;
-  position: absolute;
-  top: 4vh;
-  left: 2vw;
+  width: 40vw;
   text-align: left;
+  position: fixed;
+  bottom: 2vh;
+  left: 30vw;
 
   h3 {
     margin-top: 0;
@@ -99,7 +78,7 @@ function remove() {
   background-color: #FF38381A;
 
   h3 {
-    color: #FF3838;
+    color: #A00;
   }
 }
 </style>

@@ -1,19 +1,19 @@
 <template>
-  <AlertBlock v-if="curAlert"
-              :message="curAlert.message"
-              :header="curAlert.header"
-              :alert-type="curAlert.type"/>
+  <AlertBlock v-if="alert"
+              :message="alert.message"
+              :header="alert.header"
+              :class="alert.type"/>
   <router-view/>
 </template>
 
 <script setup lang="ts">
 import {useUserStore} from './stores/UserStore'
 import AlertBlock from "@/components/AlertBlock.vue";
-import {useAlertStore} from "@/stores/AlertStore";
 import {storeToRefs} from "pinia";
+import {useAlertStore} from "@/stores/AlertStore";
 
+const {alert} = storeToRefs(useAlertStore())
 const userStore = useUserStore()
-const {curAlert} = storeToRefs(useAlertStore())
 userStore.loadSavedUser()
 </script>
 

@@ -1,6 +1,7 @@
 import { User } from '@/modules/user'
 import {useAlertStore} from "@/stores/AlertStore";
 import {useUserStore} from "@/stores/UserStore";
+import {Store} from "pinia";
 
 const SERVER_HOST = 'http://localhost:3030'
 
@@ -37,7 +38,6 @@ function noConnection(): void {
 }
 
 function badCredentials(): void {
-
     const alertStore = useAlertStore()
     alertStore.setAlert({
         type: 'error',
