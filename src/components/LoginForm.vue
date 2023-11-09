@@ -2,16 +2,22 @@
   <section class="form">
     <BackButton class="back"/>
     <h2>Sign In</h2>
-    <input type="text"
-           placeholder="Username|Email"
-           v-model="username"
-           :disabled="loading"
-    />
-    <input type="password"
-           placeholder="Password"
-           v-model="password"
-           :disabled="loading"
-    />
+    <div class="input">
+      <input type="text"
+             v-model="username"
+             :disabled="loading"
+             required
+      />
+      <span class="label">Login|Email</span>
+    </div>
+    <div class="input">
+      <input type="password"
+             v-model="password"
+             :disabled="loading"
+             required
+      />
+      <span class="label">Password</span>
+    </div>
     <p>Don't have an account? </p>
     <router-link class="link" to="/signup">Sign Up</router-link>
     <label class="checkbox">
@@ -113,21 +119,36 @@ section.form {
     width: 100%;
   }
 
-  input[type=text], input[type=password] {
-    color: $base-color;
-    font-size: 14pt;
-    height: 40px;
-    width: 180px;
-    padding: 0 10px;
-    font-family: inherit;
-    border: none;
+  .input {
+    position: relative;
 
-    &:focus {
-      outline: none;
+    input {
+      margin: 0;
+      color: black;
+      font-size: 12pt;
+      height: 40px;
+      width: 180px;
+      padding: 15px 0 0 10px;
+      font-family: inherit;
+      border: none;
+
+      &:focus {
+        outline: none;
+      }
+
+      &:focus ~ .label,
+      &:not(:focus):valid ~ .label {
+        top: -15px;
+        font-size: 9pt;
+      }
     }
 
-    &:not(:placeholder-shown) {
-      color: black;
+    span {
+      position: absolute;
+      color: $base-color;
+      font-size: 12pt;
+      top: -5px;
+      left: 10px;
     }
   }
 

@@ -1,6 +1,5 @@
 import { User } from '@/modules/user'
 import {useAlertStore} from "@/stores/AlertStore";
-import {useAppStore} from "@/stores/AppStore";
 
 const SERVER_HOST = 'http://localhost:3030'
 
