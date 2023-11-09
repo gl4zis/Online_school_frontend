@@ -1,124 +1,205 @@
 <template>
   <section class="form">
+    <BackButton class="back"/>
     <h2>Sign In</h2>
-    <input type="text" placeholder="Username|Email" v-model="username"/>
-    <input type="password" placeholder="Password" v-model="password"/>
-    <div class="checkbox">
-      <input type="checkbox" v-model="needSaving" id="saving">
-      <label for="saving">Remember me</label>
-    </div>
+    <input type="text"
+           placeholder="Username|Email"
+           v-model="username"
+           :disabled="loading"
+    />
+    <input type="password"
+           placeholder="Password"
+           v-model="password"
+           :disabled="loading"
+    />
     <p>Don't have an account? </p>
-    <router-link to="/signup">Sign Up</router-link>
-    <button type="submit"
-            @click="signIn({ username, password })"
-    >Sign in</button>
+    <router-link class="link" to="/signup">Sign Up</router-link>
+    <label class="checkbox">
+      <input type="checkbox"
+             v-model="remember"
+             :disabled="loading"
+      />Remember me
+    </label>
+    <button class="confirm"
+            @click="signIn"
+    >Sign in
+    </button>
   </section>
+  <div class="spinner">
+    <LoaderSpinner/>
+  </div>
 </template>
 
 <script setup lang="ts">
 import router from "@/router";
-import {ref} from "vue";
-import {User, validate} from "@/modules/user";
+import {Ref, ref} from "vue";
+import {User, validateUser} from "@/modules/user";
 import {useUserStore} from "@/stores/UserStore";
-import {login} from "@/modules/serverApi";
-import {useAlertStore} from "@/stores/AlertStore";
+import LoaderSpinner from "@/components/layout/LoaderSpinner.vue";
+import {useAppStore} from "@/stores/AppStore";
+import {generateToken} from "@/modules/serverApi";
+import {storeToRefs} from "pinia";
+import BackButton from "@/components/layout/BackButton.vue";
 
-const username = ref('')
-const password = ref('')
-const needSaving = ref(false)
+const remember: Ref<boolean> = ref(false)
+const username: Ref<string> = ref('')
+const password: Ref<string> = ref('')
 
 const userStore = useUserStore()
-const alertStore = useAlertStore()
+const appStore = useAppStore()
+const {loading} = storeToRefs(appStore)
 
-async function signIn(user: User): Promise<void> {
-
-  if (!validate(user)) {
-    alertStore.setAlert({
-      type: 'error',
-      header: 'Failed',
-      message: 'Incorrect username or password'
-    })
-    return
+async function signIn(): Promise<void> {
+  userStore.resetUser()
+  const user: User = {
+    username: username.value,
+    password: password.value
   }
 
-  await login(user)
-  if (userStore.authorized) {
-    userStore.user = user
-    if (needSaving.value)
-      userStore.saveUser()
-    else
-      userStore.resetUserInStorage()
-    router.push('/')
+  if (validateUser(user)) {
+    appStore.loading = true
+    const token: string | null = await generateToken(user)
+    appStore.loading = false
+
+    if (token) {
+      userStore.setToken(token)
+      userStore.setUser(user)
+      if (remember.value)
+        userStore.saveUser()
+
+      await router.push('/')
+    }
   }
 }
 </script>
 
 <style scoped lang="scss">
+$base-color: #555D;
+$second-color: #FA0;
+
 section.form {
   position: relative;
-  top: 20vh;
-  background-color: #DDD5;
-  border-radius: 20px;
-  border: 2px solid grey;
+  top: 10vh;
+  background-color: $base-color;
   margin: auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  max-width: 300px;
-  width: 30vw;
-  color: #333;
+  max-width: 350px;
+  width: 35vw;
+  color: white;
+  padding: 5px;
+  font-size: 13pt;
+
+  .back {
+    position: absolute;
+    top: 0;
+    left: 15px;
+    color: white;
+
+    &:active {
+      border-color: black;
+    }
+  }
 
   * {
     margin-top: 15px;
     margin-bottom: 15px;
-    width: 50%;
-    box-sizing: border-box;
   }
 
   h2 {
-    font-size: 30pt;
+    font-size: 24pt;
+    width: 100%;
   }
 
   input[type=text], input[type=password] {
+    color: $base-color;
     font-size: 14pt;
-    border-radius: 10px;
     height: 40px;
-    width: 200px;
+    width: 180px;
     padding: 0 10px;
-  }
+    font-family: inherit;
+    border: none;
 
-  .checkbox {
-    width: 80%;
-    font-weight: bold;
-    font-size: 14pt;
-    display: flex;
-    justify-content: center;
+    &:focus {
+      outline: none;
+    }
 
-    input {
-      width: 20px;
+    &:not(:placeholder-shown) {
+      color: black;
     }
   }
 
   p {
     margin-bottom: 0;
+    width: 100%;
   }
 
-  a {
-    margin-top: 0;
+  .link {
+    color: white;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
-  button {
-    border-radius: 10px;
-    box-sizing: border-box;
-    border: 3px solid grey;
-    background-color: #EEE;
-    height: 30px;
+  .checkbox {
+    font-size: 14pt;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    input {
+      margin-right: 10px;
+      appearance: none;
+      border: 2px solid $second-color;
+      width: 20px;
+      height: 20px;
+      transition-duration: 0.2s;
+      transform: rotate(-90deg);
+
+      &:checked {
+        background-color: $second-color;
+        transition-duration: 0.2s;
+        transform: rotate(90deg);
+      }
+
+      &:disabled {
+        border-color: darken($second-color, 30%);
+      }
+    }
+  }
+
+  .confirm {
+    border: 2px solid $second-color;
+    background-color: $base-color;
+    color: $second-color;
+    height: 40px;
+    width: 150px;
     font-size: 12pt;
-  }
+    cursor: pointer;
+    position: relative;
+    transition: 0.6s;
 
-  button:active {
-    border: 3px solid #EEE;
+    &:hover {
+      color: white;
+      background-color: $second-color;
+    }
+
+    &:active {
+      transition: 0.2s;
+      transform: translateY(10%);
+    }
   }
+}
+
+.spinner {
+  position: relative;
+  top: 10vh;
+  width: 35vw;
+  height: 10vh;
+  margin: auto;
 }
 </style>

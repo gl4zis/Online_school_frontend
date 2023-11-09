@@ -1,12 +1,10 @@
 import { User } from '@/modules/user'
 import {useAlertStore} from "@/stores/AlertStore";
-import {useUserStore} from "@/stores/UserStore";
-import {Store} from "pinia";
+import {useAppStore} from "@/stores/AppStore";
 
 const SERVER_HOST = 'http://localhost:3030'
 
-export async function login(user: User): Promise<void> {
-    const userStore = useUserStore()
+export async function generateToken(user: User): Promise<string|null> {
     try {
         const res: Response = await fetch(`${SERVER_HOST}/login`, {
             method: 'POST',
@@ -17,14 +15,14 @@ export async function login(user: User): Promise<void> {
         });
 
         if (res.ok) {
-            userStore.jwt = (await res.json()).token
-            userStore.authorized = true
+            return (await res.json()).token
         } else {
-            userStore.authorized = false
             badCredentials()
+            return null
         }
     } catch (err) {
         noConnection()
+        return null
     }
 }
 

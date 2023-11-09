@@ -1,18 +1,26 @@
 import {defineStore, StoreDefinition} from "pinia";
-import {Ref, ref} from "vue";
+import {computed, Ref} from "vue";
 import {User} from "@/modules/user";
-import {login} from "@/modules/serverApi";
+import {generateToken} from "@/modules/serverApi";
 
 export const useUserStore: StoreDefinition = defineStore('userStore', () => {
-    const user: Ref<User|null> = ref(null)
-    const jwt: Ref<string|null> = ref(null)
-    const authorized: Ref<boolean> = ref(false)
+    const user: Ref<User|null> = computed((): User|null => {
+        const userJson: string|null = sessionStorage.getItem('user')
+        if (userJson)
+            return JSON.parse(userJson)
+        else
+            return null
+    })
 
-    async function loadSavedUser(): Promise<void> {
+    const jwt: Ref<string|null> = computed((): string|null => sessionStorage.getItem('jwt'))
+
+    async function loadUser(): Promise<void> {
         const userJson: string|null = localStorage.getItem('user')
         if (userJson) {
-            user.value = JSON.parse(userJson)
-            await login(<User> user.value)
+            sessionStorage.setItem('user', userJson)
+            const token: string | null = await generateToken(JSON.parse(userJson))
+            if (token)
+                sessionStorage.setItem('jwt', token)
         }
     }
 
@@ -20,16 +28,27 @@ export const useUserStore: StoreDefinition = defineStore('userStore', () => {
         localStorage.setItem('user', JSON.stringify(user.value))
     }
 
-    function resetUserInStorage(): void {
+    function setUser(user: User): void {
+        sessionStorage.setItem('user', JSON.stringify(user))
+    }
+
+    function setToken(token: string): void {
+        sessionStorage.setItem('jwt', token)
+    }
+
+    function resetUser(): void {
         localStorage.removeItem('user')
+        sessionStorage.removeItem('user')
+        sessionStorage.removeItem('jwt')
     }
 
     return {
         user,
         jwt,
-        authorized,
-        loadSavedUser,
+        loadUser,
         saveUser,
-        resetUserInStorage
+        resetUser,
+        setUser,
+        setToken
     }
 })

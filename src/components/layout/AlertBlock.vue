@@ -1,5 +1,5 @@
 <template>
-  <div class="alert" @click="alertStore.removeAlert()">
+  <div class="alert" @click="remove">
     <h3 v-text="props.header"></h3>
     <p v-text="props.message"></p>
   </div>
@@ -8,8 +8,6 @@
 <script setup lang="ts">
 import {defineProps} from "vue";
 import {useAlertStore} from "@/stores/AlertStore";
-
-const alertStore = useAlertStore()
 
 const props = defineProps({
   header: {
@@ -21,6 +19,11 @@ const props = defineProps({
     required: true
   }
 })
+
+function remove(): void {
+  const alertStore = useAlertStore()
+  alertStore.removeAlert()
+}
 </script>
 
 <style scoped lang="scss">
