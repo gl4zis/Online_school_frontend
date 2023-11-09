@@ -2,38 +2,28 @@
   <section class="form">
     <BackButton class="back"/>
     <h2>Sign In</h2>
-    <div class="input">
-      <input type="text"
+    <MyInput type="text"
+             required
+             text="Login|Email"
              v-model="username"
              :disabled="loading"
+    />
+    <MyInput type="password"
              required
-      />
-      <span class="label">Login|Email</span>
-    </div>
-    <div class="input">
-      <input type="password"
+             text="Password"
              v-model="password"
              :disabled="loading"
-             required
-      />
-      <span class="label">Password</span>
-    </div>
-    <p>Don't have an account? </p>
+    />
+    <p>Don't have an account?</p>
     <router-link class="link" to="/signup">Sign Up</router-link>
-    <label class="checkbox">
-      <input type="checkbox"
-             v-model="remember"
-             :disabled="loading"
-      />Remember me
-    </label>
-    <button class="confirm"
-            @click="signIn"
-    >Sign in
-    </button>
+    <MyCheckBox text="Remember me"
+                :disabled="loading"
+                v-model="remember"
+    />
+    <MyButton text="Sign In"
+              :action="signIn"/>
   </section>
-  <div class="spinner">
-    <LoaderSpinner/>
-  </div>
+  <LoaderSpinner class="spinner"/>
 </template>
 
 <script setup lang="ts">
@@ -46,6 +36,9 @@ import {useAppStore} from "@/stores/AppStore";
 import {generateToken} from "@/modules/serverApi";
 import {storeToRefs} from "pinia";
 import BackButton from "@/components/layout/BackButton.vue";
+import MyInput from "@/components/layout/MyInput.vue";
+import MyCheckBox from "@/components/layout/MyCheckBox.vue";
+import MyButton from "@/components/layout/MyButton.vue";
 
 const remember: Ref<boolean> = ref(false)
 const username: Ref<string> = ref('')
@@ -80,13 +73,12 @@ async function signIn(): Promise<void> {
 </script>
 
 <style scoped lang="scss">
-$base-color: #555D;
-$second-color: #FA0;
+@import "@/styles/variables";
 
 section.form {
   position: relative;
   top: 10vh;
-  background-color: $base-color;
+  background-color: rgba($base-color, 0.8);
   margin: auto;
   display: flex;
   flex-direction: column;
@@ -119,39 +111,6 @@ section.form {
     width: 100%;
   }
 
-  .input {
-    position: relative;
-
-    input {
-      margin: 0;
-      color: black;
-      font-size: 12pt;
-      height: 40px;
-      width: 180px;
-      padding: 15px 0 0 10px;
-      font-family: inherit;
-      border: none;
-
-      &:focus {
-        outline: none;
-      }
-
-      &:focus ~ .label,
-      &:not(:focus):valid ~ .label {
-        top: -15px;
-        font-size: 9pt;
-      }
-    }
-
-    span {
-      position: absolute;
-      color: $base-color;
-      font-size: 12pt;
-      top: -5px;
-      left: 10px;
-    }
-  }
-
   p {
     margin-bottom: 0;
     width: 100%;
@@ -165,62 +124,11 @@ section.form {
       text-decoration: underline;
     }
   }
-
-  .checkbox {
-    font-size: 14pt;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-
-    input {
-      margin-right: 10px;
-      appearance: none;
-      border: 2px solid $second-color;
-      width: 20px;
-      height: 20px;
-      transition-duration: 0.2s;
-      transform: rotate(-90deg);
-
-      &:checked {
-        background-color: $second-color;
-        transition-duration: 0.2s;
-        transform: rotate(90deg);
-      }
-
-      &:disabled {
-        border-color: darken($second-color, 30%);
-      }
-    }
-  }
-
-  .confirm {
-    border: 2px solid $second-color;
-    background-color: $base-color;
-    color: $second-color;
-    height: 40px;
-    width: 150px;
-    font-size: 12pt;
-    cursor: pointer;
-    position: relative;
-    transition: 0.6s;
-
-    &:hover {
-      color: white;
-      background-color: $second-color;
-    }
-
-    &:active {
-      transition: 0.2s;
-      transform: translateY(10%);
-    }
-  }
 }
 
 .spinner {
   position: relative;
-  top: 10vh;
-  width: 35vw;
-  height: 10vh;
+  top: 15vh;
   margin: auto;
 }
 </style>

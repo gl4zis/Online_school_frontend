@@ -27,6 +27,13 @@ function remove(): void {
 </script>
 
 <style scoped lang="scss">
+@import "@/styles/variables";
+
+$error-color: #FF3838;
+$ok-color: #2EC946;
+$message-color: #4D4DFF;
+$warning-color: #FB0;
+
 .alert {
   padding: 16px;
   width: 40vw;
@@ -46,42 +53,42 @@ function remove(): void {
     margin: 0;
     font-size: 14px;
     font-family: 'Open Sans', sans-serif;
-    color: #555555;
+    color: $base-color;
   }
 }
 
 .message {
-  background-color: #4D4DFF1A;
+  background-color: rgba($message-color, 0.1);
 
   h3 {
-    color: #4D4DFF;
+    color: $message-color;
   }
 }
 
 .warning {
-  background-color: #FFBA001A;
+  background-color: rgba($warning-color, 0.1);
 
   h3 {
-    color: #FFBA00;
+    color: $warning-color;
   }
 }
 
 .ok {
-  border-left: 4px solid #2EC946;
-  background-color: #2EC9461A;
+  border-left: 4px solid $ok-color;
+  background-color: rgba($ok-color, 0.1);
 
   h3 {
-    color: #2EC946;
+    color: $ok-color;
   }
 }
 
 .error {
-  border: 1px solid #FF383844;
+  border: 1px solid rgba($error-color, 0.25);
   border-radius: 8px;
-  background-color: #FF38381A;
+  background-color: rgba($error-color, 0.1);
 
   h3 {
-    color: #A00;
+    color: $error-color;
   }
 }
 </style>

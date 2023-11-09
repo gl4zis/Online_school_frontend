@@ -16,13 +16,15 @@ const spin = computed(() => {
 </script>
 
 <style scoped lang="scss">
+@import "@/styles/variables";
+
 .loader {
   margin: auto;
   animation: rotate 2s linear infinite;
   width: 6vw;
 
   .path {
-    stroke: #FA0;
+    stroke: $second-color;
     stroke-linecap: round;
     animation: dash 2s ease-in-out infinite;
   }

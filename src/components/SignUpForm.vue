@@ -12,8 +12,7 @@ import BackButton from "@/components/layout/BackButton.vue";
 </script>
 
 <style scoped lang="scss">
-$base-color: #555D;
-$second-color: #FA0;
+@import "@/styles/variables";
 
 section.form {
   position: relative;
