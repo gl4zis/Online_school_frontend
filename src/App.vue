@@ -1,8 +1,5 @@
 <template>
-  <AlertBlock v-if="alert"
-              :message="alert.message"
-              :header="alert.header"
-              :class="alert.type"/>
+  <AlertBlock :alert="alert"/>
   <router-view/>
 </template>
 

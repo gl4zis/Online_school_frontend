@@ -1,22 +1,25 @@
 <template>
-  <div class="alert" @click="remove">
-    <h3 v-text="props.header"></h3>
-    <p v-text="props.message"></p>
-  </div>
+  <transition name="alert">
+    <div v-if="alert"
+         class="alert"
+         :class="alert.type"
+         @click="remove"
+    >
+      <h3 v-text="alert.header"></h3>
+      <p v-text="alert.message"></p>
+    </div>
+  </transition>
 </template>
 
 <script setup lang="ts">
-import {defineProps} from "vue";
-import {useAlertStore} from "@/stores/AlertStore";
+import {defineProps, PropType} from "vue";
+import {Alert, useAlertStore} from "@/stores/AlertStore";
 
-const props = defineProps({
-  header: {
-    type: String,
-    required: true
-  },
-  message: {
-    type: String,
-    required: true
+defineProps({
+  alert: {
+    type: Object as PropType<Alert>,
+    required: false,
+    default: null
   }
 })
 
@@ -54,6 +57,14 @@ $warning-color: #FB0;
     font-size: 14px;
     font-family: 'Open Sans', sans-serif;
     color: $base-color;
+  }
+
+  &-enter-from, &-leave-to {
+    opacity: 0;
+  }
+
+  &-enter-active, &-leave-active {
+    transition-duration: .3s;
   }
 }
 
