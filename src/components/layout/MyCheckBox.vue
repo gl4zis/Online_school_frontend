@@ -12,7 +12,7 @@ import {defineProps} from "vue";
 
 const props = defineProps({
   text: String,
-  modelValue: String,
+  modelValue: Boolean,
   disabled: Boolean
 })
 </script>

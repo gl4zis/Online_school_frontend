@@ -23,18 +23,14 @@
     <MyButton text="Sign In"
               :action="signIn"/>
   </section>
-  <LoaderSpinner class="spinner"/>
+  <LoaderSpinner v-if="loading" class="spinner"/>
 </template>
 
 <script setup lang="ts">
 import router from "@/router";
 import {Ref, ref} from "vue";
-import {User, validateUser} from "@/modules/user";
-import {useUserStore} from "@/stores/UserStore";
+import userApi from "@/modules/user"
 import LoaderSpinner from "@/components/layout/LoaderSpinner.vue";
-import {useAppStore} from "@/stores/AppStore";
-import {generateToken} from "@/modules/serverApi";
-import {storeToRefs} from "pinia";
 import BackButton from "@/components/layout/BackButton.vue";
 import MyInput from "@/components/layout/MyInput.vue";
 import MyCheckBox from "@/components/layout/MyCheckBox.vue";
@@ -44,31 +40,21 @@ const remember: Ref<boolean> = ref(false)
 const username: Ref<string> = ref('')
 const password: Ref<string> = ref('')
 
-const userStore = useUserStore()
-const appStore = useAppStore()
-const {loading} = storeToRefs(appStore)
+const loading: Ref<boolean> = ref(false)
 
 async function signIn(): Promise<void> {
-  userStore.resetUser()
-  const user: User = {
+  loading.value = true
+
+  const successful: boolean = await userApi.signIn({
     username: username.value,
     password: password.value
-  }
+  },
+      remember.value
+  )
 
-  if (validateUser(user)) {
-    appStore.loading = true
-    const token: string | null = await generateToken(user)
-    appStore.loading = false
-
-    if (token) {
-      userStore.setToken(token)
-      userStore.setUser(user)
-      if (remember.value)
-        userStore.saveUser()
-
-      await router.push('/')
-    }
-  }
+  loading.value = false
+  if (successful)
+    await router.push('/')
 }
 </script>
 
@@ -117,7 +103,7 @@ section.form {
   }
 
   .link {
-    color: white;
+    color: aqua;
     text-decoration: none;
 
     &:hover {
@@ -130,5 +116,6 @@ section.form {
   position: relative;
   top: 15vh;
   margin: auto;
+  width: 5vw;
 }
 </style>

@@ -1,19 +1,8 @@
 <template>
-  <svg v-if="spin" class="loader" viewBox="0 0 50 50">
+  <svg class="loader" viewBox="0 0 50 50">
     <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"/>
   </svg>
 </template>
-
-<script setup lang="ts">
-import {computed} from "vue";
-import {useAppStore} from '@/stores/AppStore'
-
-const appStore = useAppStore()
-
-const spin = computed(() => {
-  return appStore.loading
-})
-</script>
 
 <style scoped lang="scss">
 @import "@/styles/variables";
@@ -21,7 +10,6 @@ const spin = computed(() => {
 .loader {
   margin: auto;
   animation: rotate 2s linear infinite;
-  width: 6vw;
 
   .path {
     stroke: $second-color;

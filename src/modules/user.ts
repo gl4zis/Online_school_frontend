@@ -1,25 +1,62 @@
-import {useAlertStore} from "@/stores/AlertStore";
+import {useUserStore} from "@/stores/UserStore";
+import alertApi from "@/modules/alert"
+import serverApi from "@/modules/server"
 
 export type User = {
     username: string,
     password: string
 }
 
-export function validateUser(user: User): boolean {
-    const passwordPattern = /^\S{6,50}$/
-    const usernamePattern = /^[\w\d]{3,20}$/
-    const emailPattern = /^[\w\d]+@[\w\d]+\.[\w\d]{2,5}$/
-    const res: boolean = passwordPattern.test(user.password) &&
-        (usernamePattern.test(user.username) || emailPattern.test(user.username))
+export type StudentReg = {
+    username: string,
+    password: string,
+    firstname: string,
+    lastname: string,
+    birthdate: Date,
+    grade: number
+}
 
-    if (!res) {
-        const alertStore = useAlertStore()
-        alertStore.setAlert({
-            type: 'error',
-            header: 'Failed',
-            message: 'Incorrect username or password'
-        })
+function validPassword(password: string): boolean {
+    return /^\S{6,50}$/.test(password)
+}
+
+function validUsername(username: string): boolean {
+    return /^[\w\d]{3,20}$/.test(username)
+}
+
+function validEmail(email: string): boolean {
+    return /^[\w\d]+@[\w\d]+\.[\w\d]{2,5}$/.test(email)
+}
+
+function validateUser({username, password}: User): boolean {
+    return validPassword(password) &&
+        (validUsername(username) || validEmail(username))
+}
+
+async function signIn(user: User, needRemember: boolean): Promise<boolean> {
+    const userStore = useUserStore()
+    userStore.resetUser()
+
+    if (!validateUser(user)) {
+        alertApi.error('Failed', 'Invalid inputted data')
+        return false
     }
 
-    return res
+    const token: string | null = await serverApi.generateToken(user)
+
+    if (!token) {
+        return false
+    }
+
+    userStore.setToken(token)
+    userStore.setUser(user)
+    if (needRemember)
+        userStore.saveUser()
+
+    return true
+}
+
+
+export default {
+    signIn
 }

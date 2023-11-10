@@ -1,7 +1,7 @@
 import {defineStore, StoreDefinition} from "pinia";
 import {computed, Ref} from "vue";
 import {User} from "@/modules/user";
-import {generateToken} from "@/modules/serverApi";
+import serverApi from "@/modules/server"
 
 export const useUserStore: StoreDefinition = defineStore('userStore', () => {
     const user: Ref<User|null> = computed((): User|null => {
@@ -18,7 +18,7 @@ export const useUserStore: StoreDefinition = defineStore('userStore', () => {
         const userJson: string|null = localStorage.getItem('user')
         if (userJson) {
             sessionStorage.setItem('user', userJson)
-            const token: string | null = await generateToken(JSON.parse(userJson))
+            const token: string | null = await serverApi.generateToken(JSON.parse(userJson))
             if (token)
                 sessionStorage.setItem('jwt', token)
         }

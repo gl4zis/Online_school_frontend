@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import {defineProps, PropType} from "vue";
 
-type Type = 'text' | 'password'
+type Type = 'text' | 'password' | 'date'
 
 const props = defineProps({
   type: {
@@ -33,13 +33,15 @@ const props = defineProps({
 
 .input {
   position: relative;
+  height: 40px;
+  max-width: 180px;
 
   input {
-    margin: 0;
+    margin: 0 auto;
     color: black;
     font-size: 12pt;
-    height: 40px;
-    width: 180px;
+    width: 100%;
+    height: 100%;
     padding: 15px 0 0 10px;
     font-family: inherit;
     border: none;
@@ -57,12 +59,13 @@ const props = defineProps({
   }
 
   .label {
+    pointer-events: none;
     transition-duration: 0.2s;
     position: absolute;
     color: $base-color;
     font-size: 12pt;
     top: 10px;
-    left: 10px;
+    left: 5%;
   }
 }
 </style>
