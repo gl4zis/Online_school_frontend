@@ -28,9 +28,27 @@ function validEmail(email: string): boolean {
     return /^[\w\d]+@[\w\d]+\.[\w\d]{2,5}$/.test(email)
 }
 
+function validName(name: string): boolean {
+    return /^[\s\wа-яА-Я,.\-']{2,50}$/.test(name)
+}
+
+function validBirthdate(date: Date): boolean {
+    return Date.now() - date.getTime() > 7 * 365 * 24 * 60 * 60 * 1000  // Min 7 years ago
+}
+
+function validGrade(grade: number): boolean {
+    return Number.isInteger(grade) && grade >= 1 && grade <= 11
+}
+
 function validateUser({username, password}: User): boolean {
     return validPassword(password) &&
         (validUsername(username) || validEmail(username))
+}
+
+function validateStudentReg({username, password, firstname, lastname, grade, birthdate}: StudentReg): boolean {
+    return validUsername(username) && validPassword(password) &&
+        validName(firstname) && validName(lastname) &&
+        validBirthdate(birthdate) && validGrade(grade)
 }
 
 async function signIn(user: User, needRemember: boolean): Promise<boolean> {
@@ -53,6 +71,10 @@ async function signIn(user: User, needRemember: boolean): Promise<boolean> {
     if (needRemember)
         userStore.saveUser()
 
+    return true
+}
+
+async function signUpStudent(student: StudentReg): Promise<boolean> {
     return true
 }
 

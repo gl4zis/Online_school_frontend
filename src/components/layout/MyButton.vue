@@ -1,20 +1,26 @@
 <template>
-  <button @click="props.action">
-    {{ props.text }}
+  <button @click="action" :disabled="disabled">
+    {{ text }}
   </button>
 </template>
 
 <script setup lang="ts">
 import {defineProps} from "vue";
 
-const props = defineProps({
+defineProps({
   text: String,
-  action: Function
+  action: Function,
+  disabled: Boolean
 })
 </script>
 
 <style scoped lang="scss">
 @import "@/styles/variables";
+
+@mixin filled {
+  color: white;
+  background-color: $second-color;
+}
 
 button {
   border: 2px solid $second-color;
@@ -28,13 +34,16 @@ button {
   transition: 0.6s;
 
   &:hover {
-    color: white;
-    background-color: $second-color;
+    @include filled;
   }
 
-  &:active {
+  &:active:not(:disabled) {
     transition: 0.2s;
     transform: translateY(10%);
+  }
+
+  &:disabled {
+    @include filled
   }
 }
 </style>

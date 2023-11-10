@@ -38,6 +38,7 @@ $message-color: #4D4DFF;
 $warning-color: #FB0;
 
 .alert {
+  z-index: 2;
   padding: 16px;
   width: 40vw;
   text-align: left;
@@ -59,7 +60,11 @@ $warning-color: #FB0;
     color: $base-color;
   }
 
-  &-enter-from, &-leave-to {
+  &-enter-from {
+    transform: translateY(200%);
+  }
+
+  &-leave-to {
     opacity: 0;
   }
 

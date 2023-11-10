@@ -1,19 +1,19 @@
 <template>
-  <div>
-    <select>
-      <option v-for="index in range"
+  <div class="select">
+    <select :disabled="disabled">
+      <option v-for="index in (max - min + 1)"
               :key="index"
-              :value="getVal(index)"
-      >{{ getVal(index) }}</option>
+              :value="min + index - 1"
+      >{{ min + index - 1 }}</option>
     </select>
-    <span class="label">{{ props.text }}</span>
+    <span class="label">{{ text }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
 import {defineProps} from "vue";
 
-const props = defineProps({
+defineProps({
   min: {
     type: Number,
     required: true
@@ -22,28 +22,35 @@ const props = defineProps({
     type: Number,
     required: true
   },
-  text: String
+  text: String,
+  disabled: Boolean
 })
-
-const range: number = props.max - props.min + 1
-const getVal = (idx: number): number => {
-  return Number(props.min) + idx - 1
-}
 </script>
 
 <style scoped lang="scss">
 @import "@/styles/variables";
-div {
+
+.select {
   position: relative;
+  min-width: 50px;
+  height: 40px;
 
   select {
-    width: 50px;
-    height: 40px;
+    width: 100%;
+    height: 100%;
+    background-color: $base-color;
+    color: $second-color;
     text-align: center;
     padding: 15px 0 0 0;
     font-size: 12pt;
     appearance: none;
     cursor: pointer;
+    border-bottom: 2px solid white;
+
+    &:disabled {
+      opacity: 1;
+      background-color: #AAA;
+    }
 
     &:focus {
       outline: none;
@@ -53,7 +60,7 @@ div {
   .label {
     pointer-events: none;
     position: absolute;
-    color: $base-color;
+    color: white;
     font-size: 9pt;
     top: 2px;
     left: 5px;

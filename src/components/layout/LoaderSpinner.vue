@@ -8,6 +8,7 @@
 @import "@/styles/variables";
 
 .loader {
+  pointer-events: none;
   margin: auto;
   animation: rotate 2s linear infinite;
 

@@ -1,13 +1,13 @@
 <template>
   <div class="input">
-    <input :type="props.type"
-           :required="props.required"
+    <input :type="type"
+           :required="required"
            placeholder=""
            @input="$emit('update:modelValue', $event.target.value)"
            :value="modelValue"
-           :disabled="props.disabled"
+           :disabled="disabled"
     />
-    <span class="label">{{ props.text }}</span>
+    <span class="label">{{ text }}</span>
   </div>
 </template>
 
@@ -16,14 +16,14 @@ import {defineProps, PropType} from "vue";
 
 type Type = 'text' | 'password' | 'date'
 
-const props = defineProps({
+defineProps({
   type: {
     type: String as PropType<Type>,
     required: true
   },
   text: String,
   required: Boolean,
-  modelValue: String,
+  modelValue: [Date, String],
   disabled: Boolean
 })
 </script>
@@ -34,17 +34,20 @@ const props = defineProps({
 .input {
   position: relative;
   height: 40px;
-  max-width: 180px;
+  min-width: 160px;
 
   input {
     margin: 0 auto;
-    color: black;
+    color: $second-color;
+    background-color: $base-color;
+    color-scheme: dark;
     font-size: 12pt;
     width: 100%;
     height: 100%;
-    padding: 15px 0 0 10px;
+    padding: 15px 5px 0 10px;
     font-family: inherit;
     border: none;
+    border-bottom: 2px white solid;
 
     &:focus {
       outline: none;
@@ -56,16 +59,20 @@ const props = defineProps({
       transform: translateY(-10px);
       font-size: 9pt;
     }
+
+    &:disabled {
+      background-color: #AAA;
+    }
   }
 
   .label {
     pointer-events: none;
     transition-duration: 0.2s;
     position: absolute;
-    color: $base-color;
+    color: white;
     font-size: 12pt;
     top: 10px;
-    left: 5%;
+    left: 7pt;
   }
 }
 </style>

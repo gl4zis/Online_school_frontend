@@ -15,8 +15,8 @@
              :disabled="loading"
     />
     <p>Don't have an account?</p>
-    <router-link class="link" to="/signup">Sign Up</router-link>
-    <MyCheckBox text="Remember me"
+    <MyLink path="signup" text="Sign Up"/>
+    <MyCheckBox text="Remember Me"
                 :disabled="loading"
                 v-model="remember"
     />
@@ -35,11 +35,11 @@ import BackButton from "@/components/layout/BackButton.vue";
 import MyInput from "@/components/layout/MyInput.vue";
 import MyCheckBox from "@/components/layout/MyCheckBox.vue";
 import MyButton from "@/components/layout/MyButton.vue";
+import MyLink from "@/components/layout/MyLink.vue";
 
 const remember: Ref<boolean> = ref(false)
 const username: Ref<string> = ref('')
 const password: Ref<string> = ref('')
-
 const loading: Ref<boolean> = ref(false)
 
 async function signIn(): Promise<void> {
@@ -100,15 +100,6 @@ section.form {
   p {
     margin-bottom: 0;
     width: 100%;
-  }
-
-  .link {
-    color: aqua;
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
   }
 }
 

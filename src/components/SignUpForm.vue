@@ -5,7 +5,7 @@
     <p class="info">
       This is registration for students.
       If you are not student, please
-      <router-link class="link" to="contacts">contact</router-link>
+      <MyLink path="contacts" text="contact"/>
       with administration
     </p>
     <MyInput type="text"
@@ -32,17 +32,20 @@
              required
              v-model="lastname"
     />
-    <MyInput type="date"
-             required
-             :disabled="loading"
-             text="Birthdate"
-             class="date"
-             v-model="birthdate"
-    />
-    <NumberSelect :max=11 :min=1 text="Grade"/>
-    <MyButton text="Sign Up" :action="signUp"/>
+    <div class="student">
+      <MyInput type="date"
+               required
+               :disabled="loading"
+               text="Birthdate"
+               class="date"
+               v-model="birthdate"
+      />
+      <NumberSelect :max=11 :min=1 text="Grade" :disabled="loading"/>
+    </div>
+    <MyCheckBox text="Remember Me" v-model="remember" :disabled="loading"/>
+    <MyButton text="Sign Up" :action="signUp" :disabled="loading"/>
   </section>
-  <LoaderSpinner class="spinner"/>
+  <LoaderSpinner v-if="loading" class="spinner"/>
 </template>
 
 
@@ -55,8 +58,11 @@ import LoaderSpinner from "@/components/layout/LoaderSpinner.vue";
 import {ref, Ref} from "vue";
 import {StudentReg} from "@/modules/user";
 import serverApi from "@/modules/server";
+import MyCheckBox from "@/components/layout/MyCheckBox.vue";
+import MyLink from "@/components/layout/MyLink.vue";
 
 const loading: Ref<boolean> = ref(false)
+const remember: Ref<boolean> = ref(false)
 
 const username: Ref<string> = ref('')
 const password: Ref<string> = ref('')
@@ -75,11 +81,11 @@ async function signUp() {
     grade: grade.value
   }
 
+  console.log(student)
+
   loading.value = true
   const token: string|null = await serverApi.studentSignUp(student)
   loading.value = false
-  console.log(token)
-
 }
 </script>
 
@@ -88,14 +94,12 @@ async function signUp() {
 
 section.form {
   position: relative;
-  top: 10vh;
   background-color: $base-color;
-  margin: auto;
+  margin: 10vh auto;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
+  flex-direction: column;
   align-items: center;
-  width: 450px;
+  width: 400px;
   color: white;
   padding: 10px;
   font-size: 13pt;
@@ -122,33 +126,32 @@ section.form {
 
   .info {
     margin: auto;
+    width: 80%;
+  }
+
+  .input, .student {
     width: 70%;
   }
 
-  .link {
-    color: aqua;
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
   .student {
-    margin: 0;
     display: flex;
     justify-content: space-between;
-    width: 180px;
+    margin: 0;
 
-    .date {
-      width: 120px;
+    .input {
+      width: 50%;
+    }
+
+    .select {
+      width: 25%;
     }
   }
 }
 
 .spinner {
-  position: relative;
-  top: 15vh;
-  margin: auto;
+  position: fixed;
+  top: 5vh;
+  left: 47vw;
+  width: 6vw;
 }
 </style>

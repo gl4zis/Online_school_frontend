@@ -1,16 +1,16 @@
 <template>
   <label class="checkbox">
     <input type="checkbox"
-           :disabled="props.disabled"
-           @input="$emit('update:modelValue', $event.target.value)"
-    />{{ props.text }}
+           :disabled="disabled"
+           @input="$emit('update:modelValue', $event.target.checked)"
+    />{{ text }}
   </label>
 </template>
 
 <script setup lang="ts">
 import {defineProps} from "vue";
 
-const props = defineProps({
+defineProps({
   text: String,
   modelValue: Boolean,
   disabled: Boolean
