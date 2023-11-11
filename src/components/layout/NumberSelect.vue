@@ -45,6 +45,7 @@ defineProps({
     font-size: 12pt;
     appearance: none;
     cursor: pointer;
+    border: none;
     border-bottom: 2px solid white;
 
     &:disabled {

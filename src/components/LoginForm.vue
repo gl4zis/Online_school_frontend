@@ -1,29 +1,29 @@
 <template>
   <section class="form">
-    <BackButton class="back"/>
+    <back-button class="back"/>
     <h2>Sign In</h2>
-    <MyInput type="text"
+    <my-input type="text"
              required
              text="Login|Email"
              v-model="username"
              :disabled="loading"
     />
-    <MyInput type="password"
+    <my-input type="password"
              required
              text="Password"
              v-model="password"
              :disabled="loading"
     />
     <p>Don't have an account?</p>
-    <MyLink path="signup" text="Sign Up"/>
-    <MyCheckBox text="Remember Me"
+    <my-link path="signup" text="Sign Up"/>
+    <my-check-box text="Remember Me"
                 :disabled="loading"
                 v-model="remember"
     />
-    <MyButton text="Sign In"
+    <my-button text="Sign In"
               :action="signIn"/>
   </section>
-  <LoaderSpinner v-if="loading" class="spinner"/>
+  <loader-spinner v-if="loading" class="spinner"/>
 </template>
 
 <script setup lang="ts">
@@ -64,7 +64,7 @@ async function signIn(): Promise<void> {
 section.form {
   position: relative;
   top: 10vh;
-  background-color: rgba($base-color, 0.8);
+  background-color: rgba($base-color, 0.9);
   margin: auto;
   display: flex;
   flex-direction: column;
@@ -80,11 +80,6 @@ section.form {
     position: absolute;
     top: 0;
     left: 15px;
-    color: white;
-
-    &:active {
-      border-color: black;
-    }
   }
 
   * {

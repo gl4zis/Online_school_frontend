@@ -1,6 +1,6 @@
 <template>
   <svg class="loader" viewBox="0 0 50 50">
-    <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"/>
+    <circle class="path" cx="25" cy="25" r="20"/>
   </svg>
 </template>
 
@@ -13,6 +13,8 @@
   animation: rotate 2s linear infinite;
 
   .path {
+    fill: none;
+    stroke-width: 5;
     stroke: $second-color;
     stroke-linecap: round;
     animation: dash 2s ease-in-out infinite;

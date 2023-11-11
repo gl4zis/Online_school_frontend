@@ -13,11 +13,18 @@ function goBack(): void {
 </script>
 
 <style scoped lang="scss">
+@import "@/styles/variables";
+
 button {
   font-size: 18pt;
   text-align: center;
   border: 1px solid white;
   border-radius: 5px;
   background: none;
+  color: $second-color;
+
+  &:active {
+    border-color: $second-color;
+  }
 }
 </style>

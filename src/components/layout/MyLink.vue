@@ -18,8 +18,10 @@ defineProps({
 </script>
 
 <style scoped lang="scss">
+@import "@/styles/variables";
+
 .link {
-  color: aqua;
+  color: $second-color;
   text-decoration: none;
 
   &:hover {

@@ -8,6 +8,7 @@
            :disabled="disabled"
     />
     <span class="label">{{ text }}</span>
+    <slot/>
   </div>
 </template>
 
@@ -44,7 +45,7 @@ defineProps({
     font-size: 12pt;
     width: 100%;
     height: 100%;
-    padding: 15px 5px 0 10px;
+    padding: 15px 35px 0 10px;
     font-family: inherit;
     border: none;
     border-bottom: 2px white solid;
@@ -73,6 +74,15 @@ defineProps({
     font-size: 12pt;
     top: 10px;
     left: 7pt;
+  }
+
+  & :slotted(.ico) {
+    width: 26px;
+    height: 26px;
+    margin: 0;
+    position: absolute;
+    top: 7px;
+    right: 7px;
   }
 }
 </style>

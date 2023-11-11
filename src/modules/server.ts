@@ -3,6 +3,16 @@ import alertApi from "@/modules/alert"
 
 const SERVER_HOST = 'http://localhost:3030'
 
+async function isUsernameUnique(username: string): Promise<boolean|null> {
+    try {
+        const res: Response = await fetch(`${SERVER_HOST}/users/unique?username=${username}`)
+        console.log(username)
+        return (await res.json()).message == 'true'
+    } catch (err) {
+        noConnection()
+        return null
+    }
+}
 
 async function generateToken(user: User): Promise<string|null> {
     try {
@@ -57,5 +67,6 @@ function noConnection(): void {
 
 export default {
     generateToken,
-    studentSignUp
+    studentSignUp,
+    isUsernameUnique
 }
