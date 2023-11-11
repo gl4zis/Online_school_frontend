@@ -15,8 +15,7 @@ export const useAlertStore: StoreDefinition = defineStore('alertStore', () =>{
 
     function setAlert(newAlert: Alert): void {
         alert.value = newAlert
-        if (processIndex)
-            clearTimeout(processIndex)
+        clearTimeout(processIndex)
         processIndex = setTimeout(removeAlert, 5000)
     }
 

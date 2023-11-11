@@ -1,5 +1,5 @@
 # Online School
-### (Can't think of a name)
+### SmartExam
 
 ---
 
@@ -16,6 +16,7 @@ All used technologies:
 - Vue.js
 - Vue routes
 - Pinia
+- Vuelidate
 - REST API
 
 [Repository](https://github.com/gl4zis/Online_school_backend)

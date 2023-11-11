@@ -9,39 +9,44 @@
       with administration
     </p>
     <my-input type="text"
-             text="Username"
-             :disabled="loading"
-             required
-             v-model="username"
-             @input="checkUsernameUniqueness"
+              text="Username"
+              :disabled="loading"
+              required
+              v-model="username"
+              @input="checkUsernameUniqueness"
+              :validation-func="validation.usernameValidateErrors"
     >
       <validation-icon class="ico" :status="usernameUniquenessStatus"/>
     </my-input>
     <my-input type="password"
-             text="Password"
-             :disabled="loading"
-             required
-             v-model="password"
+              text="Password"
+              :disabled="loading"
+              required
+              v-model="password"
+              :validation-func="validation.passwordValidateErrors"
     />
     <my-input type="text"
-             text="Firstname"
-             :disabled="loading"
-             required
-             v-model="firstname"
+              text="Firstname"
+              :disabled="loading"
+              required
+              v-model="firstname"
+              :validation-func="validation.nameValidateErrors"
     />
     <my-input type="text"
-             text="Lastname"
-             :disabled="loading"
-             required
-             v-model="lastname"
+              text="Lastname"
+              :disabled="loading"
+              required
+              v-model="lastname"
+              :validation-func="validation.nameValidateErrors"
     />
     <div class="student">
       <my-input type="date"
-               required
-               :disabled="loading"
-               text="Birthdate"
-               class="date"
-               v-model="birthdate"
+                required
+                :disabled="loading"
+                text="Birthdate"
+                class="date"
+                v-model="birthdate"
+                :validation-func="validation.birthdateValidateErrors"
       />
       <number-select :max=11 :min=1 text="Grade" :disabled="loading"/>
     </div>
@@ -64,6 +69,10 @@ import serverApi from "@/modules/server";
 import MyCheckBox from "@/components/layout/MyCheckBox.vue";
 import MyLink from "@/components/layout/MyLink.vue";
 import ValidationIcon, {ValidStatus} from "@/components/layout/ValidationIcon.vue";
+import validation from "@/modules/validation";
+import alertApi from "@/modules/alert"
+import userApi from "@/modules/user";
+import router from "@/router";
 
 const loading: Ref<boolean> = ref(false)
 const remember: Ref<boolean> = ref(false)
@@ -73,7 +82,7 @@ const usernameUniquenessStatus: Ref<ValidStatus|undefined> = ref(undefined)
 const password: Ref<string> = ref('')
 const firstname: Ref<string> = ref('')
 const lastname: Ref<string> = ref('')
-const birthdate: Ref<Date> = ref(new Date())
+const birthdate: Ref<string> = ref('')
 const grade: Ref<number> = ref(1)
 
 let ajaxId: number
@@ -90,17 +99,21 @@ function checkUsernameUniqueness(): void {
   ajaxId = setTimeout(async () => {
     const unique: boolean|null = await serverApi.isUsernameUnique(username.value)
 
-    if (unique === null)
+    if (unique === null) {
+      usernameUniquenessStatus.value = undefined
       return
+    }
 
-    if (unique)
-      usernameUniquenessStatus.value = 'ok'
-    else
-      usernameUniquenessStatus.value = 'error'
+    unique ? usernameUniquenessStatus.value = 'ok' : usernameUniquenessStatus.value = 'error'
   }, 500)
 }
 
 async function signUp() {
+  if (usernameUniquenessStatus.value !== 'ok') {
+    alertApi.warn('Failed', 'Username is not unique')
+    return
+  }
+
   const student: StudentReg = {
     username: username.value,
     password: password.value,
@@ -110,11 +123,14 @@ async function signUp() {
     grade: grade.value
   }
 
-  console.log(student)
-
   loading.value = true
-  const token: string|null = await serverApi.studentSignUp(student)
+  const success = await userApi.signUpStudent(student, remember.value)
   loading.value = false
+
+  if (success) {
+    alertApi.ok('Signed Up', `Student ${username.value} was registered`)
+    await router.push('/')
+  }
 }
 </script>
 

@@ -48,9 +48,7 @@ async function signIn(): Promise<void> {
   const successful: boolean = await userApi.signIn({
     username: username.value,
     password: password.value
-  },
-      remember.value
-  )
+  }, remember.value)
 
   loading.value = false
   if (successful)
