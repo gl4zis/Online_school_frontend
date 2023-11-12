@@ -1,6 +1,6 @@
 <template>
   <div class="select">
-    <select :disabled="disabled">
+    <select :disabled="disabled" @change="$emit('update:modelValue', Number($event.target.value))">
       <option v-for="index in (max - min + 1)"
               :key="index"
               :value="min + index - 1"
@@ -23,7 +23,8 @@ defineProps({
     required: true
   },
   text: String,
-  disabled: Boolean
+  disabled: Boolean,
+  modelValue: Number
 })
 </script>
 

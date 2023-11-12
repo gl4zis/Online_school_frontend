@@ -51,7 +51,7 @@ async function studentSignUp(student: StudentReg): Promise<string|null> {
         if (res.ok) {
             return (await res.json()).token
         } else {
-            alertApi.error('ERROR', res.statusText)
+            alertApi.error('Failed', (await res.json()).reason)
             return null
         }
     } catch (err) {

@@ -61,7 +61,7 @@ $warning-color: #FB0;
   }
 
   &-enter-from {
-    transform: translateY(200%);
+    transform: translateY(150%);
   }
 
   &-leave-to {
@@ -74,7 +74,7 @@ $warning-color: #FB0;
 }
 
 .message {
-  background-color: rgba($message-color, 0.1);
+  background-color: rgba($message-color, 0.2);
 
   h3 {
     color: $message-color;
@@ -82,7 +82,7 @@ $warning-color: #FB0;
 }
 
 .warning {
-  background-color: rgba($warning-color, 0.1);
+  background-color: rgba($warning-color, 0.2);
 
   h3 {
     color: $warning-color;
@@ -91,7 +91,7 @@ $warning-color: #FB0;
 
 .ok {
   border-left: 4px solid $ok-color;
-  background-color: rgba($ok-color, 0.1);
+  background-color: rgba($ok-color, 0.2);
 
   h3 {
     color: $ok-color;
@@ -99,9 +99,9 @@ $warning-color: #FB0;
 }
 
 .error {
-  border: 1px solid rgba($error-color, 0.25);
+  border: 1px solid rgba($error-color, 0.5);
   border-radius: 8px;
-  background-color: rgba($error-color, 0.1);
+  background-color: rgba($error-color, 0.2);
 
   h3 {
     color: $error-color;

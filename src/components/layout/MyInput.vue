@@ -4,24 +4,22 @@
            :required="required"
            placeholder=""
            @input="$emit('update:modelValue', $event.target.value)"
-           @blur="checkValid"
-           @focus="validationError = ''"
            :value="modelValue"
            :disabled="disabled"
            :class="{ 'right-padding': $slots.default }"
     />
     <span class="label">{{ text }}</span>
-    <span v-if="validationError" class="invalid-message">{{ validationError }}</span>
+    <span class="invalid-message">{{ extraMessage }}</span>
     <slot/>
   </div>
 </template>
 
 <script setup lang="ts">
-import {defineProps, PropType, Ref, ref} from "vue";
+import {defineProps, PropType} from "vue";
 
 type Type = 'text' | 'password' | 'date'
 
-const props = defineProps({
+defineProps({
   type: {
     type: String as PropType<Type>,
     required: true
@@ -30,17 +28,8 @@ const props = defineProps({
   required: Boolean,
   modelValue: String,
   disabled: Boolean,
-  validationFunc: Function as PropType<(data: string) => string>
+  extraMessage: String
 })
-
-const validationError: Ref<string> = ref('')
-
-function checkValid(): void {
-    if (!props.validationFunc || (!props.modelValue && props.modelValue !== ''))
-      return
-
-    validationError.value = props.validationFunc(props.modelValue)
-}
 </script>
 
 <style scoped lang="scss">

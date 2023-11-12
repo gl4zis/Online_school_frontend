@@ -1,6 +1,6 @@
 import {StudentReg, User} from "@/modules/user";
 
-const usernamePattern = /^[\w\d]{3,20}/
+const usernamePattern = /^[\w\d]{3,20}$/
 const passwordPattern = /^\S{6,50}$/
 const namePattern = /^[\s\wа-яА-Я,.\-']{2,50}$/
 const emailPattern = /^[\w\d]+@[\w\d]+\.[\w\d]{2,5}$/

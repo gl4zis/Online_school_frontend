@@ -12,9 +12,9 @@
               text="Username"
               :disabled="loading"
               required
-              v-model="username"
+              v-model="formData.username"
               @input="checkUsernameUniqueness"
-              :validation-func="validation.usernameValidateErrors"
+              :extra-message="errors.username"
     >
       <validation-icon class="ico" :status="usernameUniquenessStatus"/>
     </my-input>
@@ -22,22 +22,22 @@
               text="Password"
               :disabled="loading"
               required
-              v-model="password"
-              :validation-func="validation.passwordValidateErrors"
+              v-model="formData.password"
+              :extra-message="errors.password"
     />
     <my-input type="text"
               text="Firstname"
               :disabled="loading"
               required
-              v-model="firstname"
-              :validation-func="validation.nameValidateErrors"
+              v-model="formData.firstname"
+              :extra-message="errors.firstname"
     />
     <my-input type="text"
               text="Lastname"
               :disabled="loading"
               required
-              v-model="lastname"
-              :validation-func="validation.nameValidateErrors"
+              v-model="formData.lastname"
+              :extra-message="errors.lastname"
     />
     <div class="student">
       <my-input type="date"
@@ -45,13 +45,20 @@
                 :disabled="loading"
                 text="Birthdate"
                 class="date"
-                v-model="birthdate"
-                :validation-func="validation.birthdateValidateErrors"
+                v-model="formData.birthdate"
+                :extra-message="errors.birthdate"
       />
-      <number-select :max=11 :min=1 text="Grade" :disabled="loading"/>
+      <number-select :max=11
+                     :min=1
+                     text="Grade"
+                     :disabled="loading"
+                     v-model="formData.grade"
+      />
     </div>
     <my-check-box text="Remember Me" v-model="remember" :disabled="loading"/>
-    <my-button text="Sign Up" :action="signUp" :disabled="loading"/>
+    <my-button text="Sign Up"
+               :action="signUp"
+               :disabled="loading"/>
   </section>
   <loader-spinner v-if="loading" class="spinner"/>
 </template>
@@ -63,7 +70,7 @@ import MyInput from "@/components/layout/MyInput.vue";
 import NumberSelect from "@/components/layout/NumberSelect.vue";
 import MyButton from "@/components/layout/MyButton.vue";
 import LoaderSpinner from "@/components/layout/LoaderSpinner.vue";
-import {ref, Ref} from "vue";
+import {computed, reactive, ref, Ref} from "vue";
 import {StudentReg} from "@/modules/user";
 import serverApi from "@/modules/server";
 import MyCheckBox from "@/components/layout/MyCheckBox.vue";
@@ -73,62 +80,66 @@ import validation from "@/modules/validation";
 import alertApi from "@/modules/alert"
 import userApi from "@/modules/user";
 import router from "@/router";
+import {ReactiveVariable} from "vue/macros";
 
 const loading: Ref<boolean> = ref(false)
 const remember: Ref<boolean> = ref(false)
 
-const username: Ref<string> = ref('')
 const usernameUniquenessStatus: Ref<ValidStatus|undefined> = ref(undefined)
-const password: Ref<string> = ref('')
-const firstname: Ref<string> = ref('')
-const lastname: Ref<string> = ref('')
-const birthdate: Ref<string> = ref('')
-const grade: Ref<number> = ref(1)
+
+const formData: ReactiveVariable<StudentReg> = reactive({
+  username: '',
+  password: '',
+  firstname: '',
+  lastname: '',
+  birthdate: '',
+  grade: 1
+})
+
+const errors = reactive({
+  username: computed(() => validation.usernameValidateErrors(formData.username)),
+  password: computed(() => validation.passwordValidateErrors(formData.password)),
+  firstname: computed(() => validation.nameValidateErrors(formData.firstname)),
+  lastname: computed(() => validation.nameValidateErrors(formData.lastname)),
+  birthdate: computed(() => validation.birthdateValidateErrors(formData.birthdate)),
+})
 
 let ajaxId: number
 
 function checkUsernameUniqueness(): void {
   clearTimeout(ajaxId)
-  if (username.value.length == 0) {
+  if (!formData.username || errors.username) {
     usernameUniquenessStatus.value = undefined
     return
   }
 
+  ajaxId = setTimeout(setUniquenessStatus, 500)
+}
+
+async function setUniquenessStatus() {
   usernameUniquenessStatus.value = 'loading'
+  const unique: boolean|null = await serverApi.isUsernameUnique(formData.username)
 
-  ajaxId = setTimeout(async () => {
-    const unique: boolean|null = await serverApi.isUsernameUnique(username.value)
+  if (unique === null) {
+    usernameUniquenessStatus.value = undefined
+    return
+  }
 
-    if (unique === null) {
-      usernameUniquenessStatus.value = undefined
-      return
-    }
-
-    unique ? usernameUniquenessStatus.value = 'ok' : usernameUniquenessStatus.value = 'error'
-  }, 500)
+  unique ? usernameUniquenessStatus.value = 'ok' : usernameUniquenessStatus.value = 'error'
 }
 
 async function signUp() {
-  if (usernameUniquenessStatus.value !== 'ok') {
+  if (usernameUniquenessStatus.value === 'error') {
     alertApi.warn('Failed', 'Username is not unique')
     return
   }
 
-  const student: StudentReg = {
-    username: username.value,
-    password: password.value,
-    firstname: firstname.value,
-    lastname: lastname.value,
-    birthdate: birthdate.value,
-    grade: grade.value
-  }
-
   loading.value = true
-  const success = await userApi.signUpStudent(student, remember.value)
+  const success = await userApi.signUpStudent(formData, remember.value)
   loading.value = false
 
   if (success) {
-    alertApi.ok('Signed Up', `Student ${username.value} was registered`)
+    alertApi.ok('Signed Up', `Student ${formData.username} was registered`)
     await router.push('/')
   }
 }
