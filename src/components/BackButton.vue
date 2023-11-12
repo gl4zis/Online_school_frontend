@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import router from '@/router/index'
+import router from '@/router'
 
 function goBack(): void {
   router.back()

@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import {useUserStore} from './stores/UserStore'
-import AlertBlock from "@/components/layout/AlertBlock.vue";
+import AlertBlock from "@/components/AlertBlock.vue";
 import {storeToRefs} from "pinia";
 import {useAlertStore} from "@/stores/AlertStore";
 

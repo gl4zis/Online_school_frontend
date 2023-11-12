@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import Login from '../components/LoginForm.vue'
-import SignUp from '../components/SignUpForm.vue'
+import Login from '../views/LoginView.vue'
+import SignUp from '../views/SignUpView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {

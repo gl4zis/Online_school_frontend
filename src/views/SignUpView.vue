@@ -65,17 +65,17 @@
 
 
 <script setup lang="ts">
-import BackButton from "@/components/layout/BackButton.vue";
-import MyInput from "@/components/layout/MyInput.vue";
-import NumberSelect from "@/components/layout/NumberSelect.vue";
-import MyButton from "@/components/layout/MyButton.vue";
-import LoaderSpinner from "@/components/layout/LoaderSpinner.vue";
+import BackButton from "@/components/BackButton.vue";
+import MyInput from "@/components/MyInput.vue";
+import NumberSelect from "@/components/NumberSelect.vue";
+import MyButton from "@/components/MyButton.vue";
+import LoaderSpinner from "@/components/LoaderSpinner.vue";
 import {computed, reactive, ref, Ref} from "vue";
 import {StudentReg} from "@/modules/user";
 import serverApi from "@/modules/server";
-import MyCheckBox from "@/components/layout/MyCheckBox.vue";
-import MyLink from "@/components/layout/MyLink.vue";
-import ValidationIcon, {ValidStatus} from "@/components/layout/ValidationIcon.vue";
+import MyCheckBox from "@/components/MyCheckBox.vue";
+import MyLink from "@/components/MyLink.vue";
+import ValidationIcon, {ValidStatus} from "@/components/ValidationIcon.vue";
 import validation from "@/modules/validation";
 import alertApi from "@/modules/alert"
 import userApi from "@/modules/user";

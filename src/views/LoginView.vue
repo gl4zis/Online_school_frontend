@@ -30,12 +30,12 @@
 import router from "@/router";
 import {Ref, ref} from "vue";
 import userApi from "@/modules/user"
-import LoaderSpinner from "@/components/layout/LoaderSpinner.vue";
-import BackButton from "@/components/layout/BackButton.vue";
-import MyInput from "@/components/layout/MyInput.vue";
-import MyCheckBox from "@/components/layout/MyCheckBox.vue";
-import MyButton from "@/components/layout/MyButton.vue";
-import MyLink from "@/components/layout/MyLink.vue";
+import LoaderSpinner from "@/components/LoaderSpinner.vue";
+import BackButton from "@/components/BackButton.vue";
+import MyInput from "@/components/MyInput.vue";
+import MyCheckBox from "@/components/MyCheckBox.vue";
+import MyButton from "@/components/MyButton.vue";
+import MyLink from "@/components/MyLink.vue";
 
 const remember: Ref<boolean> = ref(false)
 const username: Ref<string> = ref('')
