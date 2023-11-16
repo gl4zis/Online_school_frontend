@@ -3,6 +3,11 @@ import alertApi from "@/modules/alert"
 
 const SERVER_HOST = 'http://localhost:3030'
 
+export type TokenResponse = {
+    access: string,
+    refresh: string
+}
+
 async function isUsernameUnique(username: string): Promise<boolean|null> {
     try {
         const res: Response = await fetch(`${SERVER_HOST}/users/unique?username=${username}`)
@@ -13,7 +18,7 @@ async function isUsernameUnique(username: string): Promise<boolean|null> {
     }
 }
 
-async function generateToken(user: User): Promise<string|null> {
+async function login(user: User): Promise<TokenResponse|null> {
     try {
         const res: Response = await fetch(`${SERVER_HOST}/login`, {
             method: 'POST',
@@ -24,7 +29,7 @@ async function generateToken(user: User): Promise<string|null> {
         });
 
         if (res.ok) {
-            return (await res.json()).token
+            return <TokenResponse> await res.json()
         } else if (res.status === 401) {
             alertApi.error('Failed', 'Incorrect username or password')
             return null
@@ -38,7 +43,7 @@ async function generateToken(user: User): Promise<string|null> {
     }
 }
 
-async function studentSignUp(student: StudentReg): Promise<string|null> {
+async function studentSignUp(student: StudentReg): Promise<TokenResponse|null> {
     try {
         const res: Response = await fetch(`${SERVER_HOST}/register`, {
             method: 'POST',
@@ -49,7 +54,29 @@ async function studentSignUp(student: StudentReg): Promise<string|null> {
         });
 
         if (res.ok) {
-            return (await res.json()).token
+            return <TokenResponse> await res.json()
+        } else {
+            alertApi.error('Failed', (await res.json()).reason)
+            return null
+        }
+    } catch (err) {
+        noConnection()
+        return null
+    }
+}
+
+async function updateTokens(refresh: string): Promise<TokenResponse|null> {
+    try {
+        const res: Response = await fetch(`${SERVER_HOST}/tokens`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({refresh})
+        });
+
+        if (res.ok) {
+            return <TokenResponse> await res.json()
         } else {
             alertApi.error('Failed', (await res.json()).reason)
             return null
@@ -65,7 +92,8 @@ function noConnection(): void {
 }
 
 export default {
-    generateToken,
+    login,
+    updateTokens,
     studentSignUp,
     isUsernameUnique
 }

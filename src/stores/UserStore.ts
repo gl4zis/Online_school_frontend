@@ -1,54 +1,49 @@
 import {defineStore, StoreDefinition} from "pinia";
 import {computed, Ref} from "vue";
-import {User} from "@/modules/user";
-import serverApi from "@/modules/server"
+import serverApi, {TokenResponse} from "@/modules/server"
+import router from "@/router";
 
 export const useUserStore: StoreDefinition = defineStore('userStore', () => {
-    const user: Ref<User|null> = computed((): User|null => {
-        const userJson: string|null = sessionStorage.getItem('user')
-        if (userJson)
-            return JSON.parse(userJson)
-        else
-            return null
-    })
+    const refresh: Ref<string|null> = computed((): string|null => sessionStorage.getItem('refresh'))
+    const access: Ref<string|null> = computed((): string|null => sessionStorage.getItem('access'))
 
-    const jwt: Ref<string|null> = computed((): string|null => sessionStorage.getItem('jwt'))
-
-    async function loadUser(): Promise<void> {
-        const userJson: string|null = localStorage.getItem('user')
-        if (userJson) {
-            sessionStorage.setItem('user', userJson)
-            const token: string | null = await serverApi.generateToken(JSON.parse(userJson))
-            if (token)
-                sessionStorage.setItem('jwt', token)
+    // TODO don't update tokens each page refresh
+    async function loadRefresh(): Promise<void> {
+        const token: string|null = localStorage.getItem('refresh')
+        if (token) {
+            const tokens: TokenResponse|null = await serverApi.updateTokens(token)
+            if (tokens) {
+                setTokens(tokens)
+                saveRefresh()
+            } else {
+                resetTokens()
+                await router.push("/login")
+            }
         }
     }
 
-    function saveUser(): void {
-        localStorage.setItem('user', JSON.stringify(user.value))
+    function saveRefresh(): void {
+        if (refresh.value)
+            localStorage.setItem('refresh', refresh.value)
     }
 
-    function setUser(user: User): void {
-        sessionStorage.setItem('user', JSON.stringify(user))
+    function setTokens(response: TokenResponse): void {
+        sessionStorage.setItem('refresh', response.refresh)
+        sessionStorage.setItem('access', response.access)
     }
 
-    function setToken(token: string): void {
-        sessionStorage.setItem('jwt', token)
-    }
-
-    function resetUser(): void {
-        localStorage.removeItem('user')
-        sessionStorage.removeItem('user')
-        sessionStorage.removeItem('jwt')
+    function resetTokens(): void {
+        localStorage.removeItem('refresh')
+        sessionStorage.removeItem('refresh')
+        sessionStorage.removeItem('access')
     }
 
     return {
-        user,
-        jwt,
-        loadUser,
-        saveUser,
-        resetUser,
-        setUser,
-        setToken
+        refresh,
+        access,
+        loadRefresh,
+        saveRefresh,
+        setTokens,
+        resetTokens
     }
 })

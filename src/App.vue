@@ -12,7 +12,7 @@ import {useAlertStore} from "@/stores/AlertStore";
 const {alert} = storeToRefs(useAlertStore())
 const userStore = useUserStore()
 
-userStore.loadUser()
+userStore.loadRefresh()
 </script>
 
 <style lang="scss">
