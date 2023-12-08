@@ -1,4 +1,5 @@
 # Online School
+
 ### SmartExam
 
 ---
@@ -10,6 +11,7 @@ Written on TypeScript, Vue.js
 Using REST API for interaction with server
 
 All used technologies:
+
 - TypeScript
 - HTML
 - SCSS

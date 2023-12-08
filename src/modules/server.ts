@@ -1,5 +1,5 @@
 import {StudentReg, User} from '@/modules/user'
-import alertApi from "@/modules/alert"
+import alert from "@/modules/alert"
 
 const SERVER_HOST = 'http://localhost:3030'
 
@@ -8,7 +8,7 @@ export type TokenResponse = {
     refresh: string
 }
 
-async function isUsernameUnique(username: string): Promise<boolean|null> {
+async function isUsernameUnique(username: string): Promise<boolean | null> {
     try {
         const res: Response = await fetch(`${SERVER_HOST}/users/unique?username=${username}`)
         return (await res.json()).message == 'true'
@@ -18,7 +18,7 @@ async function isUsernameUnique(username: string): Promise<boolean|null> {
     }
 }
 
-async function login(user: User): Promise<TokenResponse|null> {
+async function login(user: User): Promise<TokenResponse | null> {
     try {
         const res: Response = await fetch(`${SERVER_HOST}/login`, {
             method: 'POST',
@@ -29,12 +29,12 @@ async function login(user: User): Promise<TokenResponse|null> {
         });
 
         if (res.ok) {
-            return <TokenResponse> await res.json()
+            return <TokenResponse>await res.json()
         } else if (res.status === 401) {
-            alertApi.error('Failed', 'Incorrect username or password')
+            alert.error('Failed', 'Incorrect username or password')
             return null
         } else {
-            alertApi.error('Strange', res.statusText)
+            alert.error('Strange', res.statusText)
             return null
         }
     } catch (err) {
@@ -43,7 +43,7 @@ async function login(user: User): Promise<TokenResponse|null> {
     }
 }
 
-async function studentSignUp(student: StudentReg): Promise<TokenResponse|null> {
+async function studentSignUp(student: StudentReg): Promise<TokenResponse | null> {
     try {
         const res: Response = await fetch(`${SERVER_HOST}/register`, {
             method: 'POST',
@@ -54,9 +54,9 @@ async function studentSignUp(student: StudentReg): Promise<TokenResponse|null> {
         });
 
         if (res.ok) {
-            return <TokenResponse> await res.json()
+            return <TokenResponse>await res.json()
         } else {
-            alertApi.error('Failed', (await res.json()).reason)
+            alert.error('Failed', (await res.json()).reason)
             return null
         }
     } catch (err) {
@@ -65,7 +65,7 @@ async function studentSignUp(student: StudentReg): Promise<TokenResponse|null> {
     }
 }
 
-async function updateTokens(refresh: string): Promise<TokenResponse|null> {
+async function updateTokens(refresh: string): Promise<TokenResponse | null> {
     try {
         const res: Response = await fetch(`${SERVER_HOST}/tokens`, {
             method: 'POST',
@@ -76,9 +76,9 @@ async function updateTokens(refresh: string): Promise<TokenResponse|null> {
         });
 
         if (res.ok) {
-            return <TokenResponse> await res.json()
+            return <TokenResponse>await res.json()
         } else {
-            alertApi.error('Failed', (await res.json()).reason)
+            alert.error('Failed', (await res.json()).reason)
             return null
         }
     } catch (err) {
@@ -88,7 +88,7 @@ async function updateTokens(refresh: string): Promise<TokenResponse|null> {
 }
 
 function noConnection(): void {
-    alertApi.error('No Connection', 'No connection with server')
+    alert.error('No Connection', 'No connection with server')
 }
 
 export default {

@@ -1,13 +1,13 @@
 <template>
   <label class="checkbox">
-    <input type="checkbox"
-           :disabled="disabled"
+    <input :disabled="disabled"
+           type="checkbox"
            @input="$emit('update:modelValue', $event.target.checked)"
     />{{ text }}
   </label>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import {defineProps} from "vue";
 
 defineProps({
@@ -17,7 +17,7 @@ defineProps({
 })
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @import "@/styles/variables";
 
 .checkbox {

@@ -1,8 +1,8 @@
 <template>
-  <router-link class="link" :to="path">{{ text ?? path }}</router-link>
+  <router-link :to="path" class="link">{{ text ?? path }}</router-link>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import {defineProps} from "vue";
 
 defineProps({
@@ -17,7 +17,7 @@ defineProps({
 })
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @import "@/styles/variables";
 
 .link {

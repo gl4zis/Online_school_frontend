@@ -1,30 +1,20 @@
 <template>
-  <button @click="goBack">
-    &lt;
-  </button>
+  <Button class="return" icon="pi pi-arrow-left" @click="goBack"/>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import router from '@/router'
+import Button from "primevue/button";
 
 function goBack(): void {
   router.back()
 }
 </script>
 
-<style scoped lang="scss">
-@import "@/styles/variables";
-
-button {
-  font-size: 18pt;
-  text-align: center;
-  border: 1px solid white;
-  border-radius: 5px;
-  background: none;
-  color: $second-color;
-
-  &:active {
-    border-color: $second-color;
-  }
+<style lang="scss" scoped>
+.return {
+  position: absolute;
+  left: 15px;
+  top: 15px;
 }
 </style>

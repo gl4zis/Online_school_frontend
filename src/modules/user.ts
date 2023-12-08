@@ -1,14 +1,14 @@
 import {useUserStore} from "@/stores/UserStore";
-import alertApi from "@/modules/alert"
+import alert from "@/modules/alert"
 import serverApi, {TokenResponse} from "@/modules/server"
 import validation from "@/modules/validation";
 
-export type User = {
+export interface User {
     username: string,
     password: string
 }
 
-export type StudentReg = {
+export interface StudentReg {
     username: string,
     password: string,
     firstname: string,
@@ -19,16 +19,16 @@ export type StudentReg = {
 
 async function auth(instance: object, needRemember: boolean,
                     validFunc: (obj: any) => boolean,
-                    getTokensFunc: (obj: any) => Promise<TokenResponse|null>): Promise<boolean> {
+                    getTokensFunc: (obj: any) => Promise<TokenResponse | null>): Promise<boolean> {
     const userStore = useUserStore()
     userStore.resetTokens()
 
     if (!validFunc(instance)) {
-        alertApi.warn('Failed', 'Invalid data')
+        alert.warn('Failed', 'Invalid data')
         return false
     }
 
-    const tokens: TokenResponse|null = await getTokensFunc(instance)
+    const tokens: TokenResponse | null = await getTokensFunc(instance)
 
     if (!tokens) {
         return false
@@ -52,7 +52,7 @@ async function signUpStudent(student: StudentReg, needRemember: boolean): Promis
 async function updateTokens(): Promise<boolean> {
     const userStore = useUserStore()
     const oldRefresh = userStore.refresh
-    const tokens: TokenResponse|null = await serverApi.updateTokens(oldRefresh)
+    const tokens: TokenResponse | null = await serverApi.updateTokens(oldRefresh)
 
     if (!tokens) {
         return false
@@ -62,9 +62,14 @@ async function updateTokens(): Promise<boolean> {
     return true
 }
 
+// Mock!!
+function getLogin(): string {
+    return 'User'
+}
 
 export default {
     signIn,
     signUpStudent,
-    updateTokens
+    updateTokens,
+    getLogin
 }

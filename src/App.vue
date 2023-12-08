@@ -3,7 +3,7 @@
   <router-view/>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import {useUserStore} from './stores/UserStore'
 import AlertBlock from "@/components/AlertBlock.vue";
 import {storeToRefs} from "pinia";
@@ -23,14 +23,6 @@ body, html {
   height: 100%;
 }
 
-html {
-  background: url("./assets/background.jpg") no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-}
-
 #app {
   position: absolute;
   background: url("./assets/background.jpg") no-repeat center center fixed;
@@ -40,12 +32,6 @@ html {
   background-size: cover;
   min-width: 100%;
   min-height: 100%;
-  text-align: center;
-}
-
-* {
-  box-sizing: border-box;
-  font-family: Verdana, sans-serif;
 }
 
 img {

@@ -1,47 +1,47 @@
 <template>
-  <svg class=".ico"
-       v-if="status"
+  <svg v-if="status"
        :class="status"
+       class=".ico"
        viewBox="0 0 70 70"
   >
     <line v-if="status === 'ok'"
           x1="20"
-          y1="30"
           x2="35"
+          y1="30"
           y2="45"
     />
     <line v-if="status === 'ok'"
           x1="35"
-          y1="45"
           x2="55"
+          y1="45"
           y2="15"
     />
     <circle v-if="status === 'loading'"
-            r="20"
             cx="35"
             cy="35"
+            r="20"
     />
     <line v-if="status === 'error'"
           x1="25"
-          y1="25"
           x2="45"
+          y1="25"
           y2="45"
     />
     <line v-if="status === 'error'"
           x1="25"
-          y1="45"
           x2="45"
+          y1="45"
           y2="25"
     />
     <circle v-if="status === 'error'"
-            r="25"
             cx="35"
             cy="35"
+            r="25"
     />
   </svg>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import {defineProps, PropType} from "vue";
 
 export type ValidStatus = 'ok' | 'loading' | 'error'
@@ -55,7 +55,7 @@ defineProps({
 })
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @import "@/styles/variables";
 
 svg {

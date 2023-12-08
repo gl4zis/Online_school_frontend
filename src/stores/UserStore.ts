@@ -4,14 +4,16 @@ import serverApi, {TokenResponse} from "@/modules/server"
 import router from "@/router";
 
 export const useUserStore: StoreDefinition = defineStore('userStore', () => {
-    const refresh: Ref<string|null> = computed((): string|null => sessionStorage.getItem('refresh'))
-    const access: Ref<string|null> = computed((): string|null => sessionStorage.getItem('access'))
+    const refresh: Ref<string | null> = computed((): string | null => sessionStorage.getItem('refresh'))
+    const access: Ref<string | null> = computed((): string | null => sessionStorage.getItem('access'))
 
-    // TODO don't update tokens each page refresh
     async function loadRefresh(): Promise<void> {
-        const token: string|null = localStorage.getItem('refresh')
+        if (access.value)
+            return
+
+        const token: string | null = localStorage.getItem('refresh')
         if (token) {
-            const tokens: TokenResponse|null = await serverApi.updateTokens(token)
+            const tokens: TokenResponse | null = await serverApi.updateTokens(token)
             if (tokens) {
                 setTokens(tokens)
                 saveRefresh()

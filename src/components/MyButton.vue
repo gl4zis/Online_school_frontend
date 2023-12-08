@@ -1,10 +1,10 @@
 <template>
-  <button @click="action" :disabled="disabled">
+  <button :disabled="disabled" @click="action">
     {{ text }}
   </button>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import {defineProps} from "vue";
 
 defineProps({
@@ -14,7 +14,7 @@ defineProps({
 })
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @import "@/styles/variables";
 
 @mixin filled {

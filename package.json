@@ -11,6 +11,9 @@
     "core-js": "^3.8.3",
     "pina": "^0.20.2204228",
     "pinia": "^2.1.7",
+    "primeflex": "^3.3.1",
+    "primeicons": "^6.0.1",
+    "primevue": "^3.43.0",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuelidate": "^0.7.7"

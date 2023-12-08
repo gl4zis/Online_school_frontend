@@ -9,8 +9,8 @@ export type Alert = {
     message: string
 }
 
-export const useAlertStore: StoreDefinition = defineStore('alertStore', () =>{
-    const alert: Ref<Alert|null> = ref(null)
+export const useAlertStore: StoreDefinition = defineStore('alertStore', () => {
+    const alert: Ref<Alert | null> = ref(null)
     let processIndex: number
 
     function setAlert(newAlert: Alert): void {

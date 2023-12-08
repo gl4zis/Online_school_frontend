@@ -1,8 +1,8 @@
 <template>
   <transition name="alert">
     <div v-if="alert"
-         class="alert"
          :class="alert.type"
+         class="alert"
          @click="remove"
     >
       <h3 v-text="alert.header"></h3>
@@ -11,7 +11,7 @@
   </transition>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import {defineProps, PropType} from "vue";
 import {Alert, useAlertStore} from "@/stores/AlertStore";
 
@@ -29,7 +29,7 @@ function remove(): void {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @import "@/styles/variables";
 
 $error-color: #FF3838;

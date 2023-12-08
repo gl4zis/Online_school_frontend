@@ -1,12 +1,12 @@
 <template>
   <div class="input">
-    <input :type="type"
+    <input :class="{ 'right-padding': $slots.default }"
+           :disabled="disabled"
            :required="required"
+           :type="type"
+           :value="modelValue"
            placeholder=""
            @input="$emit('update:modelValue', $event.target.value)"
-           :value="modelValue"
-           :disabled="disabled"
-           :class="{ 'right-padding': $slots.default }"
     />
     <span class="label">{{ text }}</span>
     <span class="invalid-message">{{ extraMessage }}</span>
@@ -14,7 +14,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import {defineProps, PropType} from "vue";
 
 type Type = 'text' | 'password' | 'date'
@@ -32,7 +32,7 @@ defineProps({
 })
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @import "@/styles/variables";
 
 .input {

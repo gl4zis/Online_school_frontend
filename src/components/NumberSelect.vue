@@ -4,13 +4,14 @@
       <option v-for="index in (max - min + 1)"
               :key="index"
               :value="min + index - 1"
-      >{{ min + index - 1 }}</option>
+      >{{ min + index - 1 }}
+      </option>
     </select>
     <span class="label">{{ text }}</span>
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import {defineProps} from "vue";
 
 defineProps({
@@ -28,7 +29,7 @@ defineProps({
 })
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @import "@/styles/variables";
 
 .select {

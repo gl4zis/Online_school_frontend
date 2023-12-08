@@ -1,44 +1,23 @@
 <template>
-  <svg class="loader" viewBox="0 0 50 50">
-    <circle class="path" cx="25" cy="25" r="20"/>
-  </svg>
+  <ProgressSpinner :class="{ 'disabled': !enabled }" animation-duration="1s"
+                   stroke-width="4"
+                   style="width: 60px"/>
 </template>
 
-<style scoped lang="scss">
-@import "@/styles/variables";
+<script lang="ts" setup>
+import ProgressSpinner from 'primevue/progressspinner';
+import {defineProps} from 'vue'
 
-.loader {
-  pointer-events: none;
-  margin: auto;
-  animation: rotate 2s linear infinite;
+defineProps({
+  enabled: {
+    type: Boolean,
+    required: true
+  }
+})
+</script>
 
-  .path {
-    fill: none;
-    stroke-width: 5;
-    stroke: $second-color;
-    stroke-linecap: round;
-    animation: dash 2s ease-in-out infinite;
-  }
-}
-
-@keyframes rotate {
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes dash {
-  0% {
-    stroke-dasharray: 1, 150;
-    stroke-dashoffset: 0;
-  }
-  50% {
-    stroke-dasharray: 90, 150;
-    stroke-dashoffset: -35;
-  }
-  100% {
-    stroke-dasharray: 90, 150;
-    stroke-dashoffset: -124;
-  }
+<style lang="scss" scoped>
+.disabled {
+  display: none;
 }
 </style>
