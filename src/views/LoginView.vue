@@ -8,8 +8,10 @@
         <h2>Sign In</h2>
       </template>
       <template #subtitle>
-        Don't have account?
-        <MyLink path="/sign-up" text="Sign Up"/>
+        <p>
+          Don't have account?
+          <MyLink path="/sign-up" text="Sign Up"/>
+        </p>
       </template>
       <template #content>
         <div class="content">
@@ -52,13 +54,14 @@ const username = ref('')
 const password = ref('')
 
 const userStore = useUserStore();
+const toast = useToast()
 
 async function signIn(): Promise<void> {
   loading.value = true
   const tokens: TokenResponse | null = await serverApi.login({
     username: username.value,
     password: password.value
-  }, useToast())
+  }, toast)
 
   if (tokens) {
     userStore.setTokens(tokens)
@@ -90,14 +93,6 @@ async function signIn(): Promise<void> {
 
         input {
           width: 100%;
-        }
-      }
-
-      .checkbox {
-        margin-top: 25px;
-        cursor: pointer;
-        * {
-          cursor: pointer;
         }
       }
     }

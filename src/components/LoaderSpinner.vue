@@ -3,7 +3,7 @@
                    class="spinner"
                    animation-duration="1s"
                    stroke-width="4"
-                   style="width: 60px"/>
+                   style="width: 6vw"/>
 </template>
 
 <script lang="ts" setup>

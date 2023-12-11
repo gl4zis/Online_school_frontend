@@ -1,5 +1,6 @@
 import {ToastServiceMethods} from "primevue/toastservice";
 import {isCredentialsValid} from "@/modules/validation";
+
 const GATEWAY_ADDRESS = 'http://localhost:8765'
 
 export interface TokenResponse {
