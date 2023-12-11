@@ -56,7 +56,7 @@ defineProps({
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/variables";
+@import "@/assets/theme";
 
 svg {
   pointer-events: none;

@@ -1,15 +1,13 @@
 <template>
-  <AlertBlock :alert="alert"/>
-  <router-view/>
+  <Toast/>
+  <RouterView/>
 </template>
 
 <script lang="ts" setup>
 import {useUserStore} from './stores/UserStore'
-import AlertBlock from "@/components/AlertBlock.vue";
-import {storeToRefs} from "pinia";
-import {useAlertStore} from "@/stores/AlertStore";
+import Toast from 'primevue/toast';
 
-const {alert} = storeToRefs(useAlertStore())
+
 const userStore = useUserStore()
 
 userStore.loadRefresh()
@@ -25,7 +23,7 @@ body, html {
 
 #app {
   position: absolute;
-  background: url("./assets/background.jpg") no-repeat center center fixed;
+  background: url("assets/background.jpg") no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -36,5 +34,11 @@ body, html {
 
 img {
   max-width: 100%;
+}
+
+@keyframes p-progress-spinner-color {
+  100%, 0% {
+    stroke: lightgrey;
+  }
 }
 </style>

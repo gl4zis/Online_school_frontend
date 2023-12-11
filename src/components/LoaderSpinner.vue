@@ -1,5 +1,7 @@
 <template>
-  <ProgressSpinner :class="{ 'disabled': !enabled }" animation-duration="1s"
+  <ProgressSpinner :class="{ 'disabled': !enabled }"
+                   class="spinner"
+                   animation-duration="1s"
                    stroke-width="4"
                    style="width: 60px"/>
 </template>

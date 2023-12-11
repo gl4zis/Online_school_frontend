@@ -23,12 +23,12 @@
           </span>
           <div class="checkbox">
             <label class="mr-3" for="remember">Remember Me</label>
-            <Checkbox v-model="remember" binary/>
+            <Checkbox v-model="remember" binary aria-label="Remember Me"/>
           </div>
         </div>
       </template>
       <template #footer>
-        <Button icon="pi pi-check" label="Sign In"/>
+        <Button icon="pi pi-check" label="Sign In" @click="message"/>
       </template>
     </Card>
     <LoaderSpinner :enabled="loading"/>
@@ -45,12 +45,19 @@ import {ref} from "vue";
 import MyLink from "@/components/MyLink.vue";
 import BackButton from "@/components/BackButton.vue";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
+import { useToast } from 'primevue/usetoast';
 
 const remember = ref(false)
 const loading = ref(true)
 
 const username = ref('')
 const password = ref('')
+
+const toast = useToast();
+
+function message() {
+  toast.add({ severity: "info", summary: 'Info', detail: 'This is some message', life: 3000})
+}
 </script>
 
 <style lang="scss" scoped>
