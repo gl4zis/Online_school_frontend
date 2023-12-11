@@ -11,11 +11,11 @@ export const useUserStore: StoreDefinition = defineStore('userStore', () => {
         if (access.value)
             return
 
-        const token: string | null = localStorage.getItem('refresh')
-        if (token) {
-            const tokens: TokenResponse | null = await serverApi.updateTokens(token)
-            if (tokens) {
-                setTokens(tokens)
+        const oldRefresh: string | null = localStorage.getItem('refresh')
+        if (oldRefresh) {
+            const newTokens: TokenResponse | null = await serverApi.updateTokens(oldRefresh)
+            if (newTokens) {
+                setTokens(newTokens)
                 saveRefresh()
             } else {
                 resetTokens()

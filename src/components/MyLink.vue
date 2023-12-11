@@ -21,7 +21,7 @@ defineProps({
 @import "@/assets/theme";
 
 .link {
-  color: $second-color;
+  color: $primary-color;
   text-decoration: none;
 
   &:hover {

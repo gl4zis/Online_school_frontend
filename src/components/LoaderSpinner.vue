@@ -1,5 +1,5 @@
 <template>
-  <ProgressSpinner :class="{ 'disabled': !enabled }"
+  <ProgressSpinner v-if="enabled"
                    class="spinner"
                    animation-duration="1s"
                    stroke-width="4"
@@ -17,9 +17,3 @@ defineProps({
   }
 })
 </script>
-
-<style lang="scss" scoped>
-.disabled {
-  display: none;
-}
-</style>

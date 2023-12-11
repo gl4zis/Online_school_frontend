@@ -7,9 +7,7 @@
 import {useUserStore} from './stores/UserStore'
 import Toast from 'primevue/toast';
 
-
 const userStore = useUserStore()
-
 userStore.loadRefresh()
 </script>
 

@@ -1,99 +1,46 @@
-import {StudentReg, User} from '@/modules/user'
-import alert from "@/modules/alert"
+import {ToastServiceMethods} from "primevue/toastservice";
+const GATEWAY_ADDRESS = 'http://localhost:8765'
 
-const SERVER_HOST = 'http://localhost:3030'
-
-export type TokenResponse = {
+export interface TokenResponse {
     access: string,
     refresh: string
 }
 
-async function isUsernameUnique(username: string): Promise<boolean | null> {
-    try {
-        const res: Response = await fetch(`${SERVER_HOST}/users/unique?username=${username}`)
-        return (await res.json()).message == 'true'
-    } catch (err) {
-        noConnection()
-        return null
-    }
+export interface Credentials {
+    username: string,
+    password: string
 }
 
-async function login(user: User): Promise<TokenResponse | null> {
+async function login(credentials: Credentials, toast: ToastServiceMethods): Promise<TokenResponse | null> {
     try {
-        const res: Response = await fetch(`${SERVER_HOST}/login`, {
+        const resp: Response = await fetch(GATEWAY_ADDRESS + '/auth/login', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(user)
-        });
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify(credentials)
+        })
+        console.log(resp)
 
-        if (res.ok) {
-            return <TokenResponse>await res.json()
-        } else if (res.status === 401) {
-            alert.error('Failed', 'Incorrect username or password')
-            return null
-        } else {
-            alert.error('Strange', res.statusText)
-            return null
-        }
+        if (resp.ok)
+            return await resp.json()
+        else if (resp.status === 400)
+            toast.add({ severity: 'warn', life: 3000, summary: 'Validation error' })
+        else if (resp.status === 401)
+            toast.add({ severity: 'warn', life: 3000, summary: 'Invalid login or password' })
+        else
+            toast.add({ severity: 'error', life: 3000, summary: 'NO CONNECTION' })
+
     } catch (err) {
-        noConnection()
-        return null
+        toast.add({ severity: 'error', life: 3000, summary: 'NO CONNECTION' })
     }
-}
 
-async function studentSignUp(student: StudentReg): Promise<TokenResponse | null> {
-    try {
-        const res: Response = await fetch(`${SERVER_HOST}/register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(student)
-        });
-
-        if (res.ok) {
-            return <TokenResponse>await res.json()
-        } else {
-            alert.error('Failed', (await res.json()).reason)
-            return null
-        }
-    } catch (err) {
-        noConnection()
-        return null
-    }
+    return null
 }
 
 async function updateTokens(refresh: string): Promise<TokenResponse | null> {
-    try {
-        const res: Response = await fetch(`${SERVER_HOST}/tokens`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({refresh})
-        });
-
-        if (res.ok) {
-            return <TokenResponse>await res.json()
-        } else {
-            alert.error('Failed', (await res.json()).reason)
-            return null
-        }
-    } catch (err) {
-        noConnection()
-        return null
-    }
-}
-
-function noConnection(): void {
-    alert.error('No Connection', 'No connection with server')
+    return null
 }
 
 export default {
     login,
-    updateTokens,
-    studentSignUp,
-    isUsernameUnique
+    updateTokens
 }

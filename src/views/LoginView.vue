@@ -14,21 +14,22 @@
       <template #content>
         <div class="content">
           <span class="p-float-label">
-            <InputText id="username" v-model="username"/>
+            <InputText id="username" v-model="username" :disabled="loading"/>
             <label for="username">Username | Email</label>
           </span>
           <span class="p-float-label">
-            <Password id="password" v-model="password" :feedback="false" toggle-mask></Password>
+            <Password id="password" v-model="password" :feedback="false"
+                      toggle-mask :disabled="loading"/>
             <label for="password">Password</label>
           </span>
-          <div class="checkbox">
-            <label class="mr-3" for="remember">Remember Me</label>
-            <Checkbox v-model="remember" binary aria-label="Remember Me"/>
+          <div class="checkbox" @click.self="changeRemember">
+            <label class="mr-3" @click="changeRemember" for="remember">Remember Me</label>
+            <Checkbox v-model="remember" binary :disabled="loading"/>
           </div>
         </div>
       </template>
       <template #footer>
-        <Button icon="pi pi-check" label="Sign In" @click="message"/>
+        <Button icon="pi pi-check" label="Sign In" @click="signIn" :disabled="loading"/>
       </template>
     </Card>
     <LoaderSpinner :enabled="loading"/>
@@ -45,18 +46,42 @@ import {ref} from "vue";
 import MyLink from "@/components/MyLink.vue";
 import BackButton from "@/components/BackButton.vue";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
-import { useToast } from 'primevue/usetoast';
+import serverApi, {TokenResponse} from "@/modules/server";
+import {useUserStore} from "@/stores/UserStore"
+import {useToast} from "primevue/usetoast";
+import router from "@/router";
 
 const remember = ref(false)
-const loading = ref(true)
+const loading = ref(false)
 
 const username = ref('')
 const password = ref('')
 
-const toast = useToast();
+const userStore = useUserStore();
+const toast = useToast()
 
-function message() {
-  toast.add({ severity: "info", summary: 'Info', detail: 'This is some message', life: 3000})
+async function signIn(): Promise<void> {
+  loading.value = true
+  const tokens: TokenResponse | null = await serverApi.login({
+    username: username.value,
+    password: password.value
+  }, toast)
+
+  if (tokens) {
+    userStore.setTokens(tokens)
+    if (remember.value)
+      userStore.saveRefresh()
+
+    await router.push('/')
+  } else {
+    userStore.resetTokens()
+    loading.value = false
+  }
+}
+
+function changeRemember(): void {
+  if (!loading.value)
+    remember.value = !remember.value
 }
 </script>
 
@@ -85,6 +110,10 @@ function message() {
 
       .checkbox {
         margin-top: 25px;
+        cursor: pointer;
+        * {
+          cursor: pointer;
+        }
       }
     }
   }
