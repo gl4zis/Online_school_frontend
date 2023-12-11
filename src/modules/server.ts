@@ -15,10 +15,9 @@ async function login(credentials: Credentials, toast: ToastServiceMethods): Prom
     try {
         const resp: Response = await fetch(GATEWAY_ADDRESS + '/auth/login', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(credentials)
         })
-        console.log(resp)
 
         if (resp.ok)
             return await resp.json()
@@ -36,7 +35,23 @@ async function login(credentials: Credentials, toast: ToastServiceMethods): Prom
     return null
 }
 
-async function updateTokens(refresh: string): Promise<TokenResponse | null> {
+async function updateTokens(refresh: string, toast: ToastServiceMethods): Promise<TokenResponse | null> {
+    try {
+        const resp: Response = await fetch(GATEWAY_ADDRESS + '/auth/tokens', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 'refresh': refresh })
+        })
+
+        console.log(resp)
+
+        if (resp.ok)
+            return await resp.json()
+
+    } catch (err) {
+        toast.add({ severity: 'error', life: 3000, summary: 'NO CONNECTION' })
+    }
+
     return null
 }
 

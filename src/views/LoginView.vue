@@ -22,10 +22,6 @@
                       toggle-mask :disabled="loading"/>
             <label for="password">Password</label>
           </span>
-          <div class="checkbox" @click.self="changeRemember">
-            <label class="mr-3" @click="changeRemember" for="remember">Remember Me</label>
-            <Checkbox v-model="remember" binary :disabled="loading"/>
-          </div>
         </div>
       </template>
       <template #footer>
@@ -37,7 +33,6 @@
 </template>
 
 <script lang="ts" setup>
-import Checkbox from 'primevue/checkbox';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
@@ -47,11 +42,10 @@ import MyLink from "@/components/MyLink.vue";
 import BackButton from "@/components/BackButton.vue";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
 import serverApi, {TokenResponse} from "@/modules/server";
-import {useUserStore} from "@/stores/UserStore"
+import {useUserStore} from "@/stores/userStore"
 import {useToast} from "primevue/usetoast";
 import router from "@/router";
 
-const remember = ref(false)
 const loading = ref(false)
 
 const username = ref('')
@@ -69,19 +63,11 @@ async function signIn(): Promise<void> {
 
   if (tokens) {
     userStore.setTokens(tokens)
-    if (remember.value)
-      userStore.saveRefresh()
-
     await router.push('/')
-  } else {
+  } else
     userStore.resetTokens()
-    loading.value = false
-  }
-}
 
-function changeRemember(): void {
-  if (!loading.value)
-    remember.value = !remember.value
+  loading.value = false
 }
 </script>
 

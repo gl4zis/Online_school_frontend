@@ -4,11 +4,7 @@
 </template>
 
 <script lang="ts" setup>
-import {useUserStore} from './stores/UserStore'
 import Toast from 'primevue/toast';
-
-const userStore = useUserStore()
-userStore.loadRefresh()
 </script>
 
 <style lang="scss">
