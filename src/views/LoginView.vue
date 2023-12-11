@@ -52,14 +52,13 @@ const username = ref('')
 const password = ref('')
 
 const userStore = useUserStore();
-const toast = useToast()
 
 async function signIn(): Promise<void> {
   loading.value = true
   const tokens: TokenResponse | null = await serverApi.login({
     username: username.value,
     password: password.value
-  }, toast)
+  }, useToast())
 
   if (tokens) {
     userStore.setTokens(tokens)
