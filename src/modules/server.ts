@@ -13,6 +13,10 @@ export interface Credentials {
     password: string
 }
 
+interface MessageResponse {
+    message: string
+}
+
 async function login(credentials: Credentials, toast: ToastServiceMethods): Promise<TokenResponse | null> {
     try {
         if (!isCredentialsValid(credentials)) {
@@ -60,6 +64,25 @@ async function updateTokens(refresh: string, toast: ToastServiceMethods): Promis
     return null
 }
 
+async function usernameUnique(username: string, toast: ToastServiceMethods): Promise<boolean | null> {
+    try {
+        const resp: Response = await fetch(GATEWAY_ADDRESS + '/auth/unique/' + username,
+            {headers: { 'Content-Type': 'application/json' }})
+
+        if (resp.ok)
+            return (<MessageResponse>await resp.json()).message === 'true'
+        else if (resp.status === 400)
+            validationError(toast)
+        else
+            noConnection(toast)
+
+    } catch (err) {
+        noConnection(toast)
+    }
+
+    return null
+}
+
 function noConnection(toast: ToastServiceMethods): void {
     toast.add({ severity: 'error', life: 3000, summary: 'NO CONNECTION' })
 }
@@ -70,5 +93,6 @@ function validationError(toast: ToastServiceMethods): void {
 
 export default {
     login,
-    updateTokens
+    updateTokens,
+    usernameUnique
 }

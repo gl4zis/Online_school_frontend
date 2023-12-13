@@ -15,14 +15,21 @@
       </template>
       <template #content>
         <div class="content">
-          <FormInput v-model="username" :disabled="loading"
+          <FormInput v-model="username"
+                     :disabled="loading"
                      label="Username | Email"/>
-          <FormInput v-model="password" :disabled="loading"
-                     label="Password" hidden :feedback="false"/>
+          <FormInput v-model="password"
+                     :disabled="loading"
+                     label="Password"
+                     hidden
+                     :feedback="false"/>
         </div>
       </template>
       <template #footer>
-        <Button icon="pi pi-check" label="Sign In" @click="signIn" :disabled="loading"/>
+        <Button icon="pi pi-check"
+                label="Sign In"
+                @click="signIn"
+                :disabled="loading"/>
       </template>
     </Card>
     <LoaderSpinner :enabled="loading"/>

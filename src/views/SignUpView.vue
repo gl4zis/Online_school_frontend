@@ -17,24 +17,45 @@
       </template>
       <template #content>
         <div class="content">
-          <FormInput v-model="username" :disabled="loading"
-                     label="Username"/>
-          <FormInput v-model="password" :disabled="loading"
-                     label="Password" hidden/>
-          <FormInput v-model="passwordRep" :disabled="loading"
-                     label="Repeat Password" hidden :feedback="false"/>
-          <FormInput v-model="firstname" :disabled="loading"
-                     label="Firstname"/>
-          <FormInput v-model="lastname" :disabled="loading"
-                     label="Lastname"/>
+          <FormInput v-model="username"
+                     :disabled="loading"
+                     label="Username"
+                     :valid-error="usernameValidation"
+                     :icon="usernameIcon"
+                     @input="validateUsername"/>
+          <FormInput v-model="password"
+                     :disabled="loading"
+                     label="Password"
+                     hidden
+                     :valid-error="passwordValidation"
+                     @input="passwordValidation = passwordValidMessage(password)"/>
+          <FormInput v-model="passwordRep"
+                     :disabled="loading"
+                     label="Repeat Password"
+                     hidden
+                     :feedback="false"
+                     :valid-error="passwordRepValidation"
+                     @input="passwordRepValidation = passwordsEqualsMessage()"/>
+          <FormInput v-model="firstname"
+                     :disabled="loading"
+                     label="Firstname"
+                     :valid-error="firstnameValidation"
+                     @input="firstnameValidation = nameValidMessage(firstname)"/>
+          <FormInput v-model="lastname"
+                     :disabled="loading"
+                     label="Lastname"
+                     :valid-error="lastnameValidation"
+                     @input="lastnameValidation = nameValidMessage(lastname)"/>
         </div>
       </template>
       <template #footer>
-        <Button icon="pi pi-check" label="Sign Up" :disabled="loading"/>
+        <Button icon="pi pi-check"
+                label="Sign Up"
+                :disabled="loading"/>
       </template>
     </Card>
   </CenterContent>
-  <LoaderSpinner class="loader" :enabled="loading"/>
+  <LoaderSpinner :enabled="loading"/>
 </template>
 
 
@@ -47,21 +68,71 @@ import Button from "primevue/button";
 import {ref} from "vue";
 import FormInput from "@/components/FormInput.vue";
 import CenterContent from "@/layouts/CenterContent.vue";
+import {nameValidMessage, passwordValidMessage, usernameValidMessage} from "@/modules/validation";
+import serverApi from '@/modules/server'
+import {useToast} from "primevue/usetoast";
 
 const loading = ref(false)
+const toast = useToast()
 
 const firstname = ref('')
+const firstnameValidation = ref('')
+
 const lastname = ref('')
+const lastnameValidation = ref('')
+
 const username = ref('')
+const usernameValidation = ref('')
+const usernameIcon = ref('')
+
 const password = ref('')
+const passwordValidation = ref('')
+
 const passwordRep = ref('')
+const passwordRepValidation = ref('')
+
+let uniqueCheckId = 0
+
+function validateUsername(): void {
+  clearTimeout(uniqueCheckId)
+  usernameValidation.value = usernameValidMessage(username.value)
+  if (!usernameValidation.value)
+    uniqueCheckId = setTimeout(checkUsernameUniqueness, 500)
+}
+
+async function checkUsernameUniqueness(): Promise<void> {
+  usernameIcon.value = 'pi pi-spin pi-spinner'
+  const unique: boolean | null = await serverApi.usernameUnique(username.value, toast)
+  if (unique == null) {
+    usernameIcon.value = ''
+    return
+  }
+
+  if (unique)
+    usernameIcon.value = 'pi pi-check'
+  else {
+    usernameIcon.value = 'pi pi-times'
+    usernameValidation.value = 'Already taken'
+  }
+}
+
+function passwordsEqualsMessage(): string {
+  if (password.value !== passwordRep.value)
+    return 'Passwords should be equals'
+
+  return ''
+}
+
+function signUp(): void {
+  return
+}
 </script>
 
 <style lang="scss" scoped>
 .form {
   position: relative;
   text-align: center;
-  width: 350px;
+  width: 400px;
 
   p {
     width: 80%;
@@ -70,6 +141,10 @@ const passwordRep = ref('')
 
   .content {
     padding: 0 30px;
+
+    & > * {
+      margin: 5px auto;
+    }
   }
 }
 </style>
