@@ -15,15 +15,10 @@
       </template>
       <template #content>
         <div class="content">
-          <span class="p-float-label">
-            <InputText id="username" v-model="username" :disabled="loading"/>
-            <label for="username">Username | Email</label>
-          </span>
-          <span class="p-float-label">
-            <Password id="password" v-model="password" :feedback="false"
-                      toggle-mask :disabled="loading"/>
-            <label for="password">Password</label>
-          </span>
+          <FormInput v-model="username" :disabled="loading"
+                     label="Username | Email"/>
+          <FormInput v-model="password" :disabled="loading"
+                     label="Password" hidden :feedback="false"/>
         </div>
       </template>
       <template #footer>
@@ -37,8 +32,6 @@
 <script lang="ts" setup>
 import Card from 'primevue/card';
 import Button from 'primevue/button';
-import InputText from 'primevue/inputtext';
-import Password from 'primevue/password';
 import {ref} from "vue";
 import MyLink from "@/components/MyLink.vue";
 import BackButton from "@/components/BackButton.vue";
@@ -47,6 +40,7 @@ import serverApi, {TokenResponse} from "@/modules/server";
 import {useUserStore} from "@/stores/userStore"
 import {useToast} from "primevue/usetoast";
 import router from "@/router";
+import FormInput from "@/components/FormInput.vue";
 
 const loading = ref(false)
 
@@ -87,14 +81,7 @@ async function signIn(): Promise<void> {
     margin: auto;
 
     .content {
-      & > * {
-        width: 250px;
-        margin: 10px auto;
-
-        input {
-          width: 100%;
-        }
-      }
+      padding: 0 30px;
     }
   }
 }

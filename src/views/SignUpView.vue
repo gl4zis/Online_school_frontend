@@ -17,28 +17,16 @@
       </template>
       <template #content>
         <div class="content">
-          <span class="p-float-label">
-            <InputText id="username" v-model="username" :disabled="loading"/>
-            <label for="username">Username</label>
-          </span>
-          <span class="p-float-label">
-            <Password id="password" v-model="password"
-                      toggle-mask :disabled="loading"/>
-            <label for="password">Password</label>
-          </span>
-          <span class="p-float-label">
-            <Password id="password-rep" v-model="passwordRep" :feedback="false"
-                      toggle-mask :disabled="loading"/>
-            <label for="password-rep">Repeat password</label>
-          </span>
-          <span class="p-float-label">
-            <InputText id="firstname" v-model="firstname" :disabled="loading"/>
-            <label for="firstname">Firstname</label>
-          </span>
-          <span class="p-float-label">
-            <InputText id="lastname" v-model="lastname" :disabled="loading"/>
-            <label for="lastname">Lastname</label>
-          </span>
+          <FormInput v-model="username" :disabled="loading"
+                     label="Username"/>
+          <FormInput v-model="password" :disabled="loading"
+                     label="Password" hidden/>
+          <FormInput v-model="passwordRep" :disabled="loading"
+                     label="Repeat Password" hidden :feedback="false"/>
+          <FormInput v-model="firstname" :disabled="loading"
+                     label="Firstname"/>
+          <FormInput v-model="lastname" :disabled="loading"
+                     label="Lastname"/>
         </div>
       </template>
       <template #footer>
@@ -52,13 +40,12 @@
 
 <script lang="ts" setup>
 import BackButton from "@/components/BackButton.vue";
-import InputText from "primevue/inputtext";
-import Password from "primevue/password";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
 import MyLink from "@/components/MyLink.vue";
 import Card from "primevue/card";
 import Button from "primevue/button";
 import {ref} from "vue";
+import FormInput from "@/components/FormInput.vue";
 
 const loading = ref(false)
 
@@ -88,14 +75,7 @@ const passwordRep = ref('')
     }
 
     .content {
-      & > * {
-        width: 250px;
-        margin: 10px auto;
 
-        input {
-          width: 100%;
-        }
-      }
     }
   }
 }
