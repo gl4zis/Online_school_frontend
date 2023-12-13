@@ -1,18 +1,18 @@
 <template>
   <div>
-  <div :class="{ 'p-float-label': label,
-                 'p-input-icon-right': icon }">
-    <i v-if="icon" :class="icon"/>
-    <InputText v-if="!hidden" :class="{ 'p-invalid': validError }"
-               :disabled="disabled" :model-value="modelValue"
-               @input="$emit('update:modelValue', $event.target.value)" />
-    <Password v-else toggle-mask :class="{ 'p-invalid': validError }"
-              :disabled="disabled"
-              :model-value="modelValue" :feedback="feedback"
-              @input="$emit('update:modelValue', $event.target.value)" />
-    <label>{{ label }}</label>
-  </div>
-  <small class="p-error">{{ validError || '&nbsp;' }}</small>
+    <div :class="{ 'p-float-label': label,
+                   'p-input-icon-right': icon }">
+      <i v-if="icon" :class="icon"/>
+      <InputText v-if="!hidden" :class="{ 'p-invalid': validError }"
+                 :disabled="disabled" :model-value="modelValue"
+                 @input="$emit('update:modelValue', $event.target.value)" />
+      <Password v-else toggle-mask :class="{ 'p-invalid': validError }"
+                :disabled="disabled"
+                :model-value="modelValue" :feedback="feedback"
+                @input="$emit('update:modelValue', $event.target.value)" />
+      <label>{{ label }}</label>
+    </div>
+    <small class="p-error">{{ validError || '&nbsp;' }}</small>
   </div>
 </template>
 

@@ -13,17 +13,16 @@ body, html {
   margin: 0;
   width: 100%;
   height: 100%;
-}
-
-#app {
-  position: absolute;
-  background: url("assets/background.jpg") no-repeat center center fixed;
+  background-image: url("assets/background.jpg");
+  background-attachment: fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  min-width: 100%;
-  min-height: 100%;
+}
+
+#app {
+  height: 100%;
 }
 
 img {

@@ -1,5 +1,5 @@
 <template>
-  <div class="root">
+  <CenterContent>
     <Card class="form">
       <template #header>
         <BackButton/>
@@ -26,7 +26,7 @@
       </template>
     </Card>
     <LoaderSpinner :enabled="loading"/>
-  </div>
+  </CenterContent>
 </template>
 
 <script lang="ts" setup>
@@ -41,6 +41,7 @@ import {useUserStore} from "@/stores/userStore"
 import {useToast} from "primevue/usetoast";
 import router from "@/router";
 import FormInput from "@/components/FormInput.vue";
+import CenterContent from "@/layouts/CenterContent.vue";
 
 const loading = ref(false)
 
@@ -68,21 +69,13 @@ async function signIn(): Promise<void> {
 </script>
 
 <style lang="scss" scoped>
-.root {
-  display: flex;
-  flex-direction: column;
+.form {
   position: relative;
-  top: 10vh;
+  text-align: center;
+  width: 350px;
 
-  .form {
-    text-align: center;
-    position: relative;
-    width: 350px;
-    margin: auto;
-
-    .content {
-      padding: 0 30px;
-    }
+  .content {
+    padding: 0 30px;
   }
 }
 </style>

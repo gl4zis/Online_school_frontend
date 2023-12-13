@@ -1,5 +1,5 @@
 <template>
-  <div class="root">
+  <CenterContent>
     <Card class="form">
       <template #header>
         <BackButton/>
@@ -33,7 +33,7 @@
         <Button icon="pi pi-check" label="Sign Up" :disabled="loading"/>
       </template>
     </Card>
-  </div>
+  </CenterContent>
   <LoaderSpinner class="loader" :enabled="loading"/>
 </template>
 
@@ -46,6 +46,7 @@ import Card from "primevue/card";
 import Button from "primevue/button";
 import {ref} from "vue";
 import FormInput from "@/components/FormInput.vue";
+import CenterContent from "@/layouts/CenterContent.vue";
 
 const loading = ref(false)
 
@@ -57,31 +58,18 @@ const passwordRep = ref('')
 </script>
 
 <style lang="scss" scoped>
-.root {
-  display: flex;
-  flex-direction: column;
+.form {
   position: relative;
-  top: 10vh;
+  text-align: center;
+  width: 350px;
 
-  .form {
-    text-align: center;
-    position: relative;
-    width: 350px;
+  p {
+    width: 80%;
     margin: auto;
-
-    p {
-      width: 80%;
-      margin: auto;
-    }
-
-    .content {
-
-    }
   }
-}
 
-.loader {
-  top: -40vh;
-  left: 47vw;
+  .content {
+    padding: 0 30px;
+  }
 }
 </style>
