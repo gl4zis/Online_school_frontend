@@ -1,5 +1,4 @@
 import {useUserStore} from "@/stores/userStore";
-import router from "@/router";
 
 const GATEWAY_ADDRESS = 'http://localhost:8765'
 
@@ -10,7 +9,7 @@ interface IStatus {
 export interface ITokenResponse extends IStatus {
     access: string,
     refresh: string,
-    expired_at: number
+    expiredAt: number
 }
 
 export interface ICredentials {
@@ -40,6 +39,16 @@ export interface IMessageResponse extends IStatus {
     message: string
 }
 
+async function createDataFromResponse(resp: Response): Promise<object> {
+    try {
+        const data = await resp.json()
+        data.status = resp.status
+        return data
+    } catch(err) {
+        return { status: resp.status }
+    }
+}
+
 async function sendStandardRequest(route: string, options: RequestInit): Promise<object> {
     if (!options.headers)
         options.headers = {}
@@ -47,9 +56,7 @@ async function sendStandardRequest(route: string, options: RequestInit): Promise
 
     try {
         const resp: Response = await fetch(GATEWAY_ADDRESS + route, options)
-        const data = await resp.json()
-        data.status = resp.status
-        return data
+        return await createDataFromResponse(resp)
     } catch (err) {
         return {status: 503}
     }
@@ -57,16 +64,15 @@ async function sendStandardRequest(route: string, options: RequestInit): Promise
 
 async function sendRequestWithToken(route: string, options: RequestInit): Promise<object> {
     const userStore = useUserStore()
+
     if (!userStore.expiredAt) {
-        await router.push('/login')
-        return {}
+        return { status: 600 }
     }
 
     if (Date.now() + 5000 > userStore.expiredAt) {
         const newTokens: ITokenResponse = await updateTokens(userStore.refresh)
         if (newTokens.status !== 200) {
-            await router.push('/login')
-            return {}
+            return { status: 600 }
         }
 
         userStore.setTokens(newTokens)

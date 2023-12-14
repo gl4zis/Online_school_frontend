@@ -12,7 +12,7 @@ export const useUserStore: StoreDefinition = defineStore('userStore', () => {
     })
     const access: Ref<string | undefined> = computed((): string | undefined => tokenData.value?.access)
     const refresh: Ref<string | undefined> = computed((): string | undefined => tokenData.value?.refresh)
-    const expiredAt: Ref<number | undefined> = computed((): number | undefined => tokenData.value?.expired_at)
+    const expiredAt: Ref<number | undefined> = computed((): number | undefined => tokenData.value?.expiredAt)
 
     function setTokens(response: ITokenResponse): void {
         localStorage.setItem('tokenData', JSON.stringify(response))

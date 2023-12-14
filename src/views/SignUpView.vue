@@ -28,14 +28,14 @@
                      :valid-error="passwordValidation"
                      hidden
                      label="Password"
-                     @input="passwordValidation = passwordValidMessage(password)"/>
+                     @input="validatePassword"/>
           <FormInput v-model="passwordRep"
                      :disabled="loading"
                      :feedback="false"
                      :valid-error="passwordRepValidation"
                      hidden
                      label="Repeat Password"
-                     @input="passwordRepValidation = passwordsEqualsMessage()"/>
+                     @input="validatePassword"/>
           <FormInput v-model="firstname"
                      :disabled="loading"
                      :valid-error="firstnameValidation"
@@ -70,13 +70,16 @@ import {ref} from "vue";
 import FormInput from "@/components/FormInput.vue";
 import CenterContent from "@/layouts/CenterContent.vue";
 import {nameValidMessage, passwordValidMessage, usernameValidMessage} from "@/modules/validation";
-import serverApi, {IMessageResponse} from '@/modules/server'
+import serverApi, {IMessageResponse, ITokenResponse} from '@/modules/server'
 import toastApi from '@/modules/toast'
 import {useToast} from "primevue/usetoast";
+import {useUserStore} from "@/stores/userStore";
+import router from "@/router";
 
 const loading = ref(false)
 let uniqueCheckId = 0
 const toast = useToast()
+const userStore = useUserStore()
 
 const firstname = ref('')
 const firstnameValidation = ref('')
@@ -101,6 +104,11 @@ function validateUsername(): void {
     uniqueCheckId = setTimeout(checkUsernameUniqueness, 500)
 }
 
+function validatePassword(): void {
+  passwordValidation.value = passwordValidMessage(password.value)
+  passwordRepValidation.value = passwordsEqualsMessage()
+}
+
 async function checkUsernameUniqueness(): Promise<void> {
   usernameIcon.value = 'pi pi-spin pi-spinner'
   const resp: IMessageResponse = await serverApi.usernameUnique(username.value)
@@ -115,6 +123,7 @@ async function checkUsernameUniqueness(): Promise<void> {
   } else {
     usernameIcon.value = ''
     toastApi.noConnection(toast)
+    uniqueCheckId = setTimeout(validateUsername, 10000)
   }
 }
 
@@ -125,8 +134,50 @@ function passwordsEqualsMessage(): string {
   return ''
 }
 
-function signUp(): void {
-  return
+function isFormValid(): boolean {
+  return !(firstnameValidation.value + lastnameValidation.value +
+    usernameValidation.value + passwordValidation.value + passwordRepValidation.value)
+}
+
+async function signUp(): Promise<void> {
+  userStore.resetTokens()
+  if (!isFormValid()) {
+    toastApi.validationError(toast)
+    return
+  }
+
+  loading.value = true
+  const tokens: ITokenResponse = await serverApi.regStudentAccount({
+    username: username.value,
+    password: password.value
+  })
+  loading.value = false
+
+  if (tokens.status === 200) {
+    userStore.setTokens(tokens)
+    const resp: IMessageResponse = await serverApi.updateSelfProfile({
+      firstname: firstname.value,
+      lastname: lastname.value,
+      middleName: null, birthdate: null, photoId: null, description: null, subjects: null, status: 0
+    })
+
+    if (resp.status === 200) {
+      toastApi.registered(toast, username.value)
+      await router.push('/')
+    } else if (resp.status === 400 || resp.status === 403) {
+      toastApi.strangeError(toast)
+      console.log('Response:', resp)
+      await serverApi.deleteSelfAccount()
+    } else {
+      toastApi.noConnection(toast)
+      await serverApi.deleteSelfAccount()
+    }
+
+  } else if (tokens.status === 400) {
+    toastApi.strangeError(toast)
+    console.log('Response:', tokens)
+  } else
+    toastApi.noConnection(toast)
 }
 </script>
 
