@@ -1,7 +1,7 @@
 <template>
   <ProgressSpinner v-if="enabled"
-                   class="spinner"
                    animation-duration="1s"
+                   class="spinner"
                    stroke-width="4"
                    style="width: 6vw"/>
 </template>

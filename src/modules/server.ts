@@ -1,98 +1,141 @@
-import {ToastServiceMethods} from "primevue/toastservice";
-import {isCredentialsValid} from "@/modules/validation";
+import {useUserStore} from "@/stores/userStore";
+import router from "@/router";
 
 const GATEWAY_ADDRESS = 'http://localhost:8765'
 
-export interface TokenResponse {
-    access: string,
-    refresh: string
+interface IStatus {
+    status: number
 }
 
-export interface Credentials {
+export interface ITokenResponse extends IStatus {
+    access: string,
+    refresh: string,
+    expired_at: number
+}
+
+export interface ICredentials {
     username: string,
     password: string
 }
 
-interface MessageResponse {
+export interface IProfile extends IStatus {
+    firstname: string,
+    lastname: string,
+    middleName: string | null,
+    birthdate: Date | null,
+    photoId: number | null,
+    subjects: Array<string> | null,
+    description: string | null
+}
+
+export interface IAccountData extends IStatus {
+    id: number,
+    username: string,
+    email: string | null,
+    roles: Array<string>,
+    locked: boolean
+}
+
+export interface IMessageResponse extends IStatus {
     message: string
 }
 
-async function login(credentials: Credentials, toast: ToastServiceMethods): Promise<TokenResponse | null> {
+async function sendStandardRequest(route: string, options: RequestInit): Promise<object> {
+    if (!options.headers)
+        options.headers = {}
+    Object.assign(options.headers, {'Content-Type': 'application/json'})
+
     try {
-        if (!isCredentialsValid(credentials)) {
-            validationError(toast)
-            return null
+        const resp: Response = await fetch(GATEWAY_ADDRESS + route, options)
+        const data = await resp.json()
+        data.status = resp.status
+        return data
+    } catch (err) {
+        return {status: 503}
+    }
+}
+
+async function sendRequestWithToken(route: string, options: RequestInit): Promise<object> {
+    const userStore = useUserStore()
+    if (!userStore.expiredAt) {
+        await router.push('/login')
+        return {}
+    }
+
+    if (Date.now() + 5000 > userStore.expiredAt) {
+        const newTokens: ITokenResponse = await updateTokens(userStore.refresh)
+        if (newTokens.status !== 200) {
+            await router.push('/login')
+            return {}
         }
 
-        const resp: Response = await fetch(GATEWAY_ADDRESS + '/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(credentials)
-        })
-
-        if (resp.ok)
-            return await resp.json()
-        else if (resp.status === 400)
-            validationError(toast)
-        else if (resp.status === 401)
-            toast.add({ severity: 'warn', life: 3000, summary: 'Invalid login or password' })
-        else
-            noConnection(toast)
-
-    } catch (err) {
-        noConnection(toast)
+        userStore.setTokens(newTokens)
     }
 
-    return null
+    if (!options.headers)
+        options.headers = {}
+    Object.assign(options.headers, {Authorization: 'Bearer ' + userStore.access})
+
+    return await sendStandardRequest(route, options)
 }
 
-async function updateTokens(refresh: string, toast: ToastServiceMethods): Promise<TokenResponse | null> {
-    try {
-        const resp: Response = await fetch(GATEWAY_ADDRESS + '/auth/tokens', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 'refresh': refresh })
-        })
+// 400 (Validation) 401 (BadCredentials)
+async function login(credentials: ICredentials): Promise<ITokenResponse> {
+    const options: RequestInit = {method: 'POST', body: JSON.stringify(credentials)}
 
-        if (resp.ok)
-            return await resp.json()
-
-    } catch (err) {
-        noConnection(toast)
-    }
-
-    return null
+    return <ITokenResponse>await sendStandardRequest('/auth/login', options)
 }
 
-async function usernameUnique(username: string, toast: ToastServiceMethods): Promise<boolean | null> {
-    try {
-        const resp: Response = await fetch(GATEWAY_ADDRESS + '/auth/unique/' + username,
-            {headers: { 'Content-Type': 'application/json' }})
+// 403 (InvalidToken)
+async function updateTokens(refresh: string): Promise<ITokenResponse> {
+    const options: RequestInit = {method: 'POST', body: JSON.stringify({refresh: refresh})}
 
-        if (resp.ok)
-            return (<MessageResponse>await resp.json()).message === 'true'
-        else if (resp.status === 400)
-            validationError(toast)
-        else
-            noConnection(toast)
-
-    } catch (err) {
-        noConnection(toast)
-    }
-
-    return null
+    return <ITokenResponse>await sendStandardRequest('/auth/tokens', options)
 }
 
-function noConnection(toast: ToastServiceMethods): void {
-    toast.add({ severity: 'error', life: 3000, summary: 'NO CONNECTION' })
+// 400 (Validation)
+async function usernameUnique(username: string): Promise<IMessageResponse> {
+    return <IMessageResponse>await sendStandardRequest('/auth/unique/' + username, {})
 }
 
-function validationError(toast: ToastServiceMethods): void {
-    toast.add({ severity: 'warn', life: 3000, summary: 'Validation error' })
+// 400 (Validation, UsernameIsTaken)
+async function regStudentAccount(credentials: ICredentials): Promise<ITokenResponse> {
+    const options: RequestInit = {method: 'POST', body: JSON.stringify(credentials)}
+
+    return <ITokenResponse>await sendStandardRequest('/auth/signup', options)
+}
+
+// 403 (InvalidToken)
+async function deleteSelfAccount(): Promise<IMessageResponse> {
+    const options: RequestInit = {method: 'DELETE'}
+
+    return <IMessageResponse>await sendRequestWithToken('/auth', options)
+}
+
+// 403 (InvalidToken), 404 (AccountNotFound)
+async function getSelfAccount(): Promise<IAccountData> {
+    return <IAccountData>await sendRequestWithToken('/auth', {})
+}
+
+// 403 (InvalidToken), 404 (ProfileNotFound)
+async function getSelfProfile(): Promise<IProfile> {
+    return <IProfile>await sendRequestWithToken('/profile', {})
+}
+
+// 400 (Validation), 403 (InvalidToken)
+async function updateSelfProfile(profile: IProfile): Promise<IMessageResponse> {
+    const options: RequestInit = {method: 'PUT', body: JSON.stringify(profile)}
+
+    return <IMessageResponse>await sendRequestWithToken('/profile', options)
 }
 
 export default {
     login,
     updateTokens,
-    usernameUnique
+    usernameUnique,
+    regStudentAccount,
+    deleteSelfAccount,
+    getSelfAccount,
+    getSelfProfile,
+    updateSelfProfile
 }

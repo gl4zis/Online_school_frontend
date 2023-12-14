@@ -1,24 +1,31 @@
 import {defineStore, StoreDefinition} from "pinia";
 import {computed, Ref} from "vue";
-import {TokenResponse} from "@/modules/server"
+import {ITokenResponse} from "@/modules/server"
 
 export const useUserStore: StoreDefinition = defineStore('userStore', () => {
-    const refresh: Ref<string | null> = computed((): string | null => localStorage.getItem('refresh'))
-    const access: Ref<string | null> = computed((): string | null => localStorage.getItem('access'))
+    const tokenData: Ref<ITokenResponse | null> = computed((): ITokenResponse | null => {
+        const data: string | null = localStorage.getItem('tokenData')
+        if (!data)
+            return null
 
-    function setTokens(response: TokenResponse): void {
-        localStorage.setItem('refresh', response.refresh)
-        localStorage.setItem('access', response.access)
+        return JSON.parse(data)
+    })
+    const access: Ref<string | undefined> = computed((): string | undefined => tokenData.value?.access)
+    const refresh: Ref<string | undefined> = computed((): string | undefined => tokenData.value?.refresh)
+    const expiredAt: Ref<number | undefined> = computed((): number | undefined => tokenData.value?.expired_at)
+
+    function setTokens(response: ITokenResponse): void {
+        localStorage.setItem('tokenData', JSON.stringify(response))
     }
 
     function resetTokens(): void {
-        localStorage.removeItem('refresh')
-        localStorage.removeItem('access')
+        localStorage.removeItem('tokenData')
     }
 
     return {
         refresh,
         access,
+        expiredAt,
         setTokens,
         resetTokens
     }

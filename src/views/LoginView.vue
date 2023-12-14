@@ -20,16 +20,16 @@
                      label="Username | Email"/>
           <FormInput v-model="password"
                      :disabled="loading"
-                     label="Password"
+                     :feedback="false"
                      hidden
-                     :feedback="false"/>
+                     label="Password"/>
         </div>
       </template>
       <template #footer>
-        <Button icon="pi pi-check"
+        <Button :disabled="loading"
+                icon="pi pi-check"
                 label="Sign In"
-                @click="signIn"
-                :disabled="loading"/>
+                @click="signIn"/>
       </template>
     </Card>
     <LoaderSpinner :enabled="loading"/>
@@ -43,12 +43,14 @@ import {ref} from "vue";
 import MyLink from "@/components/MyLink.vue";
 import BackButton from "@/components/BackButton.vue";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
-import serverApi, {TokenResponse} from "@/modules/server";
+import serverApi, {ICredentials, ITokenResponse} from "@/modules/server";
+import toastApi from "@/modules/toast"
 import {useUserStore} from "@/stores/userStore"
 import {useToast} from "primevue/usetoast";
 import router from "@/router";
 import FormInput from "@/components/FormInput.vue";
 import CenterContent from "@/layouts/CenterContent.vue";
+import {isCredentialsValid} from "@/modules/validation";
 
 const loading = ref(false)
 
@@ -59,17 +61,28 @@ const userStore = useUserStore();
 const toast = useToast()
 
 async function signIn(): Promise<void> {
-  loading.value = true
-  const tokens: TokenResponse | null = await serverApi.login({
+  userStore.resetTokens()
+
+  const credentials: ICredentials = {
     username: username.value,
     password: password.value
-  }, toast)
+  }
 
-  if (tokens) {
+  if (!isCredentialsValid(credentials)) {
+    toastApi.invalidCredentials(toast)
+    return
+  }
+
+  loading.value = true
+  const tokens: ITokenResponse = await serverApi.login(credentials)
+
+  if (tokens.status === 200) {
     userStore.setTokens(tokens)
     await router.push('/')
-  } else
-    userStore.resetTokens()
+  } else if (tokens.status === 400 || tokens.status === 401)
+    toastApi.invalidCredentials(toast)
+  else
+    toastApi.noConnection(toast)
 
   loading.value = false
 }
