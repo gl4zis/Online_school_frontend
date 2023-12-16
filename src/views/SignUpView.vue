@@ -28,14 +28,7 @@
                      :valid-error="passwordValidation"
                      hidden
                      label="Password"
-                     @input="validatePassword"/>
-          <FormInput v-model="passwordRep"
-                     :disabled="loading"
-                     :feedback="false"
-                     :valid-error="passwordRepValidation"
-                     hidden
-                     label="Repeat Password"
-                     @input="validatePassword"/>
+                     @input="passwordValidation = passwordValidMessage(password)"/>
           <FormInput v-model="firstname"
                      :disabled="loading"
                      :valid-error="firstnameValidation"
@@ -73,13 +66,13 @@ import {nameValidMessage, passwordValidMessage, usernameValidMessage} from "@/mo
 import serverApi, {IMessageResponse, ITokenResponse} from '@/modules/server'
 import toastApi from '@/modules/toast'
 import {useToast} from "primevue/usetoast";
-import {useUserStore} from "@/stores/userStore";
+import {useAuthStore} from "@/stores/authStore";
 import router from "@/router";
 
 const loading = ref(false)
 let uniqueCheckId = 0
 const toast = useToast()
-const userStore = useUserStore()
+const authStore = useAuthStore()
 
 const firstname = ref('')
 const firstnameValidation = ref('')
@@ -94,19 +87,11 @@ const usernameIcon = ref('')
 const password = ref('')
 const passwordValidation = ref('')
 
-const passwordRep = ref('')
-const passwordRepValidation = ref('')
-
 function validateUsername(): void {
   clearTimeout(uniqueCheckId)
   usernameValidation.value = usernameValidMessage(username.value)
   if (!usernameValidation.value)
     uniqueCheckId = setTimeout(checkUsernameUniqueness, 500)
-}
-
-function validatePassword(): void {
-  passwordValidation.value = passwordValidMessage(password.value)
-  passwordRepValidation.value = passwordsEqualsMessage()
 }
 
 async function checkUsernameUniqueness(): Promise<void> {
@@ -127,20 +112,13 @@ async function checkUsernameUniqueness(): Promise<void> {
   }
 }
 
-function passwordsEqualsMessage(): string {
-  if (password.value !== passwordRep.value)
-    return 'Passwords should be equals'
-
-  return ''
-}
-
 function isFormValid(): boolean {
   return !(firstnameValidation.value + lastnameValidation.value +
-    usernameValidation.value + passwordValidation.value + passwordRepValidation.value)
+    usernameValidation.value + passwordValidation.value)
 }
 
 async function signUp(): Promise<void> {
-  userStore.resetTokens()
+  authStore.resetTokens()
   if (!isFormValid()) {
     toastApi.validationError(toast)
     return
@@ -151,33 +129,37 @@ async function signUp(): Promise<void> {
     username: username.value,
     password: password.value
   })
-  loading.value = false
 
   if (tokens.status === 200) {
-    userStore.setTokens(tokens)
-    const resp: IMessageResponse = await serverApi.updateSelfProfile({
-      firstname: firstname.value,
-      lastname: lastname.value,
-      middleName: null, birthdate: null, photoId: null, description: null, subjects: null, status: 0
-    })
-
-    if (resp.status === 200) {
-      toastApi.registered(toast, username.value)
-      await router.push('/')
-    } else if (resp.status === 400 || resp.status === 403) {
-      toastApi.strangeError(toast)
-      console.log('Response:', resp)
-      await serverApi.deleteSelfAccount()
-    } else {
-      toastApi.noConnection(toast)
-      await serverApi.deleteSelfAccount()
-    }
-
+    authStore.setTokens(tokens)
+    await createProfile()
   } else if (tokens.status === 400) {
     toastApi.strangeError(toast)
     console.log('Response:', tokens)
   } else
     toastApi.noConnection(toast)
+
+  loading.value = false
+}
+
+async function createProfile(): Promise<void> {
+  const resp: IMessageResponse = await serverApi.updateSelfProfile({
+    firstname: firstname.value,
+    lastname: lastname.value,
+    status: 0
+  })
+
+  if (resp.status === 200) {
+    toastApi.registered(toast, username.value)
+    await router.push('/')
+  } else if (resp.status === 400 || resp.status === 403) {
+    toastApi.validationError(toast)
+    validateUsername()
+    await serverApi.deleteSelfAccount()
+  } else {
+    toastApi.noConnection(toast)
+    await serverApi.deleteSelfAccount()
+  }
 }
 </script>
 

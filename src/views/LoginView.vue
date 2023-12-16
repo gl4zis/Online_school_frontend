@@ -45,7 +45,7 @@ import BackButton from "@/components/BackButton.vue";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
 import serverApi, {ICredentials, ITokenResponse} from "@/modules/server";
 import toastApi from "@/modules/toast"
-import {useUserStore} from "@/stores/userStore"
+import {useAuthStore} from "@/stores/authStore"
 import {useToast} from "primevue/usetoast";
 import router from "@/router";
 import FormInput from "@/components/FormInput.vue";
@@ -57,11 +57,11 @@ const loading = ref(false)
 const username = ref('')
 const password = ref('')
 
-const userStore = useUserStore();
+const authStore = useAuthStore();
 const toast = useToast()
 
 async function signIn(): Promise<void> {
-  userStore.resetTokens()
+  authStore.resetTokens()
 
   const credentials: ICredentials = {
     username: username.value,
@@ -77,7 +77,7 @@ async function signIn(): Promise<void> {
   const tokens: ITokenResponse = await serverApi.login(credentials)
 
   if (tokens.status === 200) {
-    userStore.setTokens(tokens)
+    authStore.setTokens(tokens)
     await router.push('/')
   } else if (tokens.status === 400 || tokens.status === 401)
     toastApi.invalidCredentials(toast)

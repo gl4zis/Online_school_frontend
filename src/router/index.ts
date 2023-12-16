@@ -5,12 +5,10 @@ import SignUp from '../views/SignUpView.vue'
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/login',
-        name: 'login',
         component: Login
     },
     {
         path: '/sign-up',
-        name: 'signup',
         component: SignUp
     }
 ]

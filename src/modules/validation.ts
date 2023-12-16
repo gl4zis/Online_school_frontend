@@ -1,11 +1,12 @@
 import {ICredentials} from "@/modules/server";
 
 const USERNAME_REGEX = /^\w{3,20}$/
-const PASSWORD_REGEX = /^\S{6,50}$/
+const PASSWORD_REGEXES = [/^\S+$/, /\d+/, /[a-z]+/, /[A-Z]+/]
 const NAME_REGEX = /^[\s\wа-яА-Я,.\-']{2,50}$/
 
 export function isCredentialsValid(credentials: ICredentials): boolean {
-    return USERNAME_REGEX.test(credentials.username) && PASSWORD_REGEX.test(credentials.password)
+    return USERNAME_REGEX.test(credentials.username) &&
+        PASSWORD_REGEXES.every(regex => regex.test(credentials.password))
 }
 
 export function usernameValidMessage(username: string): string {
@@ -21,9 +22,15 @@ export function usernameValidMessage(username: string): string {
 export function passwordValidMessage(password: string): string {
     if (!password)
         return "Shouldn't be empty"
-    if (password.length < 6 || password.length > 50)
-        return 'Length should be between 6 and 50'
-    if (!PASSWORD_REGEX.test(password))
+    if (password.length < 8 || password.length > 50)
+        return 'Length should be between 8 and 50'
+    if (!PASSWORD_REGEXES[1].test(password))
+        return 'Should have at least one digit'
+    if (!PASSWORD_REGEXES[2].test(password))
+        return 'Should have at least one lowercase'
+    if (!PASSWORD_REGEXES[3].test(password))
+        return 'Should have at least one uppercase'
+    if (!PASSWORD_REGEXES[0].test(password))
         return "Whitespace aren't allowed"
     return ''
 }

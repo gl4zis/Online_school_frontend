@@ -1,4 +1,4 @@
-import {useUserStore} from "@/stores/userStore";
+import {useAuthStore} from "@/stores/authStore";
 
 const GATEWAY_ADDRESS = 'http://localhost:8765'
 
@@ -20,17 +20,17 @@ export interface ICredentials {
 export interface IProfile extends IStatus {
     firstname: string,
     lastname: string,
-    middleName: string | null,
-    birthdate: Date | null,
-    photoId: number | null,
-    subjects: Array<string> | null,
-    description: string | null
+    middleName?: string,
+    birthdate?: Date,
+    photoId?: number,
+    subjects?: Array<string>,
+    description?: string
 }
 
 export interface IAccountData extends IStatus {
     id: number,
     username: string,
-    email: string | null,
+    email?: string,
     roles: Array<string>,
     locked: boolean
 }
@@ -63,24 +63,24 @@ async function sendStandardRequest(route: string, options: RequestInit): Promise
 }
 
 async function sendRequestWithToken(route: string, options: RequestInit): Promise<object> {
-    const userStore = useUserStore()
+    const authStore = useAuthStore()
 
-    if (!userStore.expiredAt) {
-        return { status: 600 }
+    if (!authStore.expiredAt) {
+        return { status: 401 }
     }
 
-    if (Date.now() + 5000 > userStore.expiredAt) {
-        const newTokens: ITokenResponse = await updateTokens(userStore.refresh)
+    if (Date.now() + 5000 > authStore.expiredAt) {
+        const newTokens: ITokenResponse = await updateTokens(authStore.refresh)
         if (newTokens.status !== 200) {
-            return { status: 600 }
+            return { status: 401 }
         }
 
-        userStore.setTokens(newTokens)
+        authStore.setTokens(newTokens)
     }
 
     if (!options.headers)
         options.headers = {}
-    Object.assign(options.headers, {Authorization: 'Bearer ' + userStore.access})
+    Object.assign(options.headers, {Authorization: 'Bearer ' + authStore.access})
 
     return await sendStandardRequest(route, options)
 }

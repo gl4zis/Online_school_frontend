@@ -7,9 +7,20 @@
                  :disabled="disabled" :model-value="modelValue"
                  @input="$emit('update:modelValue', $event.target.value)"/>
       <Password v-else :class="{ 'p-invalid': validError }" :disabled="disabled"
-                :feedback="feedback"
-                :model-value="modelValue" toggle-mask
-                @input="$emit('update:modelValue', $event.target.value)"/>
+                :model-value="modelValue" toggle-mask :feedback="feedback"
+                @input="$emit('update:modelValue', $event.target.value)">
+        <template v-if="feedback" #header>
+          Your password should contain:
+        </template>
+        <template v-if="feedback" #content>
+          <ul>
+            <li>At least 8 symbols</li>
+            <li>At least one capital character</li>
+            <li>At least one small character</li>
+            <li>At least one digit</li>
+          </ul>
+        </template>
+      </Password>
       <label>{{ label }}</label>
     </div>
     <small class="p-error">{{ validError || '&nbsp;' }}</small>
