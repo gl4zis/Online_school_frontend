@@ -5,9 +5,11 @@ import {ITokenResponse} from "@/modules/server"
 export const useAuthStore: StoreDefinition = defineStore('authStore', () => {
     const access: Ref<string | null> = computed((): string | null => localStorage.getItem('access'))
     const refresh: Ref<string | null> = computed((): string | null => localStorage.getItem('refresh'))
-    const expiredAt: Ref<string | null> = computed((): string | null => {
-        console.log(localStorage.getItem('expired_at'))
-        return localStorage.getItem('expired_at')
+    const expiredAt: Ref<number | null> = computed((): number | null => {
+        const expiredStr: string | null = localStorage.getItem('expired_at')
+        if (expiredStr)
+            return JSON.parse(expiredStr)
+        return null
     })
 
     function setTokens(response: ITokenResponse): void {

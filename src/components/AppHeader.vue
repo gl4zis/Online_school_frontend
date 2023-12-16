@@ -1,7 +1,7 @@
 <template>
   <Menubar :model="items" class="menu">
     <template #start>
-      <Image :src="appLogo" alt="logo" width="60" class="ml-4 mr-4"/>
+      <Image :src="appLogo" alt="logo" width="60" class="ml-4 mr-4" image-style="border-radius: 15px"/>
     </template>
     <template #item="{ item, props }">
       <a class="m-2" v-bind="props.action">

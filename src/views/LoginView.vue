@@ -51,17 +51,20 @@ import router from "@/router";
 import FormInput from "@/components/FormInput.vue";
 import CenterContent from "@/layouts/CenterContent.vue";
 import {isCredentialsValid} from "@/modules/validation";
+import {useProfileStore} from "@/stores/profileStore";
 
 const loading = ref(false)
 
 const username = ref('')
 const password = ref('')
 
-const authStore = useAuthStore();
+const authStore = useAuthStore()
+const profileStore = useProfileStore()
 const toast = useToast()
 
 async function signIn(): Promise<void> {
   authStore.resetTokens()
+  profileStore.resetData()
 
   const credentials: ICredentials = {
     username: username.value,
@@ -78,6 +81,7 @@ async function signIn(): Promise<void> {
 
   if (tokens.status === 200) {
     authStore.setTokens(tokens)
+    await getProfileData()
     await router.push('/')
   } else if (tokens.status === 400 || tokens.status === 401)
     toastApi.invalidCredentials(toast)
@@ -85,6 +89,22 @@ async function signIn(): Promise<void> {
     toastApi.noConnection(toast)
 
   loading.value = false
+}
+
+async function getProfileData(): Promise<void> {
+  const account = await serverApi.getSelfAccount()
+  const profile = await serverApi.getSelfProfile()
+  let photoStr = ''
+  if (profile.photoId)
+    photoStr = (await serverApi.getFile(profile.photoId)).message
+
+  profileStore.updateProfile({
+    username: account.username,
+    email: account.email,
+    firstname: profile.firstname,
+    lastname: profile.lastname,
+    photoStr: photoStr
+  })
 }
 </script>
 

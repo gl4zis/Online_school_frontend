@@ -135,6 +135,10 @@ async function updateSelfProfile(profile: IProfile): Promise<IMessageResponse> {
     return <IMessageResponse>await sendRequestWithToken('/profile', options)
 }
 
+async function getFile(id: number): Promise<IMessageResponse> {
+    return <IMessageResponse>await sendStandardRequest('/file/' + id, {})
+}
+
 export default {
     login,
     updateTokens,
@@ -143,5 +147,6 @@ export default {
     deleteSelfAccount,
     getSelfAccount,
     getSelfProfile,
-    updateSelfProfile
+    updateSelfProfile,
+    getFile
 }

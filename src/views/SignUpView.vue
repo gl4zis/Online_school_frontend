@@ -68,11 +68,14 @@ import toastApi from '@/modules/toast'
 import {useToast} from "primevue/usetoast";
 import {useAuthStore} from "@/stores/authStore";
 import router from "@/router";
+import {useProfileStore} from "@/stores/profileStore";
 
 const loading = ref(false)
 let uniqueCheckId = 0
+
 const toast = useToast()
 const authStore = useAuthStore()
+const profileStore = useProfileStore()
 
 const firstname = ref('')
 const firstnameValidation = ref('')
@@ -119,6 +122,8 @@ function isFormValid(): boolean {
 
 async function signUp(): Promise<void> {
   authStore.resetTokens()
+  profileStore.resetData()
+
   if (!isFormValid()) {
     toastApi.validationError(toast)
     return
