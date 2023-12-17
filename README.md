@@ -18,7 +18,7 @@ All used technologies:
 - Vue.js
 - Vue routes
 - Pinia
-- Vuelidate
+- PrimeVue
 - REST API
 
 [Repository](https://github.com/gl4zis/Online_school_backend)

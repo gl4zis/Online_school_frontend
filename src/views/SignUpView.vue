@@ -121,8 +121,7 @@ function isFormValid(): boolean {
 }
 
 async function signUp(): Promise<void> {
-  authStore.resetTokens()
-  profileStore.resetData()
+  serverApi.logout()
 
   if (!isFormValid()) {
     toastApi.validationError(toast)
@@ -156,6 +155,7 @@ async function createProfile(): Promise<void> {
 
   if (resp.status === 200) {
     toastApi.registered(toast, username.value)
+    saveProfile()
     await router.push('/')
   } else if (resp.status === 400 || resp.status === 403) {
     toastApi.validationError(toast)
@@ -166,6 +166,15 @@ async function createProfile(): Promise<void> {
     await serverApi.deleteSelfAccount()
   }
 }
+
+function saveProfile(): void {
+  profileStore.setProfile({
+    username: username.value,
+    firstname: firstname.value,
+    lastname: lastname.value
+  })
+}
+
 </script>
 
 <style lang="scss" scoped>

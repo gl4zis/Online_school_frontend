@@ -1,4 +1,5 @@
 import {useAuthStore} from "@/stores/authStore";
+import {useProfileStore} from "@/stores/profileStore";
 
 const GATEWAY_ADDRESS = 'http://localhost:8765'
 
@@ -139,6 +140,30 @@ async function getFile(id: number): Promise<IMessageResponse> {
     return <IMessageResponse>await sendStandardRequest('/file/' + id, {})
 }
 
+async function loadAllUserData(): Promise<void> {
+    const account: IAccountData = await getSelfAccount()
+    const profile: IProfile = await getSelfProfile()
+    if (account.status === 200 && profile.status === 200) {
+        let photoStr = ''
+        if (profile.photoId)
+            photoStr = (await getFile(profile.photoId)).message
+
+        useProfileStore().updateProfile({
+            username: account.username,
+            email: account.email,
+            firstname: profile.firstname,
+            lastname: profile.lastname,
+            photoStr: photoStr
+        })
+    } else {
+        logout()
+    }
+}
+
+function logout(): void {
+    useProfileStore().resetData()
+    useAuthStore().resetTokens()
+}
 export default {
     login,
     updateTokens,
@@ -148,5 +173,7 @@ export default {
     getSelfAccount,
     getSelfProfile,
     updateSelfProfile,
-    getFile
+    getFile,
+    loadAllUserData,
+    logout
 }

@@ -1,5 +1,5 @@
 import {defineStore, StoreDefinition} from "pinia";
-import {computed, Ref} from "vue";
+import {ref, Ref, watch} from "vue";
 
 interface IUserData {
     username: string,
@@ -10,21 +10,26 @@ interface IUserData {
 }
 
 export const useProfileStore: StoreDefinition = defineStore('profileStore', () => {
-    const profile: Ref<IUserData | null> = computed((): IUserData | null => {
-        const profileStr: string | null = localStorage.getItem('profile')
-        if (!profileStr)
-            return null
+    const profile: Ref<IUserData | null> = ref(null)
 
-        return JSON.parse(profileStr)
-    })
+    const savedProfile: string | null = localStorage.getItem('profile')
+    if (savedProfile)
+        profile.value = JSON.parse(savedProfile)
 
     function updateProfile(data: IUserData): void {
-        localStorage.setItem('profile', JSON.stringify(data))
+        profile.value = data
     }
 
     function resetData(): void {
-        localStorage.removeItem('profile')
+        profile.value = null
     }
+
+    watch(() => profile.value,
+        (state: IUserData | null): void => {
+        if (state)
+            localStorage.setItem('profile', JSON.stringify(state))
+        else localStorage.removeItem('profile')
+    }, {deep: true})
 
     return {
         profile,
