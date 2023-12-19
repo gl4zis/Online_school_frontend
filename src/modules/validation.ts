@@ -3,6 +3,7 @@ import {ICredentials} from "@/modules/server";
 const USERNAME_REGEX = /^\w{3,20}$/
 const PASSWORD_REGEXES = [/^\S+$/, /\d+/, /[a-z]+/, /[A-Z]+/]
 const NAME_REGEX = /^[\s\wа-яА-Я,.\-']{2,50}$/
+const EMAIL_REGEX = /^\w+@\w+\.\w{2,5}$/
 
 export function isCredentialsValid(credentials: ICredentials): boolean {
     return USERNAME_REGEX.test(credentials.username) &&
@@ -43,4 +44,11 @@ export function nameValidMessage(name: string): string {
     if (!NAME_REGEX.test(name))
         return "It doesn't look like a name"
     return ''
+}
+
+export function emailValidMessage(email: string): string {
+    if (!email || EMAIL_REGEX.test(email))
+        return ''
+    else
+        return 'Invalid email'
 }

@@ -111,7 +111,6 @@ async function checkUsernameUniqueness(): Promise<void> {
   } else {
     usernameIcon.value = ''
     toastApi.noConnection(toast)
-    uniqueCheckId = setTimeout(validateUsername, 10000)
   }
 }
 

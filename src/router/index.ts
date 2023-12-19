@@ -5,6 +5,7 @@ import MainPage from "@/views/MainPage.vue";
 import MyCourses from "@/views/MyCourses.vue";
 import OurTeachers from "@/views/OurTeachers.vue";
 import ContactsPage from "@/views/ContactsPage.vue";
+import ProfileView from "@/views/ProfileView.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -30,6 +31,10 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/contacts',
         component: ContactsPage
+    },
+    {
+        path: '/profile',
+        component: ProfileView
     }
 ]
 
