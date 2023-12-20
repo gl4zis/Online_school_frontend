@@ -167,7 +167,7 @@ async function createProfile(): Promise<void> {
 }
 
 function saveProfile(): void {
-  profileStore.setProfile({
+  profileStore.updateProfile({
     username: username.value,
     firstname: firstname.value,
     lastname: lastname.value
