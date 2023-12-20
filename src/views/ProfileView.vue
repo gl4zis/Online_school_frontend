@@ -35,7 +35,6 @@ import CenterContent from "@/layouts/CenterContent.vue";
 import Card from "primevue/card";
 import BackButton from "@/components/BackButton.vue";
 import Divider from 'primevue/divider';
-import Button from 'primevue/button';
 import {useProfileStore} from "@/stores/profileStore";
 import {storeToRefs} from "pinia";
 import FormInput from "@/components/FormInput.vue";
@@ -87,7 +86,7 @@ async function checkUsernameUniqueness(): Promise<void> {
 .card {
   margin: 5vh 0;
   position: relative;
-  width: 80%;
+  width: 70%;
   text-align: center;
 
   .content {

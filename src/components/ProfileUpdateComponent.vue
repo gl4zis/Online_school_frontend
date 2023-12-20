@@ -1,8 +1,11 @@
 <template>
   <Card class="block">
+    <template #title>
+      <PhotoWithUploader @update="onPhotoUpdate"/>
+    </template>
     <template #content>
+      <Divider/>
       <div class="form">
-        <Image :src="userPhoto || defaultUserIcon" alt="User Icon" width="150"/>
         <FormInput v-model="firstname"
                    :valid-error="firstnameValidation"
                    :disabled="!editing"
@@ -25,38 +28,29 @@
       </div>
     </template>
     <template #footer>
-      <div v-if="!editing" class="footer">
-        <Button label="Edit"
-                severity="help"
-                @click="editing = !editing"/>
-      </div>
-      <div v-else class="footer">
-        <Button label="Cancel"
-                @click="resetData"/>
-        <Button label="Confirm"
-                severity="help"
-                @click="editing = !editing"/>
-      </div>
+      <EditButtonsBlock :editing="editing"
+                        @edit="editing = true"
+                        @cancel="resetData"/>
     </template>
   </Card>
 </template>
 
 <script setup lang="ts">
-import defaultUserIcon from "@/assets/user_icon.jpg";
 import {nameValidMessage} from "@/modules/validation";
-import Button from "primevue/button";
 import FormInput from "@/components/FormInput.vue";
+import Divider from 'primevue/divider';
 import Card from "primevue/card";
-import Image from "primevue/image";
 import {ref, Ref} from "vue";
 import {storeToRefs} from "pinia";
 import {useProfileStore} from "@/stores/profileStore";
 import DateInput from "@/components/DateInput.vue";
+import EditButtonsBlock from "@/components/EditButtonsBlock.vue";
+import PhotoWithUploader, {FileRequest} from "@/components/UserPhotoWithUploader.vue";
 
 const {profile} = storeToRefs(useProfileStore())
 const editing: Ref<boolean> = ref(false)
 
-const userPhoto = ref(profile.value?.photoStr)
+const userPhoto: Ref<string> = ref(profile.value?.photoStr)
 
 const firstname: Ref<string> = ref(profile.value?.firstname)
 const firstnameValidation: Ref<string> = ref('')
@@ -71,7 +65,8 @@ const date: Ref<Date | null> = ref(profile.value?.date)
 const dateValidation: Ref<string> = ref('')
 
 function resetData(): void {
-  editing.value = !editing.value
+  editing.value = false
+
   firstname.value = profile.value?.firstname
   lastname.value = profile.value?.lastname
   middleName.value = profile.value?.middleName
@@ -82,14 +77,13 @@ function resetData(): void {
   lastnameValidation.value = ''
   middleNameValidation.value = ''
 }
+
+function onPhotoUpdate(req: FileRequest) {
+  console.log(req)
+}
 </script>
 
 <style scoped lang="scss">
-.footer {
-  display: flex;
-  justify-content: space-evenly;
-}
-
 .form {
   & > * {
     margin-top: 5px;

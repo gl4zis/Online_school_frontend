@@ -153,6 +153,7 @@ async function loadAllUserData(): Promise<void> {
             email: account.email,
             firstname: profile.firstname,
             lastname: profile.lastname,
+            photoId: profile.photoId,
             photoStr: photoStr
         })
     } else {

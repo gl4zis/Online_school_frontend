@@ -6,6 +6,7 @@ interface IUserData {
     email?: string,
     firstname: string,
     lastname: string,
+    photoId: number,
     photoStr?: string
 }
 
