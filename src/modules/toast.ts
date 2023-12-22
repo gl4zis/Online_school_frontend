@@ -17,7 +17,7 @@ function registered(toast: ToastServiceMethods, username: string): void {
 }
 
 function strangeError(toast: ToastServiceMethods): void {
-    toast.add({severity: 'error', life: 3000, summary: 'Strange error', detail: 'Check console'})
+    toast.add({severity: 'error', life: 3000, summary: 'Something went wrong', detail: 'Try again'})
 }
 
 export default {

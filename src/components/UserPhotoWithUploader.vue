@@ -16,11 +16,10 @@ import defaultUserIcon from "@/assets/user_icon.jpg";
 import Button from 'primevue/button';
 import Image from "primevue/image";
 import FileUpload from "primevue/fileupload";
-import {useProfileStore} from "@/stores/profileStore";
 import {ref, Ref, defineEmits} from "vue";
+import {profileStore} from "@/stores/profileStore";
 
-const profileStore = useProfileStore()
-const photo: Ref<string> = ref(profileStore.profile?.photoStr)
+const photo: Ref<string | undefined> = ref(profileStore.profile?.photoStr)
 const emit = defineEmits(['update'])
 
 interface Photo {

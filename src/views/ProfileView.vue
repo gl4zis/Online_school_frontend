@@ -35,26 +35,24 @@ import CenterContent from "@/layouts/CenterContent.vue";
 import Card from "primevue/card";
 import BackButton from "@/components/BackButton.vue";
 import Divider from 'primevue/divider';
-import {useProfileStore} from "@/stores/profileStore";
-import {storeToRefs} from "pinia";
 import FormInput from "@/components/FormInput.vue";
 import {usernameValidMessage, emailValidMessage} from "@/modules/validation";
 import {Ref, ref} from "vue";
-import serverApi, {IMessageResponse} from "@/modules/server";
+import serverApi from "@/modules/server";
 import toastApi from "@/modules/toast";
 import {useToast} from "primevue/usetoast";
 import ProfileUpdateComponent from "@/components/ProfileUpdateComponent.vue";
+import {profileStore} from "@/stores/profileStore";
+import {MessageResponse} from "@/modules/dtoInterfaces";
 
-const {profile} = storeToRefs(useProfileStore())
 const toast = useToast()
 
-
-const username: Ref<string> = ref(profile.value?.username)
+const username: Ref<string | undefined> = ref(profileStore.profile?.username)
 const usernameValidation: Ref<string> = ref('')
 const usernameIcon: Ref<string> = ref('')
 let uniqueCheckId = 0
 
-const email: Ref<string> = ref(profile.value?.email)
+const email: Ref<string | undefined> = ref(profileStore.profile?.email)
 const emailValidation: Ref<string> = ref('')
 
 function validateUsername(): void {
@@ -65,8 +63,11 @@ function validateUsername(): void {
 }
 
 async function checkUsernameUniqueness(): Promise<void> {
+  if (!username.value)
+    return
+
   usernameIcon.value = 'pi pi-spin pi-spinner'
-  const resp: IMessageResponse = await serverApi.usernameUnique(username.value)
+  const resp: MessageResponse = await serverApi.usernameUnique(username.value)
 
   if (resp.status === 200) {
     if (resp.message === 'true')

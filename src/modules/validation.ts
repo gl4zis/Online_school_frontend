@@ -1,16 +1,16 @@
-import {ICredentials} from "@/modules/server";
+import {Credentials} from "@/modules/dtoInterfaces";
 
 const USERNAME_REGEX = /^\w{3,20}$/
 const PASSWORD_REGEXES = [/^\S+$/, /\d+/, /[a-z]+/, /[A-Z]+/]
 const NAME_REGEX = /^[\s\wа-яА-Я,.\-']{2,50}$/
 const EMAIL_REGEX = /^\w+@\w+\.\w{2,5}$/
 
-export function isCredentialsValid(credentials: ICredentials): boolean {
+export function isCredentialsValid(credentials: Credentials): boolean {
     return USERNAME_REGEX.test(credentials.username) &&
         PASSWORD_REGEXES.every(regex => regex.test(credentials.password))
 }
 
-export function usernameValidMessage(username: string): string {
+export function usernameValidMessage(username: string | undefined): string {
     if (!username)
         return "Shouldn't be empty"
     if (username.length < 3 || username.length > 20)
@@ -36,7 +36,7 @@ export function passwordValidMessage(password: string): string {
     return ''
 }
 
-export function nameValidMessage(name: string): string {
+export function nameValidMessage(name: string | undefined): string {
     if (!name)
         return "Shouldn't be empty"
     if (name.length < 2 || name.length > 50)
@@ -46,9 +46,22 @@ export function nameValidMessage(name: string): string {
     return ''
 }
 
-export function emailValidMessage(email: string): string {
+export function emailValidMessage(email: string | undefined): string {
     if (!email || EMAIL_REGEX.test(email))
         return ''
     else
         return 'Invalid email'
+}
+
+export function birthdateValidMessage(birthdate: Date | undefined): string {
+    const oneYearMillis = 365 * 24 * 60 * 60 * 1000
+    console.log(oneYearMillis)
+
+    if (!birthdate)
+        return ''
+    if (Date.now() - 6 * oneYearMillis > birthdate.getTime())
+        return 'You are too young'
+    if (Date.now() - 100 * oneYearMillis < birthdate.getTime())
+        return "You're 100 years old?)"
+    return ''
 }

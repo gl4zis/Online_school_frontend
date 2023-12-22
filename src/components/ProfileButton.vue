@@ -1,8 +1,8 @@
 <template>
   <Button text class="mr-4 button" @click="action">
-    <template v-if="profile?.username">
+    <template v-if="profileStore.profile?.username">
       <Avatar :image="userIcon || defaultUser" size="large" shape="circle" class="mr-3"/>
-      {{ profile?.username }}
+      {{ profileStore.profile?.username }}
     </template>
     <template v-else>
       Sign In
@@ -14,16 +14,13 @@
 import Button from 'primevue/button';
 import Avatar from 'primevue/avatar';
 import defaultUser from "@/assets/user_icon.jpg";
-import {useProfileStore} from "@/stores/profileStore";
 import router from "@/router";
-import {storeToRefs} from "pinia";
+import {profileStore} from "@/stores/profileStore";
 
-const {profile} = storeToRefs(useProfileStore())
-
-const userIcon: string | undefined = profile.value?.photoStr
+const userIcon: string | undefined = profileStore.profile?.photoStr
 
 function action(): void {
-  if (profile.value?.username)
+  if (profileStore.profile?.username)
     router.push('/profile')
   else
     router.push('/login')

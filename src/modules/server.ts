@@ -1,46 +1,17 @@
-import {useAuthStore} from "@/stores/authStore";
-import {useProfileStore} from "@/stores/profileStore";
+import {ProfileState, profileStore} from "@/stores/profileStore";
+import {authStore} from "@/stores/authStore";
+import {
+    Credentials,
+    MessageResponse,
+    JwtResponse,
+    ProfileResponse,
+    ProfileUpdateRequest,
+    SignUpData
+} from "@/modules/dtoInterfaces";
 
 const GATEWAY_ADDRESS = 'http://localhost:8765'
 
-interface IStatus {
-    status: number
-}
-
-export interface ITokenResponse extends IStatus {
-    access: string,
-    refresh: string,
-    expiredAt: number
-}
-
-export interface ICredentials {
-    username: string,
-    password: string
-}
-
-export interface IProfile extends IStatus {
-    firstname: string,
-    lastname: string,
-    middleName?: string,
-    birthdate?: Date,
-    photoId?: number,
-    subjects?: Array<string>,
-    description?: string
-}
-
-export interface IAccountData extends IStatus {
-    id: number,
-    username: string,
-    email?: string,
-    roles: Array<string>,
-    locked: boolean
-}
-
-export interface IMessageResponse extends IStatus {
-    message: string
-}
-
-async function createDataFromResponse(resp: Response): Promise<object> {
+async function getDataFromResponse(resp: Response): Promise<object> {
     try {
         const data = await resp.json()
         data.status = resp.status
@@ -50,28 +21,28 @@ async function createDataFromResponse(resp: Response): Promise<object> {
     }
 }
 
-async function sendStandardRequest(route: string, options: RequestInit): Promise<object> {
+async function sendStandardRequest(route: string, options?: RequestInit): Promise<object> {
+    if (!options)
+        options = {}
     if (!options.headers)
         options.headers = {}
     Object.assign(options.headers, {'Content-Type': 'application/json'})
 
     try {
         const resp: Response = await fetch(GATEWAY_ADDRESS + route, options)
-        return await createDataFromResponse(resp)
+        return await getDataFromResponse(resp)
     } catch (err) {
         return {status: 503}
     }
 }
 
-async function sendRequestWithToken(route: string, options: RequestInit): Promise<object> {
-    const authStore = useAuthStore()
-
-    if (!authStore.expiredAt) {
+async function sendRequestWithToken(route: string, options?: RequestInit): Promise<object> {
+    if (!authStore.tokens) {
         return { status: 401 }
     }
 
-    if (Date.now() + 5000 > authStore.expiredAt) {
-        const newTokens: ITokenResponse = await updateTokens(authStore.refresh)
+    if (Date.now() + 5000 > authStore.tokens.expiredAt) {
+        const newTokens: JwtResponse = await updateTokens(authStore.tokens.refresh)
         if (newTokens.status !== 200) {
             return { status: 401 }
         }
@@ -79,99 +50,89 @@ async function sendRequestWithToken(route: string, options: RequestInit): Promis
         authStore.setTokens(newTokens)
     }
 
+    if (!options)
+        options = {}
     if (!options.headers)
         options.headers = {}
-    Object.assign(options.headers, {Authorization: 'Bearer ' + authStore.access})
+    Object.assign(options.headers, {Authorization: 'Bearer ' + authStore.tokens.access})
 
     return await sendStandardRequest(route, options)
 }
 
 // 400 (Validation) 401 (BadCredentials)
-async function login(credentials: ICredentials): Promise<ITokenResponse> {
+async function login(credentials: Credentials): Promise<JwtResponse> {
     const options: RequestInit = {method: 'POST', body: JSON.stringify(credentials)}
 
-    return <ITokenResponse>await sendStandardRequest('/auth/login', options)
+    return <JwtResponse>await sendStandardRequest('/user/login', options)
 }
 
 // 403 (InvalidToken)
-async function updateTokens(refresh: string): Promise<ITokenResponse> {
+async function updateTokens(refresh: string): Promise<JwtResponse> {
     const options: RequestInit = {method: 'POST', body: JSON.stringify({refresh: refresh})}
 
-    return <ITokenResponse>await sendStandardRequest('/auth/tokens', options)
+    return <JwtResponse>await sendStandardRequest('/user/tokens', options)
 }
 
 // 400 (Validation)
-async function usernameUnique(username: string): Promise<IMessageResponse> {
-    return <IMessageResponse>await sendStandardRequest('/auth/unique/' + username, {})
+async function usernameUnique(username: string): Promise<MessageResponse> {
+    return <MessageResponse>await sendStandardRequest('/user/unique/' + username)
 }
 
 // 400 (Validation, UsernameIsTaken)
-async function regStudentAccount(credentials: ICredentials): Promise<ITokenResponse> {
+async function regStudentAccount(credentials: SignUpData): Promise<JwtResponse> {
     const options: RequestInit = {method: 'POST', body: JSON.stringify(credentials)}
 
-    return <ITokenResponse>await sendStandardRequest('/auth/signup', options)
+    return <JwtResponse>await sendStandardRequest('/user/signup', options)
 }
 
 // 403 (InvalidToken)
-async function deleteSelfAccount(): Promise<IMessageResponse> {
+async function deleteSelfAccount(): Promise<MessageResponse> {
     const options: RequestInit = {method: 'DELETE'}
 
-    return <IMessageResponse>await sendRequestWithToken('/auth', options)
-}
-
-// 403 (InvalidToken), 404 (AccountNotFound)
-async function getSelfAccount(): Promise<IAccountData> {
-    return <IAccountData>await sendRequestWithToken('/auth', {})
+    return <MessageResponse>await sendRequestWithToken('/user', options)
 }
 
 // 403 (InvalidToken), 404 (ProfileNotFound)
-async function getSelfProfile(): Promise<IProfile> {
-    return <IProfile>await sendRequestWithToken('/profile', {})
+async function getSelfProfile(): Promise<ProfileResponse> {
+    return <ProfileResponse>await sendRequestWithToken('/user/profile')
 }
 
 // 400 (Validation), 403 (InvalidToken)
-async function updateSelfProfile(profile: IProfile): Promise<IMessageResponse> {
+async function updateSelfProfile(profile: ProfileUpdateRequest): Promise<MessageResponse> {
     const options: RequestInit = {method: 'PUT', body: JSON.stringify(profile)}
 
-    return <IMessageResponse>await sendRequestWithToken('/profile', options)
+    return <MessageResponse>await sendRequestWithToken('/user/profile', options)
 }
 
-async function getFile(id: number): Promise<IMessageResponse> {
-    return <IMessageResponse>await sendStandardRequest('/file/' + id, {})
+async function getFile(id: number): Promise<MessageResponse> {
+    return <MessageResponse>await sendStandardRequest('/file/' + id)
 }
 
 async function loadAllUserData(): Promise<void> {
-    const account: IAccountData = await getSelfAccount()
-    const profile: IProfile = await getSelfProfile()
-    if (account.status === 200 && profile.status === 200) {
-        let photoStr = ''
-        if (profile.photoId)
-            photoStr = (await getFile(profile.photoId)).message
-
-        useProfileStore().updateProfile({
-            username: account.username,
-            email: account.email,
-            firstname: profile.firstname,
-            lastname: profile.lastname,
-            photoId: profile.photoId,
-            photoStr: photoStr
-        })
-    } else {
+    const profile: ProfileResponse = await getSelfProfile()
+    if (profile.status !== 200) {
+        console.error(profile)
         logout()
+        return
     }
+
+    if (profile.photoId)
+        Object.assign(profile, {photoStr: (await getFile(profile.photoId)).message})
+
+    profileStore.updateProfile(<ProfileState> profile)
 }
 
 function logout(): void {
-    useProfileStore().resetData()
-    useAuthStore().resetTokens()
+    profileStore.resetProfile()
+    authStore.resetTokens()
 }
+
 export default {
     login,
     updateTokens,
     usernameUnique,
     regStudentAccount,
     deleteSelfAccount,
-    getSelfAccount,
     getSelfProfile,
     updateSelfProfile,
     getFile,

@@ -43,27 +43,27 @@ import {ref} from "vue";
 import MyLink from "@/components/MyLink.vue";
 import BackButton from "@/components/BackButton.vue";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
-import serverApi, {ICredentials, ITokenResponse} from "@/modules/server";
+import serverApi from "@/modules/server";
 import toastApi from "@/modules/toast"
-import {useAuthStore} from "@/stores/authStore"
 import {useToast} from "primevue/usetoast";
 import router from "@/router";
 import FormInput from "@/components/FormInput.vue";
 import CenterContent from "@/layouts/CenterContent.vue";
 import {isCredentialsValid} from "@/modules/validation";
+import {authStore} from "@/stores/authStore";
+import {Credentials, JwtResponse} from "@/modules/dtoInterfaces";
 
 const loading = ref(false)
 
 const username = ref('')
 const password = ref('')
 
-const authStore = useAuthStore()
 const toast = useToast()
 
 async function signIn(): Promise<void> {
   serverApi.logout()
 
-  const credentials: ICredentials = {
+  const credentials: Credentials = {
     username: username.value,
     password: password.value
   }
@@ -74,7 +74,7 @@ async function signIn(): Promise<void> {
   }
 
   loading.value = true
-  const tokens: ITokenResponse = await serverApi.login(credentials)
+  const tokens: JwtResponse = await serverApi.login(credentials)
 
   if (tokens.status === 200) {
     authStore.setTokens(tokens)

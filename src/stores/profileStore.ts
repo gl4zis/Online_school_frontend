@@ -1,40 +1,40 @@
-import {defineStore, StoreDefinition} from "pinia";
-import {ref, Ref, watch} from "vue";
+import {Profile} from "@/modules/dtoInterfaces";
 
-interface IUserData {
-    username: string,
-    email?: string,
-    firstname: string,
-    lastname: string,
-    photoId: number,
+export interface ProfileState extends Profile {
     photoStr?: string
 }
 
-export const useProfileStore: StoreDefinition = defineStore('profileStore', () => {
-    const profile: Ref<IUserData | null> = ref(null)
+interface ProfileStore {
+    profile?: ProfileState,
+    updateProfile: (profile: ProfileState) => void,
+    resetProfile: () => void
+}
 
+export const profileStore: ProfileStore = {
+    profile: getState(),
+
+    updateProfile(profile: ProfileState): void {
+        this.profile = profile
+        saveState(this.profile)
+    },
+
+    resetProfile(): void {
+        this.profile = undefined
+        saveState(this.profile)
+    }
+}
+
+function getState(): ProfileState | undefined {
     const savedProfile: string | null = localStorage.getItem('profile')
     if (savedProfile)
-        profile.value = JSON.parse(savedProfile)
+        return JSON.parse(savedProfile)
 
-    function updateProfile(data: IUserData): void {
-        profile.value = data
-    }
+    return undefined
+}
 
-    function resetData(): void {
-        profile.value = null
-    }
-
-    watch(() => profile.value,
-        (state: IUserData | null): void => {
-        if (state)
-            localStorage.setItem('profile', JSON.stringify(state))
-        else localStorage.removeItem('profile')
-    }, {deep: true})
-
-    return {
-        profile,
-        updateProfile,
-        resetData
-    }
-})
+function saveState(profile: ProfileState | undefined): void {
+    if (profile)
+        localStorage.setItem('profile', JSON.stringify(profile))
+    else
+        localStorage.removeItem('profile')
+}

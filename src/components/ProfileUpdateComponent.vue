@@ -22,60 +22,77 @@
                    label="Middle Name"
                    @input="middleNameValidation = nameValidMessage(middleName)"/>
         <DateInput :disabled="!editing"
-                   :min-date="new Date()"
+                   :max-date="new Date()"
                    v-model="date"
-                   :valid-error="dateValidation"/>
+                   :valid-error="dateValidation"
+                   @input="dateValidation = birthdateValidMessage(date)"/>
       </div>
     </template>
     <template #footer>
       <EditButtonsBlock :editing="editing"
                         @edit="editing = true"
-                        @cancel="resetData"/>
+                        @cancel="resetData"
+                        @confirm="updateProfile"/>
     </template>
   </Card>
 </template>
 
 <script setup lang="ts">
-import {nameValidMessage} from "@/modules/validation";
+import {birthdateValidMessage, nameValidMessage} from "@/modules/validation";
 import FormInput from "@/components/FormInput.vue";
 import Divider from 'primevue/divider';
 import Card from "primevue/card";
 import {ref, Ref} from "vue";
-import {storeToRefs} from "pinia";
-import {useProfileStore} from "@/stores/profileStore";
 import DateInput from "@/components/DateInput.vue";
 import EditButtonsBlock from "@/components/EditButtonsBlock.vue";
 import PhotoWithUploader, {FileRequest} from "@/components/UserPhotoWithUploader.vue";
+import {useToast} from "primevue/usetoast";
+import toastApi from '@/modules/toast'
+import {profileStore} from "@/stores/profileStore";
 
-const {profile} = storeToRefs(useProfileStore())
+const toast = useToast()
 const editing: Ref<boolean> = ref(false)
 
-const userPhoto: Ref<string> = ref(profile.value?.photoStr)
+const userPhoto: Ref<string | undefined> = ref(profileStore.profile?.photoStr)
 
-const firstname: Ref<string> = ref(profile.value?.firstname)
+const firstname: Ref<string | undefined> = ref(profileStore.profile?.firstname)
 const firstnameValidation: Ref<string> = ref('')
 
-const lastname: Ref<string> = ref(profile.value?.lastname)
+const lastname: Ref<string | undefined> = ref(profileStore.profile?.lastname)
 const lastnameValidation: Ref<string> = ref('')
 
-const middleName: Ref<string> = ref(profile.value?.middleName)
+const middleName: Ref<string | undefined> = ref(profileStore.profile?.middleName)
 const middleNameValidation: Ref<string> = ref('')
 
-const date: Ref<Date | null> = ref(profile.value?.date)
+const date: Ref<Date | undefined> = ref(profileStore.profile?.birthdate)
 const dateValidation: Ref<string> = ref('')
 
 function resetData(): void {
   editing.value = false
 
-  firstname.value = profile.value?.firstname
-  lastname.value = profile.value?.lastname
-  middleName.value = profile.value?.middleName
-  date.value = profile.value?.date
-  userPhoto.value = profile.value?.photoStr
+  firstname.value = profileStore.profile?.firstname
+  lastname.value = profileStore.profile?.lastname
+  middleName.value = profileStore.profile?.middleName
+  date.value = profileStore.profile?.birthdate
+  userPhoto.value = profileStore.profile?.photoStr
 
   firstnameValidation.value = ''
   lastnameValidation.value = ''
   middleNameValidation.value = ''
+}
+
+function isFormValid(): boolean {
+  return !(firstnameValidation.value + lastnameValidation.value +
+      middleNameValidation.value + dateValidation.value)
+}
+
+async function updateProfile(): Promise<void> {
+  if (!isFormValid()) {
+    toastApi.validationError(toast)
+    return
+  }
+
+  return
 }
 
 function onPhotoUpdate(req: FileRequest) {

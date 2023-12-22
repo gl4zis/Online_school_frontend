@@ -63,19 +63,17 @@ import {ref} from "vue";
 import FormInput from "@/components/FormInput.vue";
 import CenterContent from "@/layouts/CenterContent.vue";
 import {nameValidMessage, passwordValidMessage, usernameValidMessage} from "@/modules/validation";
-import serverApi, {IMessageResponse, ITokenResponse} from '@/modules/server'
+import serverApi from '@/modules/server'
 import toastApi from '@/modules/toast'
 import {useToast} from "primevue/usetoast";
-import {useAuthStore} from "@/stores/authStore";
-import router from "@/router";
-import {useProfileStore} from "@/stores/profileStore";
+import {profileStore} from "@/stores/profileStore";
+import {authStore} from "@/stores/authStore";
+import {MessageResponse} from "@/modules/dtoInterfaces";
 
 const loading = ref(false)
 let uniqueCheckId = 0
 
 const toast = useToast()
-const authStore = useAuthStore()
-const profileStore = useProfileStore()
 
 const firstname = ref('')
 const firstnameValidation = ref('')
@@ -99,7 +97,7 @@ function validateUsername(): void {
 
 async function checkUsernameUniqueness(): Promise<void> {
   usernameIcon.value = 'pi pi-spin pi-spinner'
-  const resp: IMessageResponse = await serverApi.usernameUnique(username.value)
+  const resp: MessageResponse = await serverApi.usernameUnique(username.value)
 
   if (resp.status === 200) {
     if (resp.message === 'true')
@@ -128,50 +126,34 @@ async function signUp(): Promise<void> {
   }
 
   loading.value = true
-  const tokens: ITokenResponse = await serverApi.regStudentAccount({
+
+  const resp = await serverApi.regStudentAccount({
     username: username.value,
-    password: password.value
-  })
-
-  if (tokens.status === 200) {
-    authStore.setTokens(tokens)
-    await createProfile()
-  } else if (tokens.status === 400) {
-    toastApi.strangeError(toast)
-    console.log('Response:', tokens)
-  } else
-    toastApi.noConnection(toast)
-
-  loading.value = false
-}
-
-async function createProfile(): Promise<void> {
-  const resp: IMessageResponse = await serverApi.updateSelfProfile({
-    firstname: firstname.value,
-    lastname: lastname.value,
-    status: 0
-  })
-
-  if (resp.status === 200) {
-    toastApi.registered(toast, username.value)
-    saveProfile()
-    await router.push('/')
-  } else if (resp.status === 400 || resp.status === 403) {
-    toastApi.validationError(toast)
-    validateUsername()
-    await serverApi.deleteSelfAccount()
-  } else {
-    toastApi.noConnection(toast)
-    await serverApi.deleteSelfAccount()
-  }
-}
-
-function saveProfile(): void {
-  profileStore.updateProfile({
-    username: username.value,
+    password: password.value,
     firstname: firstname.value,
     lastname: lastname.value
   })
+
+  if (resp.status === 200) {
+    authStore.setTokens(resp)
+
+    const profile = await serverApi.getSelfProfile()
+    profileStore.updateProfile({
+      id: profile.id,
+      username: username.value,
+      firstname: firstname.value,
+      lastname: lastname.value,
+      role: profile.role,
+      locked: profile.locked
+    })
+  } else if (resp.status === 503)
+    toastApi.noConnection(toast)
+  else {
+    toastApi.strangeError(toast)
+    console.error(resp)
+  }
+
+  loading.value = false
 }
 
 </script>
