@@ -1,4 +1,4 @@
-import {ProfileState, profileStore} from "@/stores/profileStore";
+import {profileStore} from "@/stores/profileStore";
 import {authStore} from "@/stores/authStore";
 import {
     Credentials,
@@ -112,19 +112,13 @@ async function loadAllUserData(): Promise<void> {
     const profile: ProfileResponse = await getSelfProfile()
     if (profile.status !== 200) {
         console.error(profile)
-        logout()
         return
     }
 
     if (profile.photoId)
         Object.assign(profile, {photoStr: (await getFile(profile.photoId)).message})
 
-    profileStore.updateProfile(<ProfileState> profile)
-}
-
-function logout(): void {
-    profileStore.resetProfile()
-    authStore.resetTokens()
+    profileStore.updateProfile(profile)
 }
 
 export default {
@@ -136,6 +130,5 @@ export default {
     getSelfProfile,
     updateSelfProfile,
     getFile,
-    loadAllUserData,
-    logout
+    loadAllUserData
 }

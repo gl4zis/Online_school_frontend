@@ -61,8 +61,6 @@ const password = ref('')
 const toast = useToast()
 
 async function signIn(): Promise<void> {
-  serverApi.logout()
-
   const credentials: Credentials = {
     username: username.value,
     password: password.value

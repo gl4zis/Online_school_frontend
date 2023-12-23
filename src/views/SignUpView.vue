@@ -113,13 +113,16 @@ async function checkUsernameUniqueness(): Promise<void> {
 }
 
 function isFormValid(): boolean {
+  validateUsername()
+  passwordValidation.value = passwordValidMessage(password.value)
+  firstnameValidation.value = nameValidMessage(firstname.value)
+  lastnameValidation.value = nameValidMessage(lastname.value)
+
   return !(firstnameValidation.value + lastnameValidation.value +
     usernameValidation.value + passwordValidation.value)
 }
 
 async function signUp(): Promise<void> {
-  serverApi.logout()
-
   if (!isFormValid()) {
     toastApi.validationError(toast)
     return

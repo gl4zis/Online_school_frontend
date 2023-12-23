@@ -6,15 +6,19 @@ import MyCourses from "@/views/MyCourses.vue";
 import OurTeachers from "@/views/OurTeachers.vue";
 import ContactsPage from "@/views/ContactsPage.vue";
 import ProfileView from "@/views/ProfileView.vue";
+import {profileStore} from "@/stores/profileStore";
+import {authStore} from "@/stores/authStore";
 
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/login',
-        component: Login
+        component: Login,
+        beforeEnter: () => !authStore.tokens
     },
     {
         path: '/sign-up',
-        component: SignUp
+        component: SignUp,
+        beforeEnter: () => !authStore.tokens
     },
     {
         path: '/',
@@ -34,7 +38,8 @@ const routes: Array<RouteRecordRaw> = [
     },
     {
         path: '/profile',
-        component: ProfileView
+        component: ProfileView,
+        beforeEnter: () => Boolean(profileStore.profile)
     }
 ]
 

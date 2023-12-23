@@ -3,6 +3,7 @@
     <Card class="card">
       <template #header>
         <BackButton/>
+        <LogoutButton/>
       </template>
       <template #title>
         <h2>Your Profile</h2>
@@ -44,6 +45,7 @@ import {useToast} from "primevue/usetoast";
 import ProfileUpdateComponent from "@/components/ProfileUpdateComponent.vue";
 import {profileStore} from "@/stores/profileStore";
 import {MessageResponse} from "@/modules/dtoInterfaces";
+import LogoutButton from "@/components/LogoutButton.vue";
 
 const toast = useToast()
 
