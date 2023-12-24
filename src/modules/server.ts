@@ -75,6 +75,10 @@ async function updateTokens(refresh: string): Promise<JwtResponse> {
 
 // 400 (Validation)
 async function usernameUnique(username: string): Promise<MessageResponse> {
+    const resp = <MessageResponse>await sendRequestWithToken('/user/unique/' + username)
+    if (resp.status === 200)
+        return resp
+
     return <MessageResponse>await sendStandardRequest('/user/unique/' + username)
 }
 

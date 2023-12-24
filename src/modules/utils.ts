@@ -2,9 +2,15 @@ export function dateToString(date: Date | undefined): string | undefined {
     if (!date)
         return undefined
 
-    const day = date.getDate()
-    const month = date.getMonth()
-    const year = date.getFullYear()
+    let day = date.getDate().toString()
+    let month = (date.getMonth() + 1).toString()
+    const year = date.getFullYear().toString()
 
-    return `${year}-${month+1}-${day}`
+    if (Number(day) < 10 && Number(day) > 0)
+        day = '0' + day
+
+    if (Number(month) < 10 && Number(month) > 0)
+        month = '0' + month
+
+    return `${year}-${month}-${day}`
 }
