@@ -69,7 +69,7 @@ function removeConfirm(): void {
 .card {
   margin: 5vh 0;
   position: relative;
-  width: 70%;
+  width: 800px;
   text-align: center;
 
   .logout {

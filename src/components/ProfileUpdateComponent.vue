@@ -1,9 +1,7 @@
 <template>
   <Card class="block">
-    <template #title>
-      <PhotoWithUploader @update="onPhotoUpdate"/>
-    </template>
     <template #content>
+      <PhotoWithUploader @update="onPhotoUpdate"/>
       <Divider/>
       <div class="form">
         <FormInput v-model="firstname"
@@ -113,7 +111,9 @@ async function updateProfile(): Promise<void> {
 
   const res = await serverApi.updateSelfProfile(updatedProfile)
 
-  if (res.status !== 200)
+  if (res.status === 503)
+    toastApi.noConnection(toast)
+  else if (res.status !== 200)
     toastApi.strangeError(toast)
   else {
     profileStore.updateProfile(updatedProfile)

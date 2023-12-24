@@ -6,7 +6,7 @@ import {
     JwtResponse,
     ProfileResponse,
     ProfileUpdateRequest,
-    SignUpData
+    SignUpData, Passwords, Status
 } from "@/modules/dtoInterfaces";
 
 const GATEWAY_ADDRESS = 'http://localhost:8765'
@@ -112,6 +112,12 @@ async function getFile(id: number): Promise<MessageResponse> {
     return <MessageResponse>await sendStandardRequest('/file/' + id)
 }
 
+async function changePassword(passwords: Passwords): Promise<Status> {
+    const options: RequestInit = {method: 'POST', body: JSON.stringify(passwords)}
+
+    return <Status>await sendRequestWithToken('/user/passwords', options)
+}
+
 async function loadAllUserData(): Promise<void> {
     const profile: ProfileResponse = await getSelfProfile()
     if (profile.status !== 200) {
@@ -134,5 +140,6 @@ export default {
     getSelfProfile,
     updateSelfProfile,
     getFile,
-    loadAllUserData
+    loadAllUserData,
+    changePassword
 }

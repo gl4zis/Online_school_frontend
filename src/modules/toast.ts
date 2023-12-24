@@ -20,10 +20,15 @@ function strangeError(toast: ToastServiceMethods): void {
     toast.add({severity: 'error', life: 3000, summary: 'Something went wrong', detail: 'Try again'})
 }
 
+function success(toast: ToastServiceMethods, message: string): void {
+    toast.add({severity: 'success', life: 3000, summary: 'Success', detail: message})
+}
+
 export default {
     noConnection,
     validationError,
     invalidCredentials,
     registered,
-    strangeError
+    strangeError,
+    success
 }

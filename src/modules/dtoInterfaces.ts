@@ -39,3 +39,8 @@ export interface Profile extends ProfileUpdateRequest {
 }
 
 export interface ProfileResponse extends Profile, Status {}
+
+export interface Passwords {
+    oldPassword: string,
+    newPassword: string
+}
