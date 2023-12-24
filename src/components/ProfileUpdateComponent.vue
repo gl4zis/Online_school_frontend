@@ -10,22 +10,23 @@
                    :valid-error="firstnameValidation"
                    :disabled="!editing"
                    label="Firstname"
-                   @input="firstnameValidation = nameValidMessage(firstname)"/>
+                   @input="firstnameValidation = notNullNameValidMessage(firstname)"/>
         <FormInput v-model="lastname"
                    :valid-error="lastnameValidation"
                    :disabled="!editing"
                    label="Lastname"
-                   @input="lastnameValidation = nameValidMessage(lastname)"/>
+                   @input="lastnameValidation = notNullNameValidMessage(lastname)"/>
         <FormInput v-model="middleName"
                    :valid-error="middleNameValidation"
                    :disabled="!editing"
                    label="Middle Name"
                    @input="middleNameValidation = nameValidMessage(middleName)"/>
-        <DateInput :disabled="!editing"
-                   :max-date="new Date()"
-                   v-model="date"
-                   :valid-error="dateValidation"
-                   @input="dateValidation = birthdateValidMessage(date)"/>
+        <div class="p-float-label">
+          <Calendar v-model="birthdate"
+                    :max-date="new Date()"
+                    :disabled="!editing" date-format="yy-mm-dd"/>
+          <label>Birthdate</label>
+        </div>
       </div>
     </template>
     <template #footer>
@@ -38,17 +39,20 @@
 </template>
 
 <script setup lang="ts">
-import {birthdateValidMessage, nameValidMessage} from "@/modules/validation";
+import {nameValidMessage, notNullNameValidMessage} from "@/modules/validation";
 import FormInput from "@/components/FormInput.vue";
 import Divider from 'primevue/divider';
 import Card from "primevue/card";
 import {ref, Ref} from "vue";
-import DateInput from "@/components/DateInput.vue";
 import EditButtonsBlock from "@/components/EditButtonsBlock.vue";
 import PhotoWithUploader, {FileRequest} from "@/components/UserPhotoWithUploader.vue";
 import {useToast} from "primevue/usetoast";
 import toastApi from '@/modules/toast'
 import {profileStore} from "@/stores/profileStore";
+import serverApi from "@/modules/server";
+import router from "@/router";
+import Calendar from "primevue/calendar";
+import {dateToString} from "@/modules/utils";
 
 const toast = useToast()
 const editing: Ref<boolean> = ref(false)
@@ -64,8 +68,9 @@ const lastnameValidation: Ref<string> = ref('')
 const middleName: Ref<string | undefined> = ref(profileStore.profile?.middleName)
 const middleNameValidation: Ref<string> = ref('')
 
-const date: Ref<Date | undefined> = ref(profileStore.profile?.birthdate)
-const dateValidation: Ref<string> = ref('')
+const birthdate: Ref<Date | undefined> = ref(undefined)
+if (profileStore.profile?.birthdate)
+  birthdate.value = new Date(profileStore.profile?.birthdate)
 
 function resetData(): void {
   editing.value = false
@@ -73,7 +78,9 @@ function resetData(): void {
   firstname.value = profileStore.profile?.firstname
   lastname.value = profileStore.profile?.lastname
   middleName.value = profileStore.profile?.middleName
-  date.value = profileStore.profile?.birthdate
+  if (profileStore.profile?.birthdate)
+    birthdate.value = new Date(profileStore.profile?.birthdate)
+  else birthdate.value = undefined
   userPhoto.value = profileStore.profile?.photoStr
 
   firstnameValidation.value = ''
@@ -83,16 +90,35 @@ function resetData(): void {
 
 function isFormValid(): boolean {
   return !(firstnameValidation.value + lastnameValidation.value +
-      middleNameValidation.value + dateValidation.value)
+      middleNameValidation.value)
 }
 
 async function updateProfile(): Promise<void> {
+  if (!profileStore.profile) {
+    toastApi.strangeError(toast)
+    await router.push('/')
+    return
+  }
+
   if (!isFormValid()) {
     toastApi.validationError(toast)
     return
   }
 
-  return
+  const updatedProfile = profileStore.profile
+  updatedProfile.firstname = firstname.value || ''
+  updatedProfile.lastname = lastname.value || ''
+  updatedProfile.middleName = middleName.value || undefined
+  updatedProfile.birthdate = dateToString(birthdate.value)
+
+  const res = await serverApi.updateSelfProfile(updatedProfile)
+
+  if (res.status !== 200)
+    toastApi.strangeError(toast)
+  else {
+    profileStore.updateProfile(updatedProfile)
+    editing.value = false
+  }
 }
 
 function onPhotoUpdate(req: FileRequest) {

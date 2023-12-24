@@ -28,7 +28,7 @@ export interface ProfileUpdateRequest {
     firstname: string,
     lastname: string,
     middleName?: string,
-    birthdate?: Date,
+    birthdate?: string,
     photoId?: number
 }
 

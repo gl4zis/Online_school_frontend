@@ -33,12 +33,12 @@
                      :disabled="loading"
                      :valid-error="firstnameValidation"
                      label="Firstname"
-                     @input="firstnameValidation = nameValidMessage(firstname)"/>
+                     @input="firstnameValidation = notNullNameValidMessage(firstname)"/>
           <FormInput v-model="lastname"
                      :disabled="loading"
                      :valid-error="lastnameValidation"
                      label="Lastname"
-                     @input="lastnameValidation = nameValidMessage(lastname)"/>
+                     @input="lastnameValidation = notNullNameValidMessage(lastname)"/>
         </div>
       </template>
       <template #footer>
@@ -62,7 +62,12 @@ import Button from "primevue/button";
 import {ref} from "vue";
 import FormInput from "@/components/FormInput.vue";
 import CenterContent from "@/layouts/CenterContent.vue";
-import {nameValidMessage, passwordValidMessage, usernameValidMessage} from "@/modules/validation";
+import {
+  nameValidMessage,
+  notNullNameValidMessage,
+  passwordValidMessage,
+  usernameValidMessage
+} from "@/modules/validation";
 import serverApi from '@/modules/server'
 import toastApi from '@/modules/toast'
 import {useToast} from "primevue/usetoast";

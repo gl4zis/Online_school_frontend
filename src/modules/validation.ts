@@ -38,7 +38,7 @@ export function passwordValidMessage(password: string): string {
 
 export function nameValidMessage(name: string | undefined): string {
     if (!name)
-        return "Shouldn't be empty"
+        return ''
     if (name.length < 2 || name.length > 50)
         return 'Length should be between 2 and 50'
     if (!NAME_REGEX.test(name))
@@ -46,22 +46,16 @@ export function nameValidMessage(name: string | undefined): string {
     return ''
 }
 
+export function notNullNameValidMessage(name: string | undefined): string {
+    if (!name)
+        return "Shouldn't be empty"
+
+    return nameValidMessage(name)
+}
+
 export function emailValidMessage(email: string | undefined): string {
     if (!email || EMAIL_REGEX.test(email))
         return ''
     else
         return 'Invalid email'
-}
-
-export function birthdateValidMessage(birthdate: Date | undefined): string {
-    const oneYearMillis = 365 * 24 * 60 * 60 * 1000
-    console.log(oneYearMillis)
-
-    if (!birthdate)
-        return ''
-    if (Date.now() - 6 * oneYearMillis > birthdate.getTime())
-        return 'You are too young'
-    if (Date.now() - 100 * oneYearMillis < birthdate.getTime())
-        return "You're 100 years old?)"
-    return ''
 }
