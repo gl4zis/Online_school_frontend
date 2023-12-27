@@ -20,22 +20,30 @@ import defaultUserIcon from "@/assets/user_icon.jpg";
 import Button from 'primevue/button';
 import Image from "primevue/image";
 import FileUpload from "primevue/fileupload";
-import {ref, Ref, defineEmits} from "vue";
+import {ref, Ref} from "vue";
 import {profileStore} from "@/stores/profileStore";
 import 'vue-advanced-cropper/dist/style.css';
 import ImageCropper from "@/components/ImageCropper.vue";
 import {FileRequest} from "@/modules/dtoInterfaces";
+import serverApi from "@/modules/server";
+import toastApi from "@/modules/toast";
+import {useToast} from "primevue/usetoast";
 
 const photo: Ref<string> = ref(profileStore.profile?.photoStr || '')
 const photoName: Ref<string> = ref('')
 const photoType: Ref<string> = ref('')
 const cropping: Ref<boolean> = ref(false)
-const emit = defineEmits(['update', 'remove'])
+
+const toast = useToast()
 
 interface Photo {
   objectURL: string,
   name: string,
   type: string
+}
+
+interface FileBase64 {
+  base64: string
 }
 
 async function photoUpdate({files}: any): Promise<void> {
@@ -52,8 +60,9 @@ async function photoUpdate({files}: any): Promise<void> {
   }
 }
 
-function sendPhoto({base64}: any): void {
+async function sendPhoto({base64}: FileBase64): Promise<void> {
   cropping.value = false
+  await resetPhoto()
   photo.value = base64
 
   const req: FileRequest = {
@@ -62,12 +71,67 @@ function sendPhoto({base64}: any): void {
     contentType: photoType.value
   }
 
-  emit('update', req)
+  let resp = await serverApi.createFile(req)
+
+  if (resp.status === 503) {
+    toastApi.noConnection(toast)
+    return
+  } else if (resp.status !== 200) {
+    toastApi.strangeError(toast)
+    return
+  }
+
+  if (!profileStore.profile) {
+    toastApi.strangeError(toast)
+    return
+  }
+
+  const fileId = Number(resp.message)
+  const updatedProfile = profileStore.profile
+  updatedProfile.photoStr = req.base64
+  updatedProfile.photoId = fileId
+  resp = await serverApi.updateSelfProfile(updatedProfile)
+
+  if (resp.status === 200) {
+    profileStore.updateProfile(updatedProfile)
+    toastApi.success(toast, 'Photo was updated')
+  } else if (resp.status === 503)
+    toastApi.noConnection(toast)
+  else
+    toastApi.strangeError(toast)
 }
 
-function resetPhoto(): void {
+async function resetPhoto(): Promise<void> {
+  if (!photo.value)
+    return
+
   photo.value = ''
-  emit('remove')
+
+  if (!profileStore.profile || !profileStore.profile.photoId)
+    return
+
+  let resp = await serverApi.removeFile(profileStore.profile.photoId)
+
+  if (resp.status === 503) {
+    toastApi.noConnection(toast)
+    return
+  } else if (resp.status !== 200) {
+    toastApi.strangeError(toast)
+    return
+  }
+
+  const updatedProfile = profileStore.profile
+  updatedProfile.photoStr = undefined
+  updatedProfile.photoId = undefined
+  resp = await serverApi.updateSelfProfile(updatedProfile)
+
+  if (resp.status === 503)
+    toastApi.noConnection(toast)
+  else if (resp.status == 200) {
+    toastApi.success(toast, 'Photo was removed')
+    profileStore.updateProfile(updatedProfile)
+  } else
+    toastApi.strangeError(toast)
 }
 </script>
 
