@@ -24,6 +24,7 @@ import {ref, Ref, defineEmits} from "vue";
 import {profileStore} from "@/stores/profileStore";
 import 'vue-advanced-cropper/dist/style.css';
 import ImageCropper from "@/components/ImageCropper.vue";
+import {FileRequest} from "@/modules/dtoInterfaces";
 
 const photo: Ref<string> = ref(profileStore.profile?.photoStr || '')
 const photoName: Ref<string> = ref('')
@@ -33,12 +34,6 @@ const emit = defineEmits(['update', 'remove'])
 
 interface Photo {
   objectURL: string,
-  name: string,
-  type: string
-}
-
-export interface FileRequest {
-  base64: string,
   name: string,
   type: string
 }
@@ -64,7 +59,7 @@ function sendPhoto({base64}: any): void {
   const req: FileRequest = {
     base64: photo.value,
     name: photoName.value,
-    type: photoType.value
+    contentType: photoType.value
   }
 
   emit('update', req)

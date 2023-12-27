@@ -44,3 +44,9 @@ export interface Passwords {
     oldPassword: string,
     newPassword: string
 }
+
+export interface FileRequest {
+    base64: string,
+    name: string,
+    contentType: string
+}

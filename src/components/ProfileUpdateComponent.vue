@@ -43,7 +43,7 @@ import Divider from 'primevue/divider';
 import Card from "primevue/card";
 import {ref, Ref} from "vue";
 import EditButtonsBlock from "@/components/EditButtonsBlock.vue";
-import PhotoWithUploader, {FileRequest} from "@/components/UserPhotoWithUploader.vue";
+import PhotoWithUploader from "@/components/UserPhotoWithUploader.vue";
 import {useToast} from "primevue/usetoast";
 import toastApi from '@/modules/toast'
 import {profileStore} from "@/stores/profileStore";
@@ -51,6 +51,7 @@ import serverApi from "@/modules/server";
 import router from "@/router";
 import Calendar from "primevue/calendar";
 import {dateToString} from "@/modules/utils";
+import {FileRequest} from "@/modules/dtoInterfaces";
 
 const toast = useToast()
 const editing: Ref<boolean> = ref(false)
@@ -121,12 +122,46 @@ async function updateProfile(): Promise<void> {
   }
 }
 
-function updatePhoto(req: FileRequest): void {
-  console.log(req)
+async function updatePhoto(req: FileRequest): Promise<void> {
+  let resp = await serverApi.createFile(req)
+
+  if (resp.status !== 200) {
+    toastApi.strangeError(toast)
+    return
+  }
+
+  if (!profileStore.profile) {
+    toastApi.strangeError(toast)
+    return
+  }
+
+  const fileId = Number(resp.message)
+  const updatedProfile = profileStore.profile
+  updatedProfile.photoStr = req.base64
+  updatedProfile.photoId = fileId
+  resp = await serverApi.updateSelfProfile(updatedProfile)
+
+  if (resp.status === 200) {
+    profileStore.updateProfile(updatedProfile)
+    toastApi.success(toast, 'Photo was updated')
+  } else if (resp.status === 503)
+    toastApi.noConnection(toast)
+  else
+    toastApi.strangeError(toast)
 }
 
-function removePhoto(): void {
-  console.log('remove')
+async function removePhoto(): Promise<void> {
+  if (!profileStore.profile || !profileStore.profile.photoId)
+    return
+
+  const resp = await serverApi.removeFile(profileStore.profile.photoId)
+
+  if (resp.status === 503)
+    toastApi.noConnection(toast)
+  else if (resp.status == 200)
+    toastApi.success(toast, 'Photo was removed')
+  else
+    toastApi.strangeError(toast)
 }
 </script>
 

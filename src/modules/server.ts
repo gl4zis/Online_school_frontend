@@ -6,7 +6,7 @@ import {
     JwtResponse,
     ProfileResponse,
     ProfileUpdateRequest,
-    SignUpData, Passwords, Status
+    SignUpData, Passwords, Status, FileRequest
 } from "@/modules/dtoInterfaces";
 
 const GATEWAY_ADDRESS = 'http://localhost:8765'
@@ -131,6 +131,26 @@ async function loadAllUserData(): Promise<void> {
     profileStore.updateProfile(profile)
 }
 
+// 400 Invalid File
+async function createFile(req: FileRequest): Promise<MessageResponse> {
+    const options: RequestInit = {method: 'POST', body: JSON.stringify(req)}
+
+    const resp: MessageResponse = <MessageResponse>await sendRequestWithToken('/file', options)
+    if (resp.status === 200)
+        return resp
+
+    return <MessageResponse>await sendStandardRequest('/file', options)
+}
+
+async function removeFile(id: number): Promise<Status> {
+    const options: RequestInit = {method: 'DELETE'}
+    const resp: Status = <Status>await sendRequestWithToken('/file/' + id, options)
+    if (resp.status === 200)
+        return resp
+
+    return <Status>await sendStandardRequest('/file', options)
+}
+
 export default {
     login,
     updateTokens,
@@ -141,5 +161,7 @@ export default {
     updateSelfProfile,
     getFile,
     loadAllUserData,
-    changePassword
+    changePassword,
+    createFile,
+    removeFile
 }
