@@ -1,7 +1,7 @@
 <template>
   <Card class="block">
     <template #content>
-      <PhotoWithUploader @update="onPhotoUpdate"/>
+      <PhotoWithUploader @update="updatePhoto" @remove="removePhoto"/>
       <Divider/>
       <div class="form">
         <FormInput v-model="firstname"
@@ -121,8 +121,12 @@ async function updateProfile(): Promise<void> {
   }
 }
 
-function onPhotoUpdate(req: FileRequest) {
+function updatePhoto(req: FileRequest): void {
   console.log(req)
+}
+
+function removePhoto(): void {
+  console.log('remove')
 }
 </script>
 
