@@ -12,10 +12,16 @@
 <script setup lang="ts">
 import {ref, defineEmits} from "vue";
 import Menubar from 'primevue/menubar';
+import router from "@/router";
 
 const emit = defineEmits(['register', 'course'])
 
 const items = ref([
+  {
+    label: 'Home',
+    icon: 'pi pi-home',
+    command: () => router.push('/')
+  },
   {
     label: 'Register',
     icon: 'pi pi-user',

@@ -6,7 +6,7 @@ const NAME_REGEX = /^[\s\wа-яА-Я,.\-']{2,50}$/
 const EMAIL_REGEX = /^\w+@\w+\.\w{2,5}$/
 
 export function isCredentialsValid(credentials: Credentials): boolean {
-    return USERNAME_REGEX.test(credentials.username) &&
+    return (USERNAME_REGEX.test(credentials.username) || EMAIL_REGEX.test(credentials.username)) &&
         PASSWORD_REGEXES.every(regex => regex.test(credentials.password))
 }
 

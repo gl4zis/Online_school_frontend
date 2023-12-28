@@ -34,7 +34,7 @@ export interface ProfileUpdateRequest {
 
 export interface Profile extends ProfileUpdateRequest {
     id: number,
-    role: string,
+    role: ROLE,
     locked: boolean
 }
 
@@ -49,4 +49,10 @@ export interface FileRequest {
     base64: string,
     name: string,
     contentType: string
+}
+
+export type ROLE = 'ADMIN' | 'TEACHER'
+
+export interface AdminRegisterData extends SignUpData {
+    role: ROLE
 }

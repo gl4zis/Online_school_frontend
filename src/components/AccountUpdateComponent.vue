@@ -77,6 +77,11 @@ async function checkUsernameUniqueness(): Promise<void> {
   if (!username.value)
     return
 
+  if (profileStore.profile?.username === username.value) {
+    usernameIcon.value = 'pi pi-check'
+    return
+  }
+
   usernameIcon.value = 'pi pi-spin pi-spinner'
   const resp: MessageResponse = await serverApi.usernameUnique(username.value)
 

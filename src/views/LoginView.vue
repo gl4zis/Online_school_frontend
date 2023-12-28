@@ -52,6 +52,7 @@ import CenterContent from "@/layouts/CenterContent.vue";
 import {isCredentialsValid} from "@/modules/validation";
 import {authStore} from "@/stores/authStore";
 import {Credentials, JwtResponse} from "@/modules/dtoInterfaces";
+import {profileStore} from "@/stores/profileStore";
 
 const loading = ref(false)
 
@@ -77,7 +78,12 @@ async function signIn(): Promise<void> {
   if (tokens.status === 200) {
     authStore.setTokens(tokens)
     await serverApi.loadAllUserData()
-    await router.push('/')
+    if (profileStore.profile?.role === 'ADMIN')
+      await router.push('/admin')
+    else if (profileStore.profile?.role === 'TEACHER')
+      await router.push('/teacher')
+    else
+      await router.push('/')
   } else if (tokens.status === 400 || tokens.status === 401)
     toastApi.invalidCredentials(toast)
   else

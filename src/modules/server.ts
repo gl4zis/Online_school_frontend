@@ -6,7 +6,7 @@ import {
     JwtResponse,
     ProfileResponse,
     ProfileUpdateRequest,
-    SignUpData, Passwords, Status, FileRequest
+    SignUpData, Passwords, Status, FileRequest, AdminRegisterData
 } from "@/modules/dtoInterfaces";
 
 const GATEWAY_ADDRESS = 'http://localhost:8765'
@@ -75,10 +75,6 @@ async function updateTokens(refresh: string): Promise<JwtResponse> {
 
 // 400 (Validation)
 async function usernameUnique(username: string): Promise<MessageResponse> {
-    const resp = <MessageResponse>await sendRequestWithToken('/user/unique/' + username)
-    if (resp.status === 200)
-        return resp
-
     return <MessageResponse>await sendStandardRequest('/user/unique/' + username)
 }
 
@@ -142,6 +138,7 @@ async function createFile(req: FileRequest): Promise<MessageResponse> {
     return <MessageResponse>await sendStandardRequest('/file', options)
 }
 
+// 403 No Access
 async function removeFile(id: number): Promise<Status> {
     const options: RequestInit = {method: 'DELETE'}
     const resp: Status = <Status>await sendRequestWithToken('/file/' + id, options)
@@ -149,6 +146,13 @@ async function removeFile(id: number): Promise<Status> {
         return resp
 
     return <Status>await sendStandardRequest('/file', options)
+}
+
+// 400 Validation Error, 403 No Access
+async function adminRegister(reg: AdminRegisterData): Promise<Status> {
+    const options: RequestInit = {method: 'POST', body: JSON.stringify(reg)}
+
+    return <Status>await sendRequestWithToken('/user/admin/signup', options)
 }
 
 export default {
@@ -163,5 +167,6 @@ export default {
     loadAllUserData,
     changePassword,
     createFile,
-    removeFile
+    removeFile,
+    adminRegister
 }

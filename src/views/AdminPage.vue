@@ -1,5 +1,5 @@
 <template>
-  <AdminHeader @register="showRegister" @course="showCourse" style="position: absolute"/>
+  <AdminHeader @register="showRegister" @course="showCourse"/>
   <AdminRegister v-if="pages.REGISTER"/>
   <AdminCourse v-if="pages.COURSE"/>
 </template>
@@ -10,7 +10,7 @@ import AdminRegister from "@/components/AdminRegister.vue";
 import AdminCourse from "@/components/AdminCourse.vue";
 import {reactive} from "vue";
 
-const pages = reactive({ REGISTER: false, COURSE: false})
+const pages = reactive({ REGISTER: false, COURSE: false })
 
 function showRegister(): void {
   pages.COURSE = false

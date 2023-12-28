@@ -24,11 +24,16 @@ function success(toast: ToastServiceMethods, message: string): void {
     toast.add({severity: 'success', life: 3000, summary: 'Success', detail: message})
 }
 
+function noAccess(toast: ToastServiceMethods): void {
+    toast.add({severity: 'warn', life: 3000, summary: 'You have no access for it'})
+}
+
 export default {
     noConnection,
     validationError,
     invalidCredentials,
     registered,
     strangeError,
-    success
+    success,
+    noAccess
 }

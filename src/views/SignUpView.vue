@@ -52,7 +52,6 @@
   <LoaderSpinner :enabled="loading"/>
 </template>
 
-
 <script lang="ts" setup>
 import BackButton from "@/components/BackButton.vue";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
@@ -63,7 +62,6 @@ import {ref} from "vue";
 import FormInput from "@/components/FormInput.vue";
 import CenterContent from "@/layouts/CenterContent.vue";
 import {
-  nameValidMessage,
   notNullNameValidMessage,
   passwordValidMessage,
   usernameValidMessage
@@ -74,6 +72,7 @@ import {useToast} from "primevue/usetoast";
 import {profileStore} from "@/stores/profileStore";
 import {authStore} from "@/stores/authStore";
 import {MessageResponse} from "@/modules/dtoInterfaces";
+import router from "@/router";
 
 const loading = ref(false)
 let uniqueCheckId = 0
@@ -117,18 +116,20 @@ async function checkUsernameUniqueness(): Promise<void> {
   }
 }
 
-function isFormValid(): boolean {
-  validateUsername()
+async function isFormValid(): Promise<boolean> {
+  await checkUsernameUniqueness()
+
+  usernameValidation.value = usernameValidMessage(username.value)
   passwordValidation.value = passwordValidMessage(password.value)
-  firstnameValidation.value = nameValidMessage(firstname.value)
-  lastnameValidation.value = nameValidMessage(lastname.value)
+  firstnameValidation.value = notNullNameValidMessage(firstname.value)
+  lastnameValidation.value = notNullNameValidMessage(lastname.value)
 
   return !(firstnameValidation.value + lastnameValidation.value +
-    usernameValidation.value + passwordValidation.value)
+      usernameValidation.value + passwordValidation.value)
 }
 
 async function signUp(): Promise<void> {
-  if (!isFormValid()) {
+  if (!await isFormValid()) {
     toastApi.validationError(toast)
     return
   }
@@ -154,6 +155,8 @@ async function signUp(): Promise<void> {
       role: profile.role,
       locked: profile.locked
     })
+    toastApi.registered(toast, username.value)
+    await router.push('/')
   } else if (resp.status === 503)
     toastApi.noConnection(toast)
   else {
