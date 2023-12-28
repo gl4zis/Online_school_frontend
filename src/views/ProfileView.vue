@@ -56,6 +56,9 @@ function removeConfirm(): void {
     rejectClass: 'p-button-text p-button-text',
     acceptClass: 'p-button-danger p-button-text',
     accept: async () => {
+      if (profileStore.profile?.photoId)
+        await serverApi.removeFile(profileStore.profile.photoId)
+
       await serverApi.deleteSelfAccount()
       profileStore.resetProfile()
       authStore.resetTokens()

@@ -22,7 +22,8 @@
         <div class="p-float-label">
           <Calendar v-model="birthdate"
                     :max-date="new Date()"
-                    :disabled="!editing" date-format="yy-mm-dd"/>
+                    :disabled="!editing"
+                    date-format="yy-mm-dd"/>
           <label>Birthdate</label>
         </div>
       </div>

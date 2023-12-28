@@ -8,6 +8,7 @@ import ContactsPage from "@/views/ContactsPage.vue";
 import ProfileView from "@/views/ProfileView.vue";
 import {profileStore} from "@/stores/profileStore";
 import {authStore} from "@/stores/authStore";
+import AdminPage from "@/views/AdminPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -40,6 +41,11 @@ const routes: Array<RouteRecordRaw> = [
         path: '/profile',
         component: ProfileView,
         beforeEnter: () => Boolean(profileStore.profile)
+    },
+    {
+        path: '/admin',
+        component: AdminPage,
+        beforeEnter: (): boolean => profileStore.profile?.role === 'ADMIN'
     }
 ]
 
