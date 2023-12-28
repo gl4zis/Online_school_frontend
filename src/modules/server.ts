@@ -155,6 +155,10 @@ async function adminRegister(reg: AdminRegisterData): Promise<Status> {
     return <Status>await sendRequestWithToken('/user/admin/signup', options)
 }
 
+async function getAllTeachers(): Promise<ProfileResponse[]> {
+    return <ProfileResponse[]>await sendStandardRequest('/user/profile/teachers')
+}
+
 export default {
     login,
     updateTokens,
@@ -168,5 +172,6 @@ export default {
     changePassword,
     createFile,
     removeFile,
-    adminRegister
+    adminRegister,
+    getAllTeachers
 }

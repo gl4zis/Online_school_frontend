@@ -1,13 +1,17 @@
 <template>
   <div class="root">
     <AppHeader/>
-    <div class="body"></div>
-    <div class="footer"></div>
+    <div class="body">
+      <slot name="body"/>
+    </div>
+    <div class="footer">
+      <slot name="footer"/>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import AppHeader from "@/components/AppHeader.vue";
+import AppHeader from "@/components/MainHeader.vue";
 </script>
 
 <style scoped lang="scss">

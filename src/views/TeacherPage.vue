@@ -1,9 +1,9 @@
 <template>
-  <MainLayout/>
+  <h1>Teacher Page</h1>
 </template>
 
 <script setup lang="ts">
-import MainLayout from "@/layouts/MainLayout.vue";
+
 </script>
 
 <style scoped lang="scss">

@@ -143,7 +143,17 @@ async function signUp(): Promise<void> {
   else
     toastApi.registered(toast, username.value)
 
+  clearForm()
   loading.value = false
+}
+
+function clearForm(): void {
+  username.value = ''
+  usernameIcon.value = ''
+  password.value = ''
+  firstname.value = ''
+  lastname.value = ''
+  role.value = 'TEACHER'
 }
 </script>
 

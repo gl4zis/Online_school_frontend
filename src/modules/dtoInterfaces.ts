@@ -51,7 +51,7 @@ export interface FileRequest {
     contentType: string
 }
 
-export type ROLE = 'ADMIN' | 'TEACHER'
+export type ROLE = 'ADMIN' | 'TEACHER' | 'STUDENT'
 
 export interface AdminRegisterData extends SignUpData {
     role: ROLE
