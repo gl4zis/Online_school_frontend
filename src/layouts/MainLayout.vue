@@ -4,9 +4,6 @@
     <div class="body">
       <slot name="body"/>
     </div>
-    <div class="footer">
-      <slot name="footer"/>
-    </div>
   </div>
 </template>
 
@@ -26,7 +23,6 @@ import AppHeader from "@/components/MainHeader.vue";
   margin-top: 130px;
   margin-bottom: 20px;
   width: 90%;
-  height: 2000px;
   background: white;
   border-radius: 5px;
 }

@@ -63,7 +63,7 @@ if (profileStore.profile?.role === 'STUDENT')
   })
 
 function goToElement(elementId: string): void {
-  const headerOffset = 120
+  const headerOffset = 150
   const element = document.getElementById(elementId)
   if (element){
     const position = element.getBoundingClientRect().top

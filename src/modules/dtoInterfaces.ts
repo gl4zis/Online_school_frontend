@@ -35,7 +35,9 @@ export interface ProfileUpdateRequest {
 export interface Profile extends ProfileUpdateRequest {
     id: number,
     role: ROLE,
-    locked: boolean
+    locked: boolean,
+    subjects?: string[],
+    description?: string
 }
 
 export interface ProfileResponse extends Profile, Status {}

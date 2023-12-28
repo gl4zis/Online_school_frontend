@@ -14,3 +14,17 @@ export function dateToString(date: Date | undefined): string | undefined {
 
     return `${year}-${month}-${day}`
 }
+
+export function calculateAge (birthDate: Date): number {
+    const now: Date = new Date();
+
+    let years: number = (now.getFullYear() - birthDate.getFullYear());
+
+    if (now.getMonth() < birthDate.getMonth() ||
+        now.getMonth() == birthDate.getMonth() &&
+        now.getDate() < birthDate.getDate()) {
+        years--;
+    }
+
+    return years;
+}
