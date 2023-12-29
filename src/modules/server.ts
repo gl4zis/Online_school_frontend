@@ -6,7 +6,12 @@ import {
     JwtResponse,
     ProfileResponse,
     ProfileUpdateRequest,
-    SignUpData, Passwords, Status, FileRequest, AdminRegisterData
+    SignUpData,
+    Passwords,
+    Status,
+    FileRequest,
+    AdminRegisterData,
+    Course
 } from "@/modules/dtoInterfaces";
 
 const GATEWAY_ADDRESS = 'http://localhost:8765'
@@ -159,6 +164,15 @@ async function getAllTeachers(): Promise<ProfileResponse[]> {
     return <ProfileResponse[]>await sendStandardRequest('/user/profile/teachers')
 }
 
+async function getAllCourses(): Promise<Course[]> {
+    return <Course[]>await sendStandardRequest('/course/all')
+}
+
+// 400, 404 (Incorrect id)
+async function getAnotherProfile(id: number): Promise<ProfileResponse> {
+    return <ProfileResponse>await sendStandardRequest('/user/profile/' + id)
+}
+
 export default {
     login,
     updateTokens,
@@ -173,5 +187,7 @@ export default {
     createFile,
     removeFile,
     adminRegister,
-    getAllTeachers
+    getAllTeachers,
+    getAllCourses,
+    getAnotherProfile
 }

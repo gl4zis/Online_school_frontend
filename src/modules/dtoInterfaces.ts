@@ -36,7 +36,7 @@ export interface Profile extends ProfileUpdateRequest {
     id: number,
     role: ROLE,
     locked: boolean,
-    subjects?: string[],
+    subjects?: SUBJECT[],
     description?: string
 }
 
@@ -54,7 +54,22 @@ export interface FileRequest {
 }
 
 export type ROLE = 'ADMIN' | 'TEACHER' | 'STUDENT'
+export type SUBJECT = 'Physics' | 'Math' | 'Informatics' |
+    'English Language' | 'Russian Language' | 'Romanian Language' |
+    'Hebrew Language' | 'Priesthood' | 'History'
 
 export interface AdminRegisterData extends SignUpData {
     role: ROLE
+}
+
+export interface Course {
+    name: string,
+    subject: SUBJECT,
+    price: number,
+    summary: string,
+    description: string,
+    imageId?: number,
+    studentIds: number[],
+    teacherId: number
+    // plus lessons
 }
