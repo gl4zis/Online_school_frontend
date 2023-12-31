@@ -53,11 +53,6 @@ export interface FileRequest {
     contentType: string
 }
 
-export type ROLE = 'ADMIN' | 'TEACHER' | 'STUDENT'
-export type SUBJECT = 'Physics' | 'Math' | 'Informatics' |
-    'English Language' | 'Russian Language' | 'Romanian Language' |
-    'Hebrew Language' | 'Priesthood' | 'History'
-
 export interface AdminRegisterData extends SignUpData {
     role: ROLE
 }
@@ -73,3 +68,11 @@ export interface Course {
     teacherId: number
     // plus lessons
 }
+
+export const roles: string[] = ['ADMIN', 'TEACHER', 'STUDENT']
+export const subjects: string[] = ['Physics', 'Math', 'Informatics',
+    'English Language', 'Russian Language', 'Romanian Language',
+    'Hebrew Language', 'Priesthood', 'History']
+
+export type ROLE = typeof roles[number]
+export type SUBJECT = typeof subjects[number]

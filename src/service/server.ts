@@ -12,7 +12,7 @@ import {
     FileRequest,
     AdminRegisterData,
     Course
-} from "@/modules/dtoInterfaces";
+} from "@/service/dtoInterfaces";
 
 const GATEWAY_ADDRESS = 'http://localhost:8765'
 
@@ -80,7 +80,12 @@ async function updateTokens(refresh: string): Promise<JwtResponse> {
 
 // 400 (Validation)
 async function usernameUnique(username: string): Promise<MessageResponse> {
-    return <MessageResponse>await sendStandardRequest('/user/unique/' + username)
+    return <MessageResponse>await sendStandardRequest('/user/unique?username=' + username)
+}
+
+// 400 (Validation)
+async function emailUnique(email: string): Promise<MessageResponse> {
+    return <MessageResponse>await sendStandardRequest('/user/unique?email=' + email)
 }
 
 // 400 (Validation, UsernameIsTaken)
@@ -177,6 +182,7 @@ export default {
     login,
     updateTokens,
     usernameUnique,
+    emailUnique,
     regStudentAccount,
     deleteSelfAccount,
     getSelfProfile,

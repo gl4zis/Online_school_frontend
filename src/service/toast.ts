@@ -16,8 +16,8 @@ function registered(toast: ToastServiceMethods, username: string): void {
     toast.add({severity: 'success', life: 3000, summary: 'Success', detail: `User ${username} was registered`})
 }
 
-function strangeError(toast: ToastServiceMethods): void {
-    toast.add({severity: 'error', life: 3000, summary: 'Something went wrong', detail: 'Try again'})
+function strangeError(toast: ToastServiceMethods, message?: string): void {
+    toast.add({severity: 'error', life: 3000, summary: 'Something went wrong', detail: message || 'Try again'})
 }
 
 function success(toast: ToastServiceMethods, message: string): void {

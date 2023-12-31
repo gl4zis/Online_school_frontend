@@ -11,10 +11,10 @@
 
 <script setup lang="ts">
 import {defineProps, PropType, ref} from 'vue'
-import {Course} from "@/modules/dtoInterfaces";
+import {Course} from "@/service/dtoInterfaces";
 import Image from 'primevue/image'
 import courseImage from '@/assets/course_image.jpg'
-import serverApi from '@/modules/server'
+import serverApi from '@/service/server'
 import Chip from 'primevue/chip';
 
 const props = defineProps({

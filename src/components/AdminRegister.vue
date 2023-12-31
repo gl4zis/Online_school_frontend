@@ -51,19 +51,19 @@ import {
   notNullNameValidMessage,
   passwordValidMessage,
   usernameValidMessage
-} from "@/modules/validation";
+} from "@/service/validation";
 import FormInput from "@/components/FormInput.vue";
 import Button from "primevue/button";
 import {Ref, ref} from "vue";
-import {MessageResponse, ROLE} from "@/modules/dtoInterfaces";
-import serverApi from "@/modules/server";
-import toastApi from "@/modules/toast";
+import {MessageResponse, ROLE, roles} from "@/service/dtoInterfaces";
+import serverApi from "@/service/server";
+import toastApi from "@/service/toast";
 import {useToast} from "primevue/usetoast";
 import SelectButton from "primevue/selectbutton";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
 
 const role: Ref<ROLE> = ref('TEACHER');
-const roleOptions = ref(['TEACHER', 'ADMIN']);
+const roleOptions = ref(roles);
 
 const loading = ref(false)
 const toast = useToast()

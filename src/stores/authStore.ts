@@ -1,4 +1,4 @@
-import {JwtResponse} from "@/modules/dtoInterfaces";
+import {JwtResponse} from "@/service/dtoInterfaces";
 
 interface AuthState {
     access: string,

@@ -54,9 +54,9 @@ import MainLayout from "@/layouts/MainLayout.vue";
 import Image from 'primevue/image'
 import Carousel from 'primevue/carousel';
 import {Ref, ref} from "vue";
-import serverApi from '@/modules/server'
+import serverApi from '@/service/server'
 import TeacherCard from "@/components/TeacherCard.vue";
-import {Course, ProfileResponse} from "@/modules/dtoInterfaces";
+import {Course, ProfileResponse} from "@/service/dtoInterfaces";
 import adImage1 from '@/assets/ad_image_1.jpg'
 import adImage2 from '@/assets/ad_image_2.jpg'
 import adImage3 from '@/assets/ad_image_3.jpg'

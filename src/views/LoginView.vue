@@ -43,15 +43,15 @@ import {ref} from "vue";
 import MyLink from "@/components/MyLink.vue";
 import BackButton from "@/components/BackButton.vue";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
-import serverApi from "@/modules/server";
-import toastApi from "@/modules/toast"
+import serverApi from "@/service/server";
+import toastApi from "@/service/toast"
 import {useToast} from "primevue/usetoast";
 import router from "@/router";
 import FormInput from "@/components/FormInput.vue";
 import CenterContent from "@/layouts/CenterContent.vue";
-import {isCredentialsValid} from "@/modules/validation";
+import {isCredentialsValid} from "@/service/validation";
 import {authStore} from "@/stores/authStore";
-import {Credentials, JwtResponse} from "@/modules/dtoInterfaces";
+import {Credentials, JwtResponse} from "@/service/dtoInterfaces";
 import {profileStore} from "@/stores/profileStore";
 
 const loading = ref(false)

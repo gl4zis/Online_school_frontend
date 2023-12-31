@@ -1,4 +1,4 @@
-import {Profile} from "@/modules/dtoInterfaces";
+import {Profile} from "@/service/dtoInterfaces";
 
 interface ProfileState extends Profile {
     photoStr?: string

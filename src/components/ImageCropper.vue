@@ -7,7 +7,10 @@
                    handlers: {},
                    movable: false,
                    resizable: false,
-                   aspectRatio: 1,
+                   aspectRatio: aspectRatio,
+                 }"
+                 :resize-image="{
+                   adjustStencil: false
                  }"
                  image-restriction="stencil"
                  @change="change"
@@ -20,6 +23,7 @@
 
 <script setup lang="ts">
 import {Cropper} from 'vue-advanced-cropper'
+import 'vue-advanced-cropper/dist/style.css';
 import {defineProps, defineEmits, ref} from 'vue'
 import CenterContent from "@/layouts/CenterContent.vue";
 import Button from "primevue/button";
@@ -29,6 +33,11 @@ const props = defineProps({
   photo: {
     type: String,
     required: true
+  },
+  aspectRatio: {
+    type: Number,
+    required: false,
+    default: 1
   }
 })
 

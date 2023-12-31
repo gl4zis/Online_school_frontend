@@ -65,13 +65,13 @@ import {
   notNullNameValidMessage,
   passwordValidMessage,
   usernameValidMessage
-} from "@/modules/validation";
-import serverApi from '@/modules/server'
-import toastApi from '@/modules/toast'
+} from "@/service/validation";
+import serverApi from '@/service/server'
+import toastApi from '@/service/toast'
 import {useToast} from "primevue/usetoast";
 import {profileStore} from "@/stores/profileStore";
 import {authStore} from "@/stores/authStore";
-import {MessageResponse} from "@/modules/dtoInterfaces";
+import {MessageResponse} from "@/service/dtoInterfaces";
 import router from "@/router";
 
 const loading = ref(false)

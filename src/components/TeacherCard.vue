@@ -24,10 +24,10 @@
 import Image from 'primevue/image'
 import Chip from 'primevue/chip';
 import {defineProps, PropType, ref} from 'vue'
-import {ProfileResponse} from "@/modules/dtoInterfaces";
-import serverApi from '@/modules/server'
+import {ProfileResponse} from "@/service/dtoInterfaces";
+import serverApi from '@/service/server'
 import defaultUserIcon from '@/assets/user_icon.jpg'
-import {calculateAge} from "@/modules/utils";
+import {calculateAge} from "@/service/utils";
 
 const props = defineProps({
   teacher: {

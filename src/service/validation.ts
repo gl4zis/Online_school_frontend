@@ -1,4 +1,4 @@
-import {Credentials} from "@/modules/dtoInterfaces";
+import {Credentials} from "@/service/dtoInterfaces";
 
 const USERNAME_REGEX = /^\w{3,20}$/
 const PASSWORD_REGEXES = [/^\S+$/, /\d+/, /[a-z]+/, /[A-Z]+/]

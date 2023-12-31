@@ -12,8 +12,8 @@
       </template>
       <template #content>
         <div class="content">
-          <ProfileUpdateComponent />
           <AccountUpdateComponent />
+          <ProfileUpdateComponent />
         </div>
       </template>
     </Card>
@@ -25,7 +25,7 @@ import CenterContent from "@/layouts/CenterContent.vue";
 import ConfirmDialog from 'primevue/confirmdialog';
 import Card from "primevue/card";
 import BackButton from "@/components/BackButton.vue";
-import serverApi from "@/modules/server";
+import serverApi from "@/service/server";
 import ProfileUpdateComponent from "@/components/ProfileUpdateComponent.vue";
 import {profileStore} from "@/stores/profileStore";
 import {useConfirm} from "primevue/useconfirm";
@@ -90,6 +90,10 @@ function removeConfirm(): void {
   .content {
     display: flex;
     justify-content: space-evenly;
+
+    & > * {
+      width: 300px;
+    }
   }
 }
 </style>

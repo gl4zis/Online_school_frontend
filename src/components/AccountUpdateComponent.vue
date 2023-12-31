@@ -1,32 +1,41 @@
 <template>
-  <Card class="block">
+  <Card>
     <template #content>
-      <FormInput v-model="username"
-                 :icon="usernameIcon"
-                 :valid-error="usernameValidation"
-                 label="Username"
-                 :disabled="!editing"
-                 @input="validateUsername"/>
-      <FormInput v-model="email"
-                 :valid-error="emailValidation"
-                 label="Email"
-                 :disabled="!editing"
-                 @input="emailValidation = emailValidMessage(email)"/>
-      <EditButtonsBlock :editing="editing"
-                        @edit="editing = true"
-                        @cancel="resetData"
-                        @confirm="updateAccount"/>
+      <ImageUploader :photo="userPhoto"
+                     @remove="removePhoto"
+                     @update="changePhoto"/>
       <Divider/>
-      <FormInput v-model="oldPassword"
-                 :disabled="!pEditing"
-                 hidden :feedback="false"
-                 label="Old Password"/>
-      <FormInput v-model="newPassword"
-                 :disabled="!pEditing"
-                 :valid-error="newPasswordValidation"
-                 hidden
-                 label="New Password"
-                 @input="newPasswordValidation = passwordValidMessage(newPassword)"/>
+      <div class="form">
+        <FormInput v-model="username"
+                   :icon="usernameIcon"
+                   :valid-error="usernameValidation"
+                   label="Username"
+                   :disabled="!editing"
+                   @input="validateUsername"/>
+        <FormInput v-model="email"
+                   :icon="emailIcon"
+                   :valid-error="emailValidation"
+                   label="Email"
+                   :disabled="!editing"
+                   @input="validateEmail"/>
+      </div>
+      <EditButtonsBlock :editing="editing"
+                          @edit="editing = true"
+                          @cancel="resetData"
+                          @confirm="updateAccount"/>
+      <Divider/>
+      <div class="form">
+        <FormInput v-model="oldPassword"
+                   :disabled="!pEditing"
+                   hidden :feedback="false"
+                   label="Old Password"/>
+        <FormInput v-model="newPassword"
+                   :disabled="!pEditing"
+                   :valid-error="newPasswordValidation"
+                   hidden
+                   label="New Password"
+                   @input="newPasswordValidation = passwordValidMessage(newPassword)"/>
+      </div>
       <EditButtonsBlock :editing="pEditing"
                         @edit="pEditing = true"
                         @cancel="resetPasswords"
@@ -36,29 +45,33 @@
 </template>
 
 <script setup lang="ts">
-import {emailValidMessage, passwordValidMessage, usernameValidMessage} from "@/modules/validation";
+import {emailValidMessage, passwordValidMessage, usernameValidMessage} from "@/service/validation";
 import FormInput from "@/components/FormInput.vue";
 import Divider from "primevue/divider";
 import Card from "primevue/card";
 import {ref, Ref} from "vue";
 import {profileStore} from "@/stores/profileStore";
-import {MessageResponse} from "@/modules/dtoInterfaces";
-import serverApi from "@/modules/server";
+import {FileRequest, MessageResponse} from "@/service/dtoInterfaces";
+import serverApi from "@/service/server";
 import {useToast} from "primevue/usetoast";
 import EditButtonsBlock from "@/components/EditButtonsBlock.vue";
-import toastApi from '@/modules/toast'
+import toastApi from '@/service/toast'
+import ImageUploader from "@/components/ImageUploader.vue";
 
 const toast = useToast()
-
 const editing: Ref<boolean> = ref(false)
+
+const userPhoto = ref(profileStore.profile?.photoStr)
 
 const username: Ref<string> = ref(profileStore.profile?.username || '')
 const usernameValidation: Ref<string> = ref('')
 const usernameIcon: Ref<string> = ref('')
-let uniqueCheckId = 0
+let usernameCheckId = 0
 
 const email: Ref<string | undefined> = ref(profileStore.profile?.email)
 const emailValidation: Ref<string> = ref('')
+const emailIcon = ref('')
+let emailCheckid = 0
 
 const pEditing: Ref<boolean> = ref(false)
 const oldPassword: Ref<string> = ref('')
@@ -67,10 +80,10 @@ const newPassword: Ref<string> = ref('')
 const newPasswordValidation: Ref<string> = ref('')
 
 function validateUsername(): void {
-  clearTimeout(uniqueCheckId)
+  clearTimeout(usernameCheckId)
   usernameValidation.value = usernameValidMessage(username.value)
   if (!usernameValidation.value)
-    uniqueCheckId = setTimeout(checkUsernameUniqueness, 500)
+    usernameCheckId = setTimeout(checkUsernameUniqueness, 500)
 }
 
 async function checkUsernameUniqueness(): Promise<void> {
@@ -98,6 +111,38 @@ async function checkUsernameUniqueness(): Promise<void> {
   }
 }
 
+function validateEmail(): void {
+  clearTimeout(emailCheckid)
+  emailValidation.value = emailValidMessage(email.value)
+  if (!emailValidation.value)
+    emailCheckid = setTimeout(checkEmailUniqueness, 500)
+}
+
+async function checkEmailUniqueness(): Promise<void> {
+  if (!email.value)
+    return
+
+  if (profileStore.profile?.email === email.value) {
+    emailIcon.value = 'pi pi-check'
+    return
+  }
+
+  emailIcon.value = 'pi pi-spin pi-spinner'
+  const resp: MessageResponse = await serverApi.emailUnique(email.value)
+
+  if (resp.status === 200) {
+    if (resp.message === 'true')
+      emailIcon.value = 'pi pi-check'
+    else {
+      emailIcon.value = 'pi pi-times'
+      emailValidation.value = 'Already taken'
+    }
+  } else {
+    emailIcon.value = ''
+    toastApi.noConnection(toast)
+  }
+}
+
 function resetData(): void {
   editing.value = false
   username.value = profileStore.profile?.username || ''
@@ -105,6 +150,8 @@ function resetData(): void {
 
   usernameValidation.value = ''
   emailValidation.value = ''
+  usernameIcon.value = ''
+  emailIcon.value = ''
 }
 
 function isFormValid(): boolean {
@@ -118,24 +165,27 @@ async function updateAccount(): Promise<void> {
   }
 
   if (!profileStore.profile) {
-    toastApi.strangeError(toast)
+    toastApi.strangeError(toast, 'Please relogin')
+    resetData()
     return
   }
 
-  const updatedProfile = profileStore.profile
+  const updatedProfile = {...profileStore.profile}
   updatedProfile.username = username.value
   updatedProfile.email = email.value
 
   const res = await serverApi.updateSelfProfile(updatedProfile)
 
-  if (res.status === 503)
-    toastApi.noConnection(toast)
-  else if (res.status !== 200)
-    toastApi.strangeError(toast)
-  else {
+  if (res.status === 200) {
     profileStore.updateProfile(updatedProfile)
-    editing.value = false
+    usernameIcon.value = ''
+    emailIcon.value = ''
+  } else {
+    toastApi.strangeError(toast)
+    resetData()
   }
+
+  editing.value = false
 }
 
 function resetPasswords(): void {
@@ -157,21 +207,74 @@ async function changePassword(): Promise<void> {
     newPassword: newPassword.value
   })
 
-  if (resp.status === 503)
-    toastApi.noConnection(toast)
-  else if (resp.status === 400)
-    toastApi.invalidCredentials(toast)
-  else if (resp.status !== 200)
-    toastApi.strangeError(toast)
-  else {
+  if (resp.status === 200)
     toastApi.success(toast, 'You changed your password')
-    resetPasswords()
+  else {
+    toastApi.strangeError(toast)
   }
+
+  resetPasswords()
+}
+
+async function removePhoto(): Promise<void> {
+  if (!profileStore.profile?.photoId)
+    return
+
+  let res = await serverApi.removeFile(profileStore.profile.photoId)
+
+  if (res.status !== 200) {
+    toastApi.strangeError(toast)
+    return
+  }
+
+  const updatedProfile = {...profileStore.profile}
+  updatedProfile.photoId = undefined
+  updatedProfile.photoStr = undefined
+
+  res = await serverApi.updateSelfProfile(updatedProfile)
+
+  if (res.status === 200) {
+    toastApi.success(toast, 'Photo was removed')
+    profileStore.updateProfile(updatedProfile)
+    userPhoto.value = undefined
+  } else
+    toastApi.strangeError(toast)
+}
+
+async function changePhoto(req: FileRequest): Promise<void> {
+  if (!profileStore.profile) {
+    toastApi.strangeError(toast)
+    return
+  }
+
+  let res
+  if (profileStore.profile?.photoId) {
+    res = await serverApi.removeFile(profileStore.profile.photoId)
+
+    if (res.status !== 200) {
+      toastApi.strangeError(toast)
+      return
+    }
+  }
+
+  res = await serverApi.createFile(req)
+
+  if (res.status !== 200) {
+    toastApi.strangeError(toast)
+    return
+  }
+
+  const updatedProfile = {...profileStore.profile}
+  updatedProfile.photoId = Number(res.message)
+  updatedProfile.photoStr = req.base64
+
+  res = await serverApi.updateSelfProfile(updatedProfile)
+
+  if (res.status === 200) {
+    toastApi.success(toast, 'Photo was changed')
+    profileStore.updateProfile(updatedProfile)
+    userPhoto.value = req.base64
+  } else
+    toastApi.strangeError(toast)
 }
 </script>
-
-<style scoped lang="scss">
-.block {
-  width: 268px; // Жесткий костыль
-}
-</style>

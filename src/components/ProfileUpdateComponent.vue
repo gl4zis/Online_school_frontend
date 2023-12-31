@@ -1,8 +1,6 @@
 <template>
   <Card class="block">
     <template #content>
-      <PhotoWithUploader />
-      <Divider/>
       <div class="form">
         <FormInput v-model="firstname"
                    :valid-error="firstnameValidation"
@@ -19,7 +17,7 @@
                    :disabled="!editing"
                    label="Middle Name"
                    @input="middleNameValidation = nameValidMessage(middleName)"/>
-        <div class="p-float-label">
+        <div class="p-float-label date">
           <Calendar v-model="birthdate"
                     :max-date="new Date()"
                     :disabled="!editing"
@@ -27,34 +25,49 @@
           <label>Birthdate</label>
         </div>
       </div>
-    </template>
-    <template #footer>
       <EditButtonsBlock :editing="editing"
                         @edit="editing = true"
                         @cancel="resetData"
                         @confirm="updateProfile"/>
+      <Divider/>
+      <div class="form" v-if="profileStore.profile?.role === 'TEACHER'">
+        <MultiSelect :options="subjects"
+                     v-model="currSubjects"
+                     placeholder="Subjects"
+                     display="chip"
+                     :disabled="!teachEditing"/>
+        <Textarea v-model="description"
+                  :disabled="!teachEditing"
+                  placeholder="Text something about your skills or job experience"/>
+      </div>
+      <EditButtonsBlock :editing="teachEditing"
+                        @edit="teachEditing = true"
+                        @cancel="resetTeachData"
+                        @confirm="updateTeachProfile"/>
     </template>
   </Card>
 </template>
 
 <script setup lang="ts">
-import {nameValidMessage, notNullNameValidMessage} from "@/modules/validation";
+import {nameValidMessage, notNullNameValidMessage} from "@/service/validation";
 import FormInput from "@/components/FormInput.vue";
-import Divider from 'primevue/divider';
 import Card from "primevue/card";
 import {ref, Ref} from "vue";
 import EditButtonsBlock from "@/components/EditButtonsBlock.vue";
-import PhotoWithUploader from "@/components/UserPhotoWithUploader.vue";
 import {useToast} from "primevue/usetoast";
-import toastApi from '@/modules/toast'
+import toastApi from '@/service/toast'
 import {profileStore} from "@/stores/profileStore";
-import serverApi from "@/modules/server";
-import router from "@/router";
+import serverApi from "@/service/server";
 import Calendar from "primevue/calendar";
-import {dateToString} from "@/modules/utils";
+import Textarea from 'primevue/textarea';
+import MultiSelect from 'primevue/multiselect';
+import Divider from "primevue/divider";
+import {dateToString} from "@/service/utils";
+import {subjects} from "@/service/dtoInterfaces";
 
 const toast = useToast()
 const editing: Ref<boolean> = ref(false)
+const teachEditing: Ref<boolean> = ref(false)
 
 const userPhoto: Ref<string | undefined> = ref(profileStore.profile?.photoStr)
 
@@ -70,6 +83,9 @@ const middleNameValidation: Ref<string> = ref('')
 const birthdate: Ref<Date | undefined> = ref(undefined)
 if (profileStore.profile?.birthdate)
   birthdate.value = new Date(profileStore.profile?.birthdate)
+
+const currSubjects = ref(profileStore.profile?.subjects)
+const description = ref(profileStore.profile?.description)
 
 function resetData(): void {
   editing.value = false
@@ -94,8 +110,8 @@ function isFormValid(): boolean {
 
 async function updateProfile(): Promise<void> {
   if (!profileStore.profile) {
-    toastApi.strangeError(toast)
-    await router.push('/')
+    toastApi.strangeError(toast, 'Please relogin')
+    resetData()
     return
   }
 
@@ -104,7 +120,7 @@ async function updateProfile(): Promise<void> {
     return
   }
 
-  const updatedProfile = profileStore.profile
+  const updatedProfile = {...profileStore.profile}
   updatedProfile.firstname = firstname.value || ''
   updatedProfile.lastname = lastname.value || ''
   updatedProfile.middleName = middleName.value || undefined
@@ -112,14 +128,43 @@ async function updateProfile(): Promise<void> {
 
   const res = await serverApi.updateSelfProfile(updatedProfile)
 
-  if (res.status === 503)
-    toastApi.noConnection(toast)
-  else if (res.status !== 200)
-    toastApi.strangeError(toast)
-  else {
+  if (res.status === 200)
     profileStore.updateProfile(updatedProfile)
-    editing.value = false
+  else {
+    toastApi.strangeError(toast)
+    resetData()
   }
+
+  editing.value = false
+}
+
+function resetTeachData(): void {
+  teachEditing.value = false
+  currSubjects.value = profileStore.profile?.subjects
+  description.value = profileStore.profile?.description
+}
+
+async function updateTeachProfile(): Promise<void> {
+  if (!profileStore.profile) {
+    toastApi.strangeError(toast, 'Please relogin')
+    resetData()
+    return
+  }
+
+  const updatedProfile = {...profileStore.profile}
+  updatedProfile.subjects = currSubjects.value
+  updatedProfile.description = description.value
+
+  const res = await serverApi.updateSelfProfile(updatedProfile)
+
+  if (res.status === 200)
+    profileStore.updateProfile(updatedProfile)
+  else {
+    toastApi.strangeError(toast)
+    resetTeachData()
+  }
+
+  teachEditing.value = false
 }
 </script>
 
@@ -127,6 +172,21 @@ async function updateProfile(): Promise<void> {
 .form {
   & > * {
     margin-top: 5px;
+  }
+
+  .p-calendar {
+    width: 100%;
+    margin-bottom: 7%;
+  }
+
+  .p-multiselect {
+    width: 100%;
+    text-align: left;
+  }
+
+  .p-inputtextarea {
+    width: 100%;
+    height: 200px;
   }
 }
 </style>
