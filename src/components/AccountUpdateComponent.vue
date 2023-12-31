@@ -6,18 +6,18 @@
                      @update="changePhoto"/>
       <Divider/>
       <div class="form">
-        <FormInput v-model="username"
-                   :icon="usernameIcon"
-                   :valid-error="usernameValidation"
-                   label="Username"
-                   :disabled="!editing"
-                   @input="validateUsername"/>
-        <FormInput v-model="email"
-                   :icon="emailIcon"
-                   :valid-error="emailValidation"
-                   label="Email"
-                   :disabled="!editing"
-                   @input="validateEmail"/>
+        <UniqueInput param-type="username"
+                     v-model="username"
+                     :disabled="!editing"
+                     :check-self="true"
+                     label="Username"
+                     ref="usernameInput"/>
+        <UniqueInput param-type="email"
+                     v-model="email"
+                     :disabled="!editing"
+                     :check-self="true"
+                     label="Email"
+                     ref="emailInput"/>
       </div>
       <EditButtonsBlock :editing="editing"
                           @edit="editing = true"
@@ -45,33 +45,30 @@
 </template>
 
 <script setup lang="ts">
-import {emailValidMessage, passwordValidMessage, usernameValidMessage} from "@/service/validation";
+import {passwordValidMessage} from "@/service/validation";
 import FormInput from "@/components/FormInput.vue";
 import Divider from "primevue/divider";
 import Card from "primevue/card";
 import {ref, Ref} from "vue";
 import {profileStore} from "@/stores/profileStore";
-import {FileRequest, MessageResponse} from "@/service/dtoInterfaces";
+import {FileRequest} from "@/service/dtoInterfaces";
 import serverApi from "@/service/server";
 import {useToast} from "primevue/usetoast";
 import EditButtonsBlock from "@/components/EditButtonsBlock.vue";
 import toastApi from '@/service/toast'
 import ImageUploader from "@/components/ImageUploader.vue";
+import UniqueInput from "@/components/UniqueInput.vue";
 
 const toast = useToast()
 const editing: Ref<boolean> = ref(false)
 
 const userPhoto = ref(profileStore.profile?.photoStr)
 
+const usernameInput: Ref<typeof UniqueInput | null> = ref(null)
 const username: Ref<string> = ref(profileStore.profile?.username || '')
-const usernameValidation: Ref<string> = ref('')
-const usernameIcon: Ref<string> = ref('')
-let usernameCheckId = 0
 
+const emailInput: Ref<typeof UniqueInput | null> = ref(null)
 const email: Ref<string | undefined> = ref(profileStore.profile?.email)
-const emailValidation: Ref<string> = ref('')
-const emailIcon = ref('')
-let emailCheckid = 0
 
 const pEditing: Ref<boolean> = ref(false)
 const oldPassword: Ref<string> = ref('')
@@ -79,87 +76,17 @@ const oldPassword: Ref<string> = ref('')
 const newPassword: Ref<string> = ref('')
 const newPasswordValidation: Ref<string> = ref('')
 
-function validateUsername(): void {
-  clearTimeout(usernameCheckId)
-  usernameValidation.value = usernameValidMessage(username.value)
-  if (!usernameValidation.value)
-    usernameCheckId = setTimeout(checkUsernameUniqueness, 500)
-}
-
-async function checkUsernameUniqueness(): Promise<void> {
-  if (!username.value)
-    return
-
-  if (profileStore.profile?.username === username.value) {
-    usernameIcon.value = 'pi pi-check'
-    return
-  }
-
-  usernameIcon.value = 'pi pi-spin pi-spinner'
-  const resp: MessageResponse = await serverApi.usernameUnique(username.value)
-
-  if (resp.status === 200) {
-    if (resp.message === 'true')
-      usernameIcon.value = 'pi pi-check'
-    else {
-      usernameIcon.value = 'pi pi-times'
-      usernameValidation.value = 'Already taken'
-    }
-  } else {
-    usernameIcon.value = ''
-    toastApi.noConnection(toast)
-  }
-}
-
-function validateEmail(): void {
-  clearTimeout(emailCheckid)
-  emailValidation.value = emailValidMessage(email.value)
-  if (!emailValidation.value)
-    emailCheckid = setTimeout(checkEmailUniqueness, 500)
-}
-
-async function checkEmailUniqueness(): Promise<void> {
-  if (!email.value)
-    return
-
-  if (profileStore.profile?.email === email.value) {
-    emailIcon.value = 'pi pi-check'
-    return
-  }
-
-  emailIcon.value = 'pi pi-spin pi-spinner'
-  const resp: MessageResponse = await serverApi.emailUnique(email.value)
-
-  if (resp.status === 200) {
-    if (resp.message === 'true')
-      emailIcon.value = 'pi pi-check'
-    else {
-      emailIcon.value = 'pi pi-times'
-      emailValidation.value = 'Already taken'
-    }
-  } else {
-    emailIcon.value = ''
-    toastApi.noConnection(toast)
-  }
-}
-
 function resetData(): void {
   editing.value = false
   username.value = profileStore.profile?.username || ''
   email.value = profileStore.profile?.email
 
-  usernameValidation.value = ''
-  emailValidation.value = ''
-  usernameIcon.value = ''
-  emailIcon.value = ''
-}
-
-function isFormValid(): boolean {
-  return !(usernameValidation.value + emailValidation.value)
+  usernameInput.value?.reset()
+  emailInput.value?.reset()
 }
 
 async function updateAccount(): Promise<void> {
-  if (!isFormValid()) {
+  if (!usernameInput.value?.isValid() || emailInput.value?.isValid()) {
     toastApi.validationError(toast)
     return
   }
@@ -178,8 +105,8 @@ async function updateAccount(): Promise<void> {
 
   if (res.status === 200) {
     profileStore.updateProfile(updatedProfile)
-    usernameIcon.value = ''
-    emailIcon.value = ''
+    usernameInput.value?.reset()
+    emailInput.value?.reset()
   } else {
     toastApi.strangeError(toast)
     resetData()
@@ -278,3 +205,9 @@ async function changePhoto(req: FileRequest): Promise<void> {
     toastApi.strangeError(toast)
 }
 </script>
+
+<style lang="scss" scoped>
+.form > * {
+  margin-top: 10px;
+}
+</style>

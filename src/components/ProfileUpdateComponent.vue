@@ -103,11 +103,6 @@ function resetData(): void {
   middleNameValidation.value = ''
 }
 
-function isFormValid(): boolean {
-  return !(firstnameValidation.value + lastnameValidation.value +
-      middleNameValidation.value)
-}
-
 async function updateProfile(): Promise<void> {
   if (!profileStore.profile) {
     toastApi.strangeError(toast, 'Please relogin')
@@ -115,7 +110,7 @@ async function updateProfile(): Promise<void> {
     return
   }
 
-  if (!isFormValid()) {
+  if (firstnameValidation.value || lastnameValidation.value || middleNameValidation.value) {
     toastApi.validationError(toast)
     return
   }
@@ -186,7 +181,7 @@ async function updateTeachProfile(): Promise<void> {
 
   .p-inputtextarea {
     width: 100%;
-    height: 200px;
+    height: 250px;
   }
 }
 </style>
