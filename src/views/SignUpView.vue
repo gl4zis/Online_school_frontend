@@ -11,7 +11,7 @@
         <p>
           This registration only for student.
           If you are teacher, please
-          <MyLink path="/contacts" text="contact"/>
+          <MyLink path="/" text="contact"/>
           with administration
         </p>
       </template>

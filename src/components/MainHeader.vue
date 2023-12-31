@@ -22,22 +22,22 @@ const items = ref([
   {
     label: 'Home',
     icon: 'pi pi-home',
-    command: () => goToElement('info')
+    command: () => goToPageAndElement('/', 'info')
   },
   {
     label: 'Courses',
     icon: 'pi pi-book',
-    command: () => goToElement('courses')
+    command: () => goToPageAndElement('/', 'courses')
   },
   {
     label: 'Our Teachers',
     icon: 'pi pi-users',
-    command: () => goToElement('teachers')
+    command: () => goToPageAndElement('/', 'teachers')
   },
   {
     label: 'About Us',
     icon: 'pi pi-whatsapp',
-    command: () => goToElement('contacts')
+    command: () => goToPageAndElement('/', 'contacts')
   }
 ])
 
@@ -62,16 +62,21 @@ if (profileStore.profile?.role === 'STUDENT')
     command: () => router.push('/my-courses')
   })
 
+function goToPageAndElement(url: string, elementId: string): void {
+  router.push(url).then(() =>
+    setTimeout(() => goToElement(elementId), 40)) // Не работает без этого костыля(
+}
+
 function goToElement(elementId: string): void {
-  const headerOffset = 150
-  const element = document.getElementById(elementId)
-  if (element){
-    const position = element.getBoundingClientRect().top
-    window.scrollTo({
-      top: document.documentElement.scrollTop + position - headerOffset,
-      behavior: 'smooth'
-    })
-  }
+    const headerOffset = 150
+    const element = document.getElementById(elementId)
+    if (element) {
+      const position = element.getBoundingClientRect().top
+      window.scrollTo({
+        top: document.documentElement.scrollTop + position - headerOffset,
+        behavior: 'smooth'
+      })
+    }
 }
 </script>
 
