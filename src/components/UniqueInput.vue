@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import FormInput from "@/components/FormInput.vue";
-import {defineProps, defineEmits, defineExpose, ref, PropType} from 'vue'
+import {defineProps, defineEmits, defineExpose, ref, PropType, Ref} from 'vue'
 import {emailValidMessage, usernameValidMessage} from "@/service/validation";
 import {profileStore} from "@/stores/profileStore";
 import {MessageResponse} from "@/service/dtoInterfaces";
@@ -44,36 +44,37 @@ const toast = useToast()
 const icon = ref('')
 const validMessage = ref('')
 let checkId = 0
-let curVal: string
+let curVal: Ref<string> = ref(props.modelValue || '')
 
 const ICON_OK = 'pi pi-check'
 const ICON_LOAD = 'pi pi-spin pi-spinner'
 const ICON_FAIL = 'pi pi-times'
 
 function onInputValidation(event: InputEvent): void {
-  curVal = event.target?.value
-  emit('update:modelValue', curVal)
+  curVal.value = event.target?.value
+  emit('update:modelValue', curVal.value)
   validate(true)
 }
+
 function validate(checkUnique: boolean): void {
   clearTimeout(checkId)
   validMessage.value = props.paramType === 'username' ?
-      usernameValidMessage(curVal) : emailValidMessage(curVal)
+      usernameValidMessage(curVal.value) : emailValidMessage(curVal.value)
   if (checkUnique && !validMessage.value)
     checkId = setTimeout(checkUniqueness, 500)
 }
 
 async function checkUniqueness(): Promise<void> {
-  if (!curVal)
+  if (!curVal.value)
     return
 
   if (props.checkSelf) {
     if (props.paramType === 'username' &&
-        profileStore.profile?.username === curVal) {
+        profileStore.profile?.username === curVal.value) {
       icon.value = ICON_OK
       return
     } else if (props.paramType === 'email' &&
-        profileStore.profile?.email === curVal) {
+        profileStore.profile?.email === curVal.value) {
       icon.value = ICON_OK
       return
     }
@@ -81,7 +82,7 @@ async function checkUniqueness(): Promise<void> {
 
   icon.value = ICON_LOAD
   const res: MessageResponse = props.paramType === 'username' ?
-      await serverApi.usernameUnique(curVal) : await serverApi.emailUnique(curVal)
+      await serverApi.usernameUnique(curVal.value) : await serverApi.emailUnique(curVal.value)
 
   if (res.status !== 200) {
     icon.value = ''
@@ -97,8 +98,12 @@ async function checkUniqueness(): Promise<void> {
   }
 }
 
-function reset(): void {
+function reset(value?: string): void {
   icon.value = ''
   validMessage.value = ''
+
+  if (value)
+    curVal.value = value
+  emit('update:modelValue', curVal.value)
 }
 </script>

@@ -65,10 +65,10 @@ const editing: Ref<boolean> = ref(false)
 const userPhoto = ref(profileStore.profile?.photoStr)
 
 const usernameInput: Ref<typeof UniqueInput | null> = ref(null)
-const username: Ref<string> = ref(profileStore.profile?.username || '')
+const username = ref(profileStore.profile?.username)
 
 const emailInput: Ref<typeof UniqueInput | null> = ref(null)
-const email: Ref<string | undefined> = ref(profileStore.profile?.email)
+const email = ref(profileStore.profile?.email)
 
 const pEditing: Ref<boolean> = ref(false)
 const oldPassword: Ref<string> = ref('')
@@ -78,15 +78,12 @@ const newPasswordValidation: Ref<string> = ref('')
 
 function resetData(): void {
   editing.value = false
-  username.value = profileStore.profile?.username || ''
-  email.value = profileStore.profile?.email
-
-  usernameInput.value?.reset()
-  emailInput.value?.reset()
+  usernameInput.value?.reset(profileStore.profile?.username)
+  emailInput.value?.reset(profileStore.profile?.email)
 }
 
 async function updateAccount(): Promise<void> {
-  if (!usernameInput.value?.isValid() || emailInput.value?.isValid()) {
+  if (!usernameInput.value?.isValid() || !emailInput.value?.isValid()) {
     toastApi.validationError(toast)
     return
   }
@@ -98,7 +95,7 @@ async function updateAccount(): Promise<void> {
   }
 
   const updatedProfile = {...profileStore.profile}
-  updatedProfile.username = username.value
+  updatedProfile.username = username.value || ''
   updatedProfile.email = email.value
 
   const res = await serverApi.updateSelfProfile(updatedProfile)

@@ -29,21 +29,23 @@
                         @edit="editing = true"
                         @cancel="resetData"
                         @confirm="updateProfile"/>
-      <Divider/>
-      <div class="form" v-if="profileStore.profile?.role === 'TEACHER'">
-        <MultiSelect :options="subjects"
-                     v-model="currSubjects"
-                     placeholder="Subjects"
-                     display="chip"
-                     :disabled="!teachEditing"/>
-        <Textarea v-model="description"
-                  :disabled="!teachEditing"
-                  placeholder="Text something about your skills or job experience"/>
-      </div>
-      <EditButtonsBlock :editing="teachEditing"
-                        @edit="teachEditing = true"
-                        @cancel="resetTeachData"
-                        @confirm="updateTeachProfile"/>
+      <template v-if="profileStore.profile?.role === 'TEACHER'">
+        <Divider/>
+        <div class="form">
+          <MultiSelect :options="subjects"
+                       v-model="currSubjects"
+                       placeholder="Subjects"
+                       display="chip"
+                       :disabled="!teachEditing"/>
+          <Textarea v-model="description"
+                    :disabled="!teachEditing"
+                    placeholder="Text something about your skills or job experience"/>
+        </div>
+        <EditButtonsBlock :editing="teachEditing"
+                          @edit="teachEditing = true"
+                          @cancel="resetTeachData"
+                          @confirm="updateTeachProfile"/>
+      </template>
     </template>
   </Card>
 </template>
@@ -169,9 +171,12 @@ async function updateTeachProfile(): Promise<void> {
     margin-top: 5px;
   }
 
-  .p-calendar {
-    width: 100%;
+  .date {
     margin-bottom: 7%;
+
+    .p-calendar {
+      width: 100%;
+    }
   }
 
   .p-multiselect {
