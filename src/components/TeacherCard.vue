@@ -1,6 +1,6 @@
 <template>
   <div class="card">
-      <Image :src="photo || defaultUserIcon" width="250"></Image>
+      <Image :src="photo" width="250" @error="photo = defaultUserIcon"></Image>
       <div class="info">
         <h3>{{ teacher.lastname }} {{ teacher.firstname }}
           <template v-if="teacher.birthdate">
@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import Image from 'primevue/image'
 import Chip from 'primevue/chip';
-import {defineProps, PropType, ref} from 'vue'
+import {defineProps, PropType, Ref, ref} from 'vue'
 import {ProfileResponse} from "@/service/dtoInterfaces";
 import serverApi from '@/service/server'
 import defaultUserIcon from '@/assets/user_icon.jpg'
@@ -36,9 +36,7 @@ const props = defineProps({
   }
 })
 
-const photo = ref('')
-if (props.teacher?.photoId)
-  serverApi.getFile(props.teacher?.photoId).then(resp => photo.value = resp.message)
+const photo: Ref<any> = ref(serverApi.getLinkOnImage(props.teacher?.photoId))
 </script>
 
 <style scoped lang="scss">

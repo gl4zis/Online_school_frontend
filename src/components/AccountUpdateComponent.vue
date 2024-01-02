@@ -1,8 +1,8 @@
 <template>
   <Card>
     <template #content>
-      <ImageUploader :photo="userPhoto"
-                     @remove="removePhoto"
+      <Image :src="userPhoto || defaultUserIcon" @error="userPhoto = defaultUserIcon" width="250"/>
+      <ImageUploader @remove="removePhoto"
                      @update="changePhoto"/>
       <Divider/>
       <div class="form">
@@ -58,11 +58,13 @@ import EditButtonsBlock from "@/components/EditButtonsBlock.vue";
 import toastApi from '@/service/toast'
 import ImageUploader from "@/components/ImageUploader.vue";
 import UniqueInput from "@/components/UniqueInput.vue";
+import Image from 'primevue/image'
+import defaultUserIcon from '@/assets/user_icon.jpg'
 
 const toast = useToast()
 const editing: Ref<boolean> = ref(false)
 
-const userPhoto = ref(profileStore.profile?.photoStr)
+const userPhoto: Ref<any> = ref(serverApi.getLinkOnImage(profileStore.profile?.photoId, 250))
 
 const usernameInput: Ref<typeof UniqueInput | null> = ref(null)
 const username = ref(profileStore.profile?.username)
@@ -153,14 +155,13 @@ async function removePhoto(): Promise<void> {
 
   const updatedProfile = {...profileStore.profile}
   updatedProfile.photoId = undefined
-  updatedProfile.photoStr = undefined
 
   res = await serverApi.updateSelfProfile(updatedProfile)
 
   if (res.status === 200) {
     toastApi.success(toast, 'Photo was removed')
     profileStore.updateProfile(updatedProfile)
-    userPhoto.value = undefined
+    userPhoto.value = ''
   } else
     toastApi.strangeError(toast)
 }
@@ -189,15 +190,14 @@ async function changePhoto(req: FileRequest): Promise<void> {
   }
 
   const updatedProfile = {...profileStore.profile}
-  updatedProfile.photoId = Number(res.message)
-  updatedProfile.photoStr = req.base64
+  updatedProfile.photoId = res.message
 
   res = await serverApi.updateSelfProfile(updatedProfile)
 
   if (res.status === 200) {
     toastApi.success(toast, 'Photo was changed')
     profileStore.updateProfile(updatedProfile)
-    userPhoto.value = req.base64
+    userPhoto.value = serverApi.getLinkOnImage(profileStore.profile?.photoId, 250)
   } else
     toastApi.strangeError(toast)
 }

@@ -51,7 +51,7 @@ import FormInput from "@/components/FormInput.vue";
 import CenterContent from "@/layouts/CenterContent.vue";
 import {isCredentialsValid} from "@/service/validation";
 import {authStore} from "@/stores/authStore";
-import {Credentials, JwtResponse} from "@/service/dtoInterfaces";
+import {Credentials, JwtResponse, ProfileResponse} from "@/service/dtoInterfaces";
 import {profileStore} from "@/stores/profileStore";
 
 const loading = ref(false)
@@ -77,13 +77,20 @@ async function signIn(): Promise<void> {
 
   if (tokens.status === 200) {
     authStore.setTokens(tokens)
-    await serverApi.loadAllUserData()
-    if (profileStore.profile?.role === 'ADMIN')
-      await router.push('/admin')
-    else if (profileStore.profile?.role === 'TEACHER')
-      await router.push('/teacher')
-    else
-      await router.push('/')
+    const resp: ProfileResponse = await serverApi.getSelfProfile()
+    if (resp.status === 200) {
+      profileStore.updateProfile(resp)
+
+      if (profileStore.profile?.role === 'ADMIN')
+        await router.push('/admin')
+      else if (profileStore.profile?.role === 'TEACHER')
+        await router.push('/teacher')
+      else
+        await router.push('/')
+    } else {
+      authStore.resetTokens()
+      toastApi.noConnection(toast)
+    }
   } else if (tokens.status === 400 || tokens.status === 401)
     toastApi.invalidCredentials(toast)
   else

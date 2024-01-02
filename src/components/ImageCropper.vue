@@ -29,7 +29,7 @@ import CenterContent from "@/layouts/CenterContent.vue";
 import Button from "primevue/button";
 import Card from "primevue/card";
 
-const props = defineProps({
+defineProps({
   photo: {
     type: String,
     required: true
@@ -43,14 +43,23 @@ const props = defineProps({
 
 const emit = defineEmits(['end'])
 
-const photoNow = ref(props.photo)
+const photoNow = ref()
 
-function change({canvas}: any): void {
-  photoNow.value = canvas.toDataURL()
+interface ChangeEvent {
+  canvas: HTMLCanvasElement
+}
+
+function change({canvas}: ChangeEvent): void {
+  canvas.toBlob(blob => {
+    if (blob)
+      blob.arrayBuffer().then(buffer => {
+        photoNow.value = new Uint8Array(buffer)
+      })
+  }, "image/jpeg", 1)
 }
 
 function end(): void {
-  emit('end', {base64: photoNow.value})
+  emit('end', {data: [...photoNow.value]})
 }
 </script>
 

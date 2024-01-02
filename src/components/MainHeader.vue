@@ -22,7 +22,7 @@ const items = ref([
   {
     label: 'Home',
     icon: 'pi pi-home',
-    command: () => goToPageAndElement('/', 'info')
+    command: () => router.push('/')
   },
   {
     label: 'Courses',

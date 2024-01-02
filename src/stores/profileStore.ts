@@ -1,19 +1,15 @@
 import {Profile} from "@/service/dtoInterfaces";
 
-interface ProfileState extends Profile {
-    photoStr?: string
-}
-
 interface ProfileStore {
-    profile?: ProfileState,
-    updateProfile: (profile: ProfileState) => void,
+    profile?: Profile,
+    updateProfile: (profile: Profile) => void,
     resetProfile: () => void
 }
 
 export const profileStore: ProfileStore = {
     profile: getState(),
 
-    updateProfile(profile: ProfileState): void {
+    updateProfile(profile: Profile): void {
         this.profile = profile
         saveState(this.profile)
     },
@@ -24,7 +20,7 @@ export const profileStore: ProfileStore = {
     }
 }
 
-function getState(): ProfileState | undefined {
+function getState(): Profile | undefined {
     const savedProfile: string | null = localStorage.getItem('profile')
     if (savedProfile)
         return JSON.parse(savedProfile)
@@ -32,7 +28,7 @@ function getState(): ProfileState | undefined {
     return undefined
 }
 
-function saveState(profile: ProfileState | undefined): void {
+function saveState(profile: Profile | undefined): void {
     if (profile)
         localStorage.setItem('profile', JSON.stringify(profile))
     else

@@ -29,7 +29,7 @@ export interface ProfileUpdateRequest {
     lastname: string,
     middleName?: string,
     birthdate?: string,
-    photoId?: number
+    photoId?: string
 }
 
 export interface Profile extends ProfileUpdateRequest {
@@ -48,9 +48,7 @@ export interface Passwords {
 }
 
 export interface FileRequest {
-    base64: string,
-    name: string,
-    contentType: string
+    data: number[]
 }
 
 export interface AdminRegisterData extends SignUpData {
@@ -63,7 +61,7 @@ export interface Course {
     price: number,
     summary: string,
     description: string,
-    imageId?: number,
+    imageId?: string,
     studentIds: number[],
     teacherId: number
     // plus lessons

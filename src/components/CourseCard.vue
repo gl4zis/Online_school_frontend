@@ -1,6 +1,6 @@
 <template>
   <div class="card">
-    <Image :src="image || courseImage"/>
+    <Image :src="image" @error="image = courseImage"/>
     <h3>{{ course.name }}</h3>
     <p>{{ course.summary }}</p>
     <Chip :label="course.subject"/>
@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import {defineProps, PropType, ref} from 'vue'
+import {defineProps, PropType, Ref, ref} from 'vue'
 import {Course} from "@/service/dtoInterfaces";
 import Image from 'primevue/image'
 import courseImage from '@/assets/course_image.jpg'
@@ -30,9 +30,7 @@ serverApi.getAnotherProfile(props.course.teacherId).then(resp => {
     teacher.value = resp.firstname + ' ' + resp.lastname
 })
 
-const image = ref('')
-if (props.course.imageId)
-  serverApi.getFile(props.course.imageId).then(resp => image.value = resp.message)
+const image: Ref<any> = ref(serverApi.getLinkOnImage(props.course?.imageId))
 </script>
 
 <style scoped lang="scss">

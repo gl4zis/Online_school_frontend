@@ -1,4 +1,3 @@
-import {profileStore} from "@/stores/profileStore";
 import {authStore} from "@/stores/authStore";
 import {
     Credentials,
@@ -124,32 +123,19 @@ async function changePassword(passwords: Passwords): Promise<Status> {
     return <Status>await sendRequestWithToken('/user/passwords', options)
 }
 
-async function loadAllUserData(): Promise<void> {
-    const profile: ProfileResponse = await getSelfProfile()
-    if (profile.status !== 200) {
-        console.error(profile)
-        return
-    }
-
-    if (profile.photoId)
-        Object.assign(profile, {photoStr: (await getFile(profile.photoId)).message})
-
-    profileStore.updateProfile(profile)
-}
-
 // 400 Invalid File
 async function createFile(req: FileRequest): Promise<MessageResponse> {
     const options: RequestInit = {method: 'POST', body: JSON.stringify(req)}
 
     const resp: MessageResponse = <MessageResponse>await sendRequestWithToken('/file', options)
-    if (resp.status === 200)
-        return resp
+    if (resp.status === 403)
+        return <MessageResponse>await sendStandardRequest('/file', options)
 
-    return <MessageResponse>await sendStandardRequest('/file', options)
+    return resp
 }
 
 // 403 No Access
-async function removeFile(id: number): Promise<Status> {
+async function removeFile(id: string): Promise<Status> {
     const options: RequestInit = {method: 'DELETE'}
     const resp: Status = <Status>await sendRequestWithToken('/file/' + id, options)
     if (resp.status === 200)
@@ -178,6 +164,17 @@ async function getAnotherProfile(id: number): Promise<ProfileResponse> {
     return <ProfileResponse>await sendStandardRequest('/user/profile/' + id)
 }
 
+function getLinkOnImage(id?: string, size?: number): string {
+    if (id) {
+        if (size)
+            return `${GATEWAY_ADDRESS}/file/${id}?size=${size}`
+        else
+            return `${GATEWAY_ADDRESS}/file/${id}`
+    }
+
+    return ''
+}
+
 export default {
     login,
     updateTokens,
@@ -188,12 +185,12 @@ export default {
     getSelfProfile,
     updateSelfProfile,
     getFile,
-    loadAllUserData,
     changePassword,
     createFile,
     removeFile,
     adminRegister,
     getAllTeachers,
     getAllCourses,
-    getAnotherProfile
+    getAnotherProfile,
+    getLinkOnImage
 }
