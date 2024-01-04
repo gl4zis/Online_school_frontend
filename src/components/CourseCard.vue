@@ -1,5 +1,10 @@
 <template>
   <div class="card">
+    <div class="corner">
+      <div class="arrow">
+        →
+      </div>
+    </div>
     <Image :src="image" @error="image = courseImage" width="350"/>
     <div class="info">
       <h3>{{ course.name }}</h3>
@@ -36,12 +41,43 @@ const image: Ref<any> = ref(serverApi.getLinkOnImage(props.course?.imageId))
 </script>
 
 <style scoped lang="scss">
+@import "@/assets/theme";
+
 .card {
-  border: 1px solid lightgrey;
+  top: 0;
+  position: relative;
+  border: 1px solid $card-color;
+  background: $card-color;
   border-radius: 5px;
   padding: 10px;
   width: 350px;
-  margin: auto;
+  margin: 10px auto;
+  transition: box-shadow, translate 0.3s ease-out;
+
+  .corner {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    top: 0;
+    right: 0;
+    background-color: $primary-color;
+    border-radius: 0 5px 0 50px;
+
+    .arrow {
+      color: white;
+      margin-top: 5px;
+      margin-left: 8px;
+      font-size: 18pt;
+      font-family: courier, sans, serif;
+    }
+  }
+
+  &:hover {
+    box-shadow: 0 4px 8px #2223;
+    translate: 0 -8px;
+    border: 1px solid lightgrey;
+    background-color: white;
+  }
 
   .info {
     padding: 0 10px;

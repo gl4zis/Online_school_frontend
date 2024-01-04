@@ -43,13 +43,21 @@ const photo: Ref<any> = ref(serverApi.getLinkOnImage(props.teacher?.photoId))
 
 <style scoped lang="scss">
 .card {
+  position: relative;
+  top: 0;
   border: 1px solid lightgrey;
   border-radius: 5px;
   padding: 10px;
   display: flex;
-  margin: 0 10px;
+  margin: 10px;
   text-align: left;
   height: 300px;
+  transition: box-shadow, translate 0.3s ease-out;
+
+  &:hover {
+    box-shadow: 0 4px 8px #2223;
+    translate: 0 -5px;
+  }
 
   .info {
     margin-left: 15px;
