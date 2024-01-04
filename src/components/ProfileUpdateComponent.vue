@@ -7,16 +7,16 @@
                    :disabled="!editing"
                    label="Firstname"
                    @input="firstnameValidation = notNullNameValidMessage(firstname)"/>
-        <FormInput v-model="lastname"
-                   :valid-error="lastnameValidation"
-                   :disabled="!editing"
-                   label="Lastname"
-                   @input="lastnameValidation = notNullNameValidMessage(lastname)"/>
         <FormInput v-model="middleName"
                    :valid-error="middleNameValidation"
                    :disabled="!editing"
                    label="Middle Name"
                    @input="middleNameValidation = nameValidMessage(middleName)"/>
+        <FormInput v-model="lastname"
+                   :valid-error="lastnameValidation"
+                   :disabled="!editing"
+                   label="Lastname"
+                   @input="lastnameValidation = notNullNameValidMessage(lastname)"/>
         <div class="p-float-label date">
           <Calendar v-model="birthdate"
                     :max-date="new Date()"
@@ -71,16 +71,14 @@ const toast = useToast()
 const editing: Ref<boolean> = ref(false)
 const teachEditing: Ref<boolean> = ref(false)
 
-const userPhoto: Ref<string | undefined> = ref(profileStore.profile?.photoStr)
-
 const firstname: Ref<string | undefined> = ref(profileStore.profile?.firstname)
 const firstnameValidation: Ref<string> = ref('')
 
-const lastname: Ref<string | undefined> = ref(profileStore.profile?.lastname)
-const lastnameValidation: Ref<string> = ref('')
-
 const middleName: Ref<string | undefined> = ref(profileStore.profile?.middleName)
 const middleNameValidation: Ref<string> = ref('')
+
+const lastname: Ref<string | undefined> = ref(profileStore.profile?.lastname)
+const lastnameValidation: Ref<string> = ref('')
 
 const birthdate: Ref<Date | undefined> = ref(undefined)
 if (profileStore.profile?.birthdate)
@@ -98,7 +96,6 @@ function resetData(): void {
   if (profileStore.profile?.birthdate)
     birthdate.value = new Date(profileStore.profile?.birthdate)
   else birthdate.value = undefined
-  userPhoto.value = profileStore.profile?.photoStr
 
   firstnameValidation.value = ''
   lastnameValidation.value = ''

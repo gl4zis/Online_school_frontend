@@ -1,22 +1,24 @@
 <template>
   <div class="card">
-      <Image :src="photo" width="250" @error="photo = defaultUserIcon"></Image>
-      <div class="info">
-        <h3>{{ teacher.lastname }} {{ teacher.firstname }}
-          <template v-if="teacher.birthdate">
-            , {{ calculateAge(new Date(teacher.birthdate)) }} years
-          </template>
-        </h3>
-        <div class="subjects">
-          <Chip v-for="(subject, index) in teacher.subjects"
-                :key="index"
-                :label="subject"/>
-        </div>
-        <div>{{ teacher.description }}</div>
-        <div v-if="teacher.email">
-          <b>Email:</b> {{ teacher.email }}
-        </div>
+    <div class="left">
+      <Image :src="photo" width="250" @error="photo = defaultUserIcon"/>
+      <div v-if="teacher.email" style="margin-top: 10px">
+        <b>Email:</b> {{ teacher.email }}
       </div>
+    </div>
+    <div class="info">
+      <h3>{{ teacher.lastname }} {{ teacher.firstname }}
+        <template v-if="teacher.birthdate">
+           {{ calculateAge(new Date(teacher.birthdate)) }}yo
+        </template>
+      </h3>
+      <div class="subjects">
+        <Chip v-for="(subject, index) in teacher.subjects"
+              :key="index"
+              :label="subject" style="font-size: 10pt; padding: 0 10px; margin: 3px"/>
+      </div>
+      <div class="description">{{ teacher.description }}</div>
+    </div>
   </div>
 </template>
 
@@ -47,24 +49,29 @@ const photo: Ref<any> = ref(serverApi.getLinkOnImage(props.teacher?.photoId))
   display: flex;
   margin: 0 10px;
   text-align: left;
+  height: 300px;
 
   .info {
-    width: 60%;
-    margin-left: 30px;
+    margin-left: 15px;
     display: flex;
     flex-direction: column;
-    font-size: 14pt;
+    width: 50%;
 
     & > * {
       margin: 10px 0;
     }
 
     h3 {
-      font-size: 20pt;
+      font-size: 18pt;
     }
 
     .subjects > * {
       margin: 5px;
+    }
+
+    .description {
+      font-size: 12pt;
+      overflow: hidden;
     }
   }
 }

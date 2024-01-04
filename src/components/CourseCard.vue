@@ -1,11 +1,13 @@
 <template>
   <div class="card">
-    <Image :src="image" @error="image = courseImage"/>
-    <h3>{{ course.name }}</h3>
-    <p>{{ course.summary }}</p>
-    <Chip :label="course.subject"/>
-    <p v-if="teacher">Teacher: <b>{{ teacher }}</b></p>
-    <p>Only: <i>{{ course.price }}</i> rubles!</p>
+    <Image :src="image" @error="image = courseImage" width="350"/>
+    <div class="info">
+      <h3>{{ course.name }}</h3>
+      <p>{{ course.summary }}</p>
+      <Chip :label="course.subject"/>
+      <p v-if="teacher">Teacher: <b>{{ teacher }}</b></p>
+      <p>Only: <i>{{ course.price }}</i> rubles!</p>
+    </div>
   </div>
 </template>
 
@@ -38,12 +40,16 @@ const image: Ref<any> = ref(serverApi.getLinkOnImage(props.course?.imageId))
   border: 1px solid lightgrey;
   border-radius: 5px;
   padding: 10px;
-  width: 300px;
-  height: 500px;
+  width: 350px;
   margin: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
+
+  .info {
+    padding: 0 10px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+  }
 }
 </style>

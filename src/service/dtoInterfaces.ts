@@ -70,7 +70,7 @@ export interface Course {
 export const roles: string[] = ['ADMIN', 'TEACHER', 'STUDENT']
 export const subjects: string[] = ['Physics', 'Math', 'Informatics',
     'English Language', 'Russian Language', 'Romanian Language',
-    'Hebrew Language', 'Priesthood', 'History']
+    'Hebrew Language', 'Priesthood', 'History', 'Engineering']
 
 export type ROLE = typeof roles[number]
 export type SUBJECT = typeof subjects[number]

@@ -90,9 +90,11 @@ function removeConfirm(): void {
   .content {
     display: flex;
     justify-content: space-evenly;
+    flex-wrap: wrap;
 
     & > * {
       width: 300px;
+      margin: 10px auto;
     }
   }
 }

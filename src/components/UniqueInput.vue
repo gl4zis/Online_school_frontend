@@ -104,6 +104,8 @@ function reset(value?: string): void {
 
   if (value)
     curVal.value = value
+  else
+    curVal.value = ''
   emit('update:modelValue', curVal.value)
 }
 </script>
