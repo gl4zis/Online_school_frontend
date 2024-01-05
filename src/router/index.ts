@@ -1,25 +1,12 @@
 import {createRouter, createWebHistory, RouteRecordRaw} from 'vue-router'
-import Login from '../views/LoginView.vue'
-import SignUp from '../views/SignUpView.vue'
 import MainPage from "@/views/MainPage.vue";
 import MyCourses from "@/views/MyCourses.vue";
 import ProfilePage from "@/views/ProfilePage.vue";
 import {profileStore} from "@/stores/profileStore";
-import {authStore} from "@/stores/authStore";
 import AdminPage from "@/views/AdminPage.vue";
 import TeacherPage from "@/views/TeacherPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
-    {
-        path: '/login',
-        component: Login,
-        beforeEnter: () => !authStore.tokens
-    },
-    {
-        path: '/sign-up',
-        component: SignUp,
-        beforeEnter: () => !authStore.tokens
-    },
     {
         path: '/',
         component: MainPage

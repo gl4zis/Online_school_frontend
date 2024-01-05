@@ -1,19 +1,15 @@
 <template>
-  <router-link :to="path" class="link">{{ text ?? path }}</router-link>
+  <router-link v-if="path" :to="path" class="link">{{ text ?? path }}</router-link>
+  <div v-else @click="callback" class="link">{{ text }}</div>
 </template>
 
 <script lang="ts" setup>
 import {defineProps} from "vue";
 
 defineProps({
-  path: {
-    type: String,
-    required: true
-  },
-  text: {
-    type: String,
-    required: false
-  }
+  path: String,
+  callback: Function,
+  text: String
 })
 </script>
 
@@ -21,6 +17,7 @@ defineProps({
 @import "@/assets/theme";
 
 .link {
+  display: inline-block;
   color: $primary-color;
   text-decoration: none;
 

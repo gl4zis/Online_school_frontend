@@ -61,6 +61,7 @@ const image: Ref<any> = ref(serverApi.getLinkOnImage(props.course?.imageId, prop
 
   &.normal {
     width: 350px;
+    height: 550px;
 
     .corner {
       width: 50px;
@@ -77,6 +78,7 @@ const image: Ref<any> = ref(serverApi.getLinkOnImage(props.course?.imageId, prop
 
   &.small {
     width: 250px;
+    height: 350px;
 
     .corner {
       width: 30px;

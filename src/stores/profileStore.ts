@@ -1,4 +1,5 @@
 import {Profile} from "@/service/dtoInterfaces";
+import {reactive} from "vue";
 
 interface ProfileStore {
     profile?: Profile,
@@ -6,7 +7,7 @@ interface ProfileStore {
     resetProfile: () => void
 }
 
-export const profileStore: ProfileStore = {
+export const profileStore: ProfileStore = reactive({
     profile: getState(),
 
     updateProfile(profile: Profile): void {
@@ -18,7 +19,7 @@ export const profileStore: ProfileStore = {
         this.profile = undefined
         saveState(this.profile)
     }
-}
+})
 
 function getState(): Profile | undefined {
     const savedProfile: string | null = localStorage.getItem('profile')

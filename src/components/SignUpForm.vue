@@ -41,7 +41,7 @@ import {
   passwordValidMessage
 } from "@/service/validation";
 import FormInput from "@/components/FormInput.vue";
-import {Ref, ref, defineProps} from "vue";
+import {Ref, ref, defineProps, defineEmits} from "vue";
 import {ROLE, roles} from "@/service/dtoInterfaces";
 import serverApi from "@/service/server";
 import toastApi from "@/service/toast";
@@ -51,8 +51,9 @@ import LoaderSpinner from "@/components/LoaderSpinner.vue";
 import UniqueInput from "@/components/UniqueInput.vue";
 import {authStore} from "@/stores/authStore";
 import {profileStore} from "@/stores/profileStore";
-import router from "@/router";
 import Button from "primevue/button";
+
+const emit = defineEmits(['end'])
 
 const props = defineProps({
   selfReg: {
@@ -123,6 +124,7 @@ async function signUp(): Promise<void> {
     clearForm()
 
   loading.value = false
+  emit('end')
 }
 
 async function selfRegContinue(resp: any): Promise<void> {
@@ -137,7 +139,6 @@ async function selfRegContinue(resp: any): Promise<void> {
     role: profile.role,
     locked: profile.locked
   })
-  await router.push('/')
 }
 
 function clearForm(): void {

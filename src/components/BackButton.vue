@@ -1,13 +1,21 @@
 <template>
-  <Button class="return" icon="pi pi-arrow-left" @click="goBack"/>
+  <Button class="return" icon="pi pi-arrow-left" @click="action"/>
 </template>
 
 <script lang="ts" setup>
 import router from '@/router'
 import Button from "primevue/button";
+import {defineProps} from 'vue'
 
-function goBack(): void {
-  router.back()
+const props = defineProps({
+  callback: Function
+})
+
+function action(): void {
+  if (props.callback)
+    props.callback()
+  else
+    router.back()
 }
 </script>
 

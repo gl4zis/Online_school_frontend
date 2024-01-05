@@ -1,65 +1,86 @@
 <template>
-  <CenterContent>
-    <Card class="form">
-      <template #header>
-        <BackButton/>
-      </template>
-      <template #title>
-        <h2>Sign In</h2>
-      </template>
-      <template #subtitle>
-        <p>
-          Don't have account?
-          <MyLink path="/sign-up" text="Sign Up"/>
-        </p>
-      </template>
-      <template #content>
-        <div class="content">
-          <FormInput v-model="username"
-                     :disabled="loading"
-                     label="Username | Email"/>
-          <FormInput v-model="password"
-                     :disabled="loading"
-                     :feedback="false"
-                     hidden
-                     label="Password"/>
-        </div>
-      </template>
-      <template #footer>
-        <Button :disabled="loading"
-                icon="pi pi-check"
-                label="Sign In"
-                @click="signIn"/>
-      </template>
-    </Card>
-    <LoaderSpinner :enabled="loading"/>
-  </CenterContent>
+  <Dialog v-model:visible="showing" modal>
+    <template #container>
+      <Card class="form">
+        <template #header>
+          <BackButton :callback="close"/>
+        </template>
+        <template #title>
+          <h2>Sign In</h2>
+        </template>
+        <template #subtitle>
+          <p>
+            Don't have account?
+            <MyLink :callback="signUp" text="Sign Up"/>
+          </p>
+        </template>
+        <template #content>
+          <div class="content">
+            <FormInput v-model="username"
+                       :disabled="loading"
+                       label="Username | Email"/>
+            <FormInput v-model="password"
+                       :disabled="loading"
+                       :feedback="false"
+                       hidden
+                       label="Password"/>
+          </div>
+        </template>
+        <template #footer>
+          <Button :disabled="loading"
+                  icon="pi pi-check"
+                  label="Sign In"
+                  @click="signIn"/>
+        </template>
+      </Card>
+      <LoaderSpinner :enabled="loading"/>
+    </template>
+  </Dialog>
 </template>
 
 <script lang="ts" setup>
+import Dialog from 'primevue/dialog'
 import Card from 'primevue/card';
 import Button from 'primevue/button';
-import {ref} from "vue";
+import {ref, defineExpose, defineEmits} from "vue";
 import MyLink from "@/components/MyLink.vue";
 import BackButton from "@/components/BackButton.vue";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
 import serverApi from "@/service/server";
 import toastApi from "@/service/toast"
 import {useToast} from "primevue/usetoast";
-import router from "@/router";
 import FormInput from "@/components/FormInput.vue";
-import CenterContent from "@/layouts/CenterContent.vue";
 import {isCredentialsValid} from "@/service/validation";
 import {authStore} from "@/stores/authStore";
 import {Credentials, JwtResponse, ProfileResponse} from "@/service/dtoInterfaces";
 import {profileStore} from "@/stores/profileStore";
 
 const loading = ref(false)
+const showing = ref(false)
 
 const username = ref('')
 const password = ref('')
 
 const toast = useToast()
+
+defineExpose({
+  show
+})
+
+const emit = defineEmits(['signUp'])
+
+function signUp(): void {
+  close()
+  emit('signUp')
+}
+
+function close(): void {
+  showing.value = false
+}
+
+function show(): void {
+  showing.value = true
+}
 
 async function signIn(): Promise<void> {
   const credentials: Credentials = {
@@ -80,13 +101,7 @@ async function signIn(): Promise<void> {
     const resp: ProfileResponse = await serverApi.getSelfProfile()
     if (resp.status === 200) {
       profileStore.updateProfile(resp)
-
-      if (profileStore.profile?.role === 'ADMIN')
-        await router.push('/admin')
-      else if (profileStore.profile?.role === 'TEACHER')
-        await router.push('/teacher')
-      else
-        await router.push('/')
+      close()
     } else {
       authStore.resetTokens()
       toastApi.noConnection(toast)
@@ -97,6 +112,7 @@ async function signIn(): Promise<void> {
     toastApi.noConnection(toast)
 
   loading.value = false
+
 }
 </script>
 

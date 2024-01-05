@@ -17,6 +17,7 @@ import ProfileButton from "@/components/ProfileButton.vue";
 import {ref} from "vue";
 import router from "@/router";
 import {profileStore} from "@/stores/profileStore";
+import {goToPageAndElement} from "@/service/utils";
 
 const items = ref([
   {
@@ -61,23 +62,6 @@ if (profileStore.profile?.role === 'STUDENT')
     icon: 'pi pi-book',
     command: () => router.push('/my-courses')
   })
-
-function goToPageAndElement(url: string, elementId: string): void {
-  router.push(url).then(() =>
-    setTimeout(() => goToElement(elementId), 40)) // Не работает без этого костыля(
-}
-
-function goToElement(elementId: string): void {
-    const headerOffset = 150
-    const element = document.getElementById(elementId)
-    if (element) {
-      const position = element.getBoundingClientRect().top
-      window.scrollTo({
-        top: document.documentElement.scrollTop + position - headerOffset,
-        behavior: 'smooth'
-      })
-    }
-}
 </script>
 
 <style scoped lang="scss">
