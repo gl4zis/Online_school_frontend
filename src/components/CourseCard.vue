@@ -1,16 +1,16 @@
 <template>
-  <div class="card">
+  <div class="card" :class="{ 'normal': size === 'normal', 'small': size === 'small' }">
     <div class="corner">
       <div class="arrow">
         →
       </div>
     </div>
-    <Image :src="image" @error="image = courseImage" width="350"/>
+    <Image :src="image" @error="image = courseImage" :width="size === 'small' ? 250 : 350"/>
     <div class="info">
       <h3>{{ course.name }}</h3>
-      <p>{{ course.summary }}</p>
+      <p v-if="size === 'normal'">{{ course.summary }}</p>
       <Chip :label="course.subject"/>
-      <p v-if="teacher">Teacher: <b>{{ teacher }}</b></p>
+      <p v-if="size === 'normal'">Teacher: <b>{{ teacher }}</b></p>
       <p>Only: <i>{{ course.price }}</i> rubles!</p>
     </div>
   </div>
@@ -24,10 +24,16 @@ import courseImage from '@/assets/course_image.jpg'
 import serverApi from '@/service/server'
 import Chip from 'primevue/chip';
 
+type Size = 'normal' | 'small'
+
 const props = defineProps({
   course: {
     type: Object as PropType<Course>,
     required: true
+  },
+  size: {
+    type: String as PropType<Size>,
+    default: 'normal'
   }
 })
 
@@ -37,7 +43,7 @@ serverApi.getAnotherProfile(props.course.teacherId).then(resp => {
     teacher.value = resp.firstname + ' ' + resp.lastname
 })
 
-const image: Ref<any> = ref(serverApi.getLinkOnImage(props.course?.imageId))
+const image: Ref<any> = ref(serverApi.getLinkOnImage(props.course?.imageId, props.size === 'normal' ? 350 : 250))
 </script>
 
 <style scoped lang="scss">
@@ -50,24 +56,49 @@ const image: Ref<any> = ref(serverApi.getLinkOnImage(props.course?.imageId))
   background: $card-color;
   border-radius: 5px;
   padding: 10px;
-  width: 350px;
   margin: 10px auto;
   transition: box-shadow, translate 0.3s ease-out;
 
+  &.normal {
+    width: 350px;
+
+    .corner {
+      width: 50px;
+      height: 50px;
+      border-radius: 0 5px 0 50px;
+
+      .arrow {
+        margin-top: 5px;
+        margin-left: 8px;
+        font-size: 18pt;
+      }
+    }
+  }
+
+  &.small {
+    width: 250px;
+
+    .corner {
+      width: 30px;
+      height: 30px;
+      border-radius: 0 5px 0 30px;
+
+      .arrow {
+        margin-top: 3px;
+        margin-left: 12px;
+        font-size: 14pt;
+      }
+    }
+  }
+
   .corner {
     position: absolute;
-    width: 50px;
-    height: 50px;
     top: 0;
     right: 0;
     background-color: $primary-color;
-    border-radius: 0 5px 0 50px;
 
     .arrow {
       color: white;
-      margin-top: 5px;
-      margin-left: 8px;
-      font-size: 18pt;
       font-family: courier, sans, serif;
     }
   }
@@ -81,7 +112,6 @@ const image: Ref<any> = ref(serverApi.getLinkOnImage(props.course?.imageId))
 
   .info {
     padding: 0 10px;
-    height: 300px;
     display: flex;
     flex-direction: column;
     align-items: center;

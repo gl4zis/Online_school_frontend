@@ -21,15 +21,10 @@ import AppHeader from "@/components/MainHeader.vue";
 
 .body {
   margin-top: 130px;
-  margin-bottom: 20px;
+  margin-bottom: 80px;
   width: 90%;
-  background: white;
+  background: #F8F8F8;
   border-radius: 5px;
-}
-
-.footer {
-  background: #444;
-  width: 100%;
-  height: 400px;
+  text-align: center;
 }
 </style>

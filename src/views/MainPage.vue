@@ -1,5 +1,5 @@
 <template>
-  <MainLayout class="main">
+  <MainLayout>
     <template #body>
       <section id="info">
         <h2>Some advertisement information with beautiful images to increase sells</h2>
@@ -25,7 +25,7 @@
       <section id="courses">
         <h2>Our Courses</h2>
         <Carousel :value="courses"
-                  :num-visible="6"
+                  :num-visible="5"
                   :responsive-options="courseCarOption"
                   circular>
           <template #item="{data}">
@@ -36,7 +36,7 @@
       <section id="teachers">
         <h2>Our Teachers</h2>
         <Carousel :value="teachers"
-                  :num-visible="4"
+                  :num-visible="5"
                   :responsive-options="teacherCarOption"
                   circular>
           <template #item="{data}">
@@ -69,17 +69,22 @@ serverApi.getAllTeachers().then(data => teachers.value = data)
 
 const teacherCarOption = ref([
   {
-    breakpoint: '2559px',
+    breakpoint: '2499px',
+    numVisible: 4,
+    numScroll: 1
+  },
+  {
+    breakpoint: '2159px',
     numVisible: 3,
     numScroll: 1
   },
   {
-    breakpoint: '1919px',
+    breakpoint: '1599px',
     numVisible: 2,
     numScroll: 1
   },
   {
-    breakpoint: '1023px',
+    breakpoint: '1099px',
     numVisible: 1,
     numScroll: 1
   }
@@ -89,11 +94,6 @@ const courses: Ref<Course[] | undefined> = ref()
 serverApi.getAllCourses().then(data => courses.value = data)
 
 const courseCarOption = ref([
-  {
-    breakpoint: '2559px',
-    numVisible: 5,
-    numScroll: 1
-  },
   {
     breakpoint: '2159px',
     numVisible: 4,
@@ -118,11 +118,8 @@ const courseCarOption = ref([
 </script>
 
 <style scoped lang="scss">
-.main {
-  text-align: center;
-  section {
-    margin: 80px auto;
-  }
+section {
+  margin: 80px auto;
 }
 
 #info {

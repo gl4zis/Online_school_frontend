@@ -3,7 +3,7 @@ import Login from '../views/LoginView.vue'
 import SignUp from '../views/SignUpView.vue'
 import MainPage from "@/views/MainPage.vue";
 import MyCourses from "@/views/MyCourses.vue";
-import ProfileView from "@/views/ProfileView.vue";
+import ProfilePage from "@/views/ProfilePage.vue";
 import {profileStore} from "@/stores/profileStore";
 import {authStore} from "@/stores/authStore";
 import AdminPage from "@/views/AdminPage.vue";
@@ -26,7 +26,7 @@ const routes: Array<RouteRecordRaw> = [
     },
     {
         path: '/profile',
-        component: ProfileView,
+        component: ProfilePage,
         beforeEnter: () => Boolean(profileStore.profile)
     },
     {

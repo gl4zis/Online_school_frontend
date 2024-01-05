@@ -164,6 +164,10 @@ async function getAnotherProfile(id: number): Promise<ProfileResponse> {
     return <ProfileResponse>await sendStandardRequest('/user/profile/' + id)
 }
 
+async function getTeacherCourses(teacherId: number): Promise<Course[]> {
+    return <Course[]>await sendStandardRequest(`/course/${teacherId}`)
+}
+
 function getLinkOnImage(id?: string, size?: number): string {
     if (id) {
         if (size)
@@ -191,6 +195,7 @@ export default {
     adminRegister,
     getAllTeachers,
     getAllCourses,
+    getTeacherCourses,
     getAnotherProfile,
     getLinkOnImage
 }
