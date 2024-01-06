@@ -10,11 +10,9 @@
 </template>
 
 <script setup lang="ts">
-import {ref, defineEmits} from "vue";
+import {ref} from "vue";
 import Menubar from 'primevue/menubar';
 import router from "@/router";
-
-const emit = defineEmits(['register', 'course'])
 
 const items = ref([
   {
@@ -23,14 +21,14 @@ const items = ref([
     command: () => router.push('/')
   },
   {
-    label: 'Register',
+    label: 'Users',
     icon: 'pi pi-user',
-    command: () => emit('register')
+    command: () => router.push('/admin/users')
   },
   {
-    label: 'Add Course',
-    icon: 'pi pi-plus',
-    command: () => emit('course')
+    label: 'Courses',
+    icon: 'pi pi-book',
+    command: () => router.push('/admin/courses')
   }
 ])
 </script>

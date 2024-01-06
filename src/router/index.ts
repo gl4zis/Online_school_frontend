@@ -5,6 +5,8 @@ import ProfilePage from "@/views/ProfilePage.vue";
 import {profileStore} from "@/stores/profileStore";
 import AdminPage from "@/views/AdminPage.vue";
 import TeacherPage from "@/views/TeacherPage.vue";
+import AdminCourses from "@/components/AdminCourses.vue";
+import AdminUsers from "@/components/AdminUsers.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -19,7 +21,17 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/admin',
         component: AdminPage,
-        beforeEnter: (): boolean => profileStore.profile?.role === 'ADMIN'
+        beforeEnter: (): boolean => profileStore.profile?.role === 'ADMIN',
+        children: [
+            {
+                path: 'users',
+                component: AdminUsers
+            },
+            {
+                path: 'courses',
+                component: AdminCourses
+            }
+        ]
     },
     {
         path: '/teacher',

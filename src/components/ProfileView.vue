@@ -14,12 +14,15 @@
           <Chip v-for="(subject, idx) in profile.subjects" :key="idx" :label="subject"/>
         </div>
       </div>
-      <Carousel :value="courses"
-                :num-visible="1">
-        <template #item="{data}">
-          <CourseCard :course="data" size="small"/>
-        </template>
-      </Carousel>
+      <template v-if="courses">
+        <h4>My Courses</h4>
+        <Carousel :value="courses"
+                  :num-visible="1">
+          <template #item="{data}">
+            <CourseCard :course="data" size="small"/>
+          </template>
+        </Carousel>
+      </template>
     </div>
     <template #footer>
       <div class="foot">
@@ -57,8 +60,8 @@ const photo = ref(serverApi.getLinkOnImage(props.profile?.photoId, 100))
 const showing = ref(false)
 
 const courses = ref()
-if (props.profile?.role === 'TEACHER')
-  serverApi.getTeacherCourses(props.profile.id).then(resp => courses.value = resp)
+if (props.profile?.role === 'STUDENT' || props.profile?.role === 'TEACHER')
+  serverApi.getUserCourses(props.profile).then(resp => courses.value = resp)
 
 function show(): void {
   showing.value = true

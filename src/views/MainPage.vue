@@ -1,5 +1,8 @@
 <template>
   <MainLayout>
+    <template #header>
+      <MainHeader/>
+    </template>
     <template #body>
       <section id="info">
         <h2>Some advertisement information with beautiful images to increase sells</h2>
@@ -63,6 +66,7 @@ import adImage1 from '@/assets/ad_image_1.jpg'
 import adImage2 from '@/assets/ad_image_2.jpg'
 import adImage3 from '@/assets/ad_image_3.jpg'
 import CourseCard from "@/components/CourseCard.vue";
+import MainHeader from "@/components/MainHeader.vue";
 
 const teachers: Ref<ProfileResponse[] | undefined> = ref()
 serverApi.getAllTeachers().then(data => teachers.value = data)

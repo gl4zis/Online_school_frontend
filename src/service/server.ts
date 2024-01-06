@@ -10,7 +10,7 @@ import {
     Status,
     FileRequest,
     AdminRegisterData,
-    Course
+    Course, Profile
 } from "@/service/dtoInterfaces";
 
 const GATEWAY_ADDRESS = 'http://localhost:8765'
@@ -164,8 +164,8 @@ async function getAnotherProfile(id: number): Promise<ProfileResponse> {
     return <ProfileResponse>await sendStandardRequest('/user/profile/' + id)
 }
 
-async function getTeacherCourses(teacherId: number): Promise<Course[]> {
-    return <Course[]>await sendStandardRequest(`/course/${teacherId}`)
+async function getUserCourses({id, role}: Profile): Promise<Course[]> {
+    return <Course[]>await sendStandardRequest(`/course/${id}?role=${role}`)
 }
 
 function getLinkOnImage(id?: string, size?: number): string {
@@ -177,6 +177,15 @@ function getLinkOnImage(id?: string, size?: number): string {
     }
 
     return ''
+}
+
+// Admin access
+async function getAllProfiles(): Promise<ProfileResponse[]> {
+    return <ProfileResponse[]>await sendRequestWithToken('/user/admin/users')
+}
+
+async function setUserLock(userId: number, lock: boolean): Promise<Status> {
+    return <Status>await sendRequestWithToken(`/user/admin/block/${userId}?lock=${lock}`, {method: 'PUT'})
 }
 
 export default {
@@ -195,7 +204,9 @@ export default {
     adminRegister,
     getAllTeachers,
     getAllCourses,
-    getTeacherCourses,
+    getUserCourses,
     getAnotherProfile,
-    getLinkOnImage
+    getLinkOnImage,
+    getAllProfiles,
+    setUserLock
 }

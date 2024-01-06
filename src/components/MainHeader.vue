@@ -14,7 +14,7 @@ import Menubar from 'primevue/menubar';
 import Image from 'primevue/image';
 import appLogo from "@/assets/logo.jpg";
 import ProfileButton from "@/components/ProfileButton.vue";
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import router from "@/router";
 import {profileStore} from "@/stores/profileStore";
 import {goToPageAndElement} from "@/service/utils";
@@ -42,35 +42,29 @@ const items = ref([
   }
 ])
 
-if (profileStore.profile?.role === 'ADMIN')
-  items.value.push({
-    label: 'Admin Page',
-    icon: 'pi pi-calculator',
-    command: () => router.push('/admin')
-  })
+addExtraButton()
+watch(profileStore, addExtraButton, {deep: true})
 
-if (profileStore.profile?.role === 'TEACHER')
-  items.value.push({
-    label: 'Teacher Page',
-    icon: 'pi pi-book',
-    command: () => router.push('/teacher')
-  })
+function addExtraButton(): void {
+  if (profileStore.profile?.role === 'ADMIN')
+    items.value.push({
+      label: 'Admin Page',
+      icon: 'pi pi-calculator',
+      command: () => router.push('/admin')
+    })
 
-if (profileStore.profile?.role === 'STUDENT')
-  items.value.push({
-    label: 'My Courses',
-    icon: 'pi pi-book',
-    command: () => router.push('/my-courses')
-  })
-</script>
+  if (profileStore.profile?.role === 'TEACHER')
+    items.value.push({
+      label: 'Teacher Page',
+      icon: 'pi pi-book',
+      command: () => router.push('/teacher')
+    })
 
-<style scoped lang="scss">
-.menu {
-  position: fixed;
-  top: 20px;
-  width: 95%;
-  background: white;
-  height: 90px;
-  z-index: 1;
+  if (profileStore.profile?.role === 'STUDENT')
+    items.value.push({
+      label: 'My Courses',
+      icon: 'pi pi-book',
+      command: () => router.push('/my-courses')
+    })
 }
-</style>
+</script>
