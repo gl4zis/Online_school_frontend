@@ -29,7 +29,8 @@ export interface ProfileUpdateRequest {
     lastname: string,
     middleName?: string,
     birthdate?: string,
-    photoId?: string
+    photoId?: string,
+    confirmed?: boolean
 }
 
 export interface Profile extends ProfileUpdateRequest {

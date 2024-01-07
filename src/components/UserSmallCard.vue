@@ -15,7 +15,13 @@
       <Button size="small"
               :label="lockLabel"
               severity="danger"
-              @click="setLock"/>
+              @click="changeLock"/>
+      <Button v-if="profile.role === 'TEACHER'"
+              size="small"
+              :icon="profile.confirmed ? 'pi pi-minus' : 'pi pi-plus'"
+              severity="success"
+              :title="profile.confirmed ? 'Remove from main carousel' : 'Add in main carousel'"
+              @click="changeConfirmed"/>
     </div>
     <ProfileView ref="profileDialog" :profile="profile"/>
   </div>
@@ -41,9 +47,14 @@ const profileDialog = ref()
 const profile: Ref<Profile> = ref(props.user)
 const lockLabel = computed(() => profile.value.locked ? 'Unlock' : 'Block')
 
-function setLock(): void {
-  serverApi.setUserLock(profile.value.id, !profile.value.locked)
+function changeLock(): void {
   profile.value.locked = !profile.value.locked
+  serverApi.setUserLock(profile.value.id, profile.value.locked)
+}
+
+function changeConfirmed(): void {
+  profile.value.confirmed = !profile.value.confirmed
+  serverApi.setTeacherConfirm(profile.value.id, profile.value.confirmed)
 }
 </script>
 
@@ -51,7 +62,7 @@ function setLock(): void {
 .user {
   margin: 10px auto;
   height: 80px;
-  width: 400px;
+  width: 500px;
   border: 1px solid lightgrey;
   border-radius: 5px;
   display: flex;

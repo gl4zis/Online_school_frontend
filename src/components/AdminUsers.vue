@@ -38,10 +38,16 @@ function getUsers(): void {
   align-items: center;
 
   .user-list {
-    margin-right: 50px;
     display: flex;
     flex-wrap: wrap;
-    width: 850px;
+    max-width: 80%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .user-list {
+    margin-right: 50px;
+    width: 1100px;
   }
 }
 </style>

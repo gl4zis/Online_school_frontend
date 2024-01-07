@@ -155,6 +155,11 @@ async function getAllTeachers(): Promise<ProfileResponse[]> {
     return <ProfileResponse[]>await sendStandardRequest('/user/profile/teachers')
 }
 
+async function getConfirmedTeachers(): Promise<ProfileResponse[]> {
+    const teachers = await getAllTeachers()
+    return teachers.filter(teacher => teacher.confirmed)
+}
+
 async function getAllCourses(): Promise<Course[]> {
     return <Course[]>await sendStandardRequest('/course/all')
 }
@@ -188,6 +193,10 @@ async function setUserLock(userId: number, lock: boolean): Promise<Status> {
     return <Status>await sendRequestWithToken(`/user/admin/block/${userId}?lock=${lock}`, {method: 'PUT'})
 }
 
+async function setTeacherConfirm(userId: number, confirm: boolean): Promise<Status> {
+    return <Status>await sendRequestWithToken(`/user/admin/confirm/${userId}?confirm=${confirm}`, {method: 'PUT'})
+}
+
 export default {
     login,
     updateTokens,
@@ -203,10 +212,12 @@ export default {
     removeFile,
     adminRegister,
     getAllTeachers,
+    getConfirmedTeachers,
     getAllCourses,
     getUserCourses,
     getAnotherProfile,
     getLinkOnImage,
     getAllProfiles,
-    setUserLock
+    setUserLock,
+    setTeacherConfirm
 }

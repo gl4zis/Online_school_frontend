@@ -69,7 +69,7 @@ import CourseCard from "@/components/CourseCard.vue";
 import MainHeader from "@/components/MainHeader.vue";
 
 const teachers: Ref<ProfileResponse[] | undefined> = ref()
-serverApi.getAllTeachers().then(data => teachers.value = data)
+serverApi.getConfirmedTeachers().then(data => teachers.value = data)
 
 const teacherCarOption = ref([
   {
