@@ -5,16 +5,19 @@
     </template>
     <div class="body">
       <h2>{{ profile.firstname }} {{ profile.middleName }} {{ profile.lastname }}</h2>
-      <h3>{{ calculateAge(new Date(profile.birthdate)) }} years, {{ profile.role.toLowerCase() }}</h3>
+      <h3>
+        <template v-if="profile.birthdate">{{ calculateAge(new Date(profile.birthdate)) }} years, </template>
+        {{ profile.role.toLowerCase() }}
+      </h3>
       <div v-if="profile.email">Email: <b>{{ profile.email }}</b></div>
       <div class="teacher" v-if="profile.role === 'TEACHER'">
         <div>{{ profile.description }}</div>
-        <div class="subjects">
+        <div class="subjects" v-if="profile.subjects?.length">
           <h4>My Subjects</h4>
           <Chip v-for="(subject, idx) in profile.subjects" :key="idx" :label="subject"/>
         </div>
       </div>
-      <template v-if="courses">
+      <template v-if="courses.length">
         <h4>My Courses</h4>
         <Carousel :value="courses"
                   :num-visible="1">
