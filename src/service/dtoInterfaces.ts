@@ -30,7 +30,6 @@ export interface ProfileUpdateRequest {
     middleName?: string,
     birthdate?: string,
     photoId?: string,
-    confirmed?: boolean
 }
 
 export interface Profile extends ProfileUpdateRequest {
@@ -38,7 +37,8 @@ export interface Profile extends ProfileUpdateRequest {
     role: ROLE,
     locked: boolean,
     subjects?: SUBJECT[],
-    description?: string
+    description?: string,
+    published?: boolean
 }
 
 export interface ProfileResponse extends Profile, Status {}

@@ -2,7 +2,7 @@
   <div class="main">
     <div class="user-list">
       <template v-for="user in users" :key="user.id">
-        <UserSmallCard v-if="profileStore.profile?.id !== user.id" :user="user"/>
+        <UserSmallCard :user="user"/>
       </template>
     </div>
     <Button label="New User"
@@ -18,7 +18,6 @@ import {Ref, ref} from "vue"
 import serverApi from "@/service/server";
 import {ProfileResponse} from "@/service/dtoInterfaces";
 import UserSmallCard from "@/components/UserSmallCard.vue";
-import {profileStore} from "@/stores/profileStore";
 import Button from "primevue/button";
 import AdminRegister from "@/components/AdminRegister.vue";
 
@@ -34,12 +33,14 @@ function getUsers(): void {
 
 <style scoped lang="scss">
 .main {
+  padding: 20px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 
   .user-list {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
     max-width: 80%;
   }
 }

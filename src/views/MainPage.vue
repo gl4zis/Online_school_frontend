@@ -48,7 +48,7 @@
         </Carousel>
       </section>
       <section id="contacts">
-        <h2>Some contact information IDK how not to hardcode it</h2>
+        <ContactsBlock/>
       </section>
     </template>
   </MainLayout>
@@ -67,9 +67,10 @@ import adImage2 from '@/assets/ad_image_2.jpg'
 import adImage3 from '@/assets/ad_image_3.jpg'
 import CourseCard from "@/components/CourseCard.vue";
 import MainHeader from "@/components/MainHeader.vue";
+import ContactsBlock from "@/components/ContactsBlock.vue";
 
 const teachers: Ref<ProfileResponse[] | undefined> = ref()
-serverApi.getConfirmedTeachers().then(data => teachers.value = data)
+serverApi.getPublishedTeachers().then(data => teachers.value = data)
 
 const teacherCarOption = ref([
   {

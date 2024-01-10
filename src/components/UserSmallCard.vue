@@ -9,18 +9,23 @@
       <span>{{ profile.firstname }} {{ profile.lastname }}, <i>{{ profile.role }}</i></span>
     </div>
     <div class="buttons">
-      <Button size="small"
-              label="Profile"
-              @click="profileDialog.show()"/>
-      <Button size="small"
-              :label="lockLabel"
-              severity="danger"
-              @click="changeLock"/>
-      <Button v-if="profile.role === 'TEACHER'"
+      <template v-if="profileStore.profile?.id === profile.id">
+        You
+      </template>
+      <template v-else>
+        <Button size="small"
+                label="Profile"
+                @click="profileDialog.show()"/>
+        <Button size="small"
+                :label="lockLabel"
+                severity="danger"
+                @click="changeLock"/>
+      </template>
+      <Button v-if="profile.role !== 'Student'"
               size="small"
-              :icon="profile.confirmed ? 'pi pi-minus' : 'pi pi-plus'"
-              severity="success"
-              :title="profile.confirmed ? 'Remove from main carousel' : 'Add in main carousel'"
+              :icon="profile.published ? 'pi pi-minus' : 'pi pi-plus'"
+              :severity="profile.published ? 'warning' : 'success'"
+              :title="profile.published ? 'Remove from main page' : 'Add in main page'"
               @click="changeConfirmed"/>
     </div>
     <ProfileView ref="profileDialog" :profile="profile"/>
@@ -35,6 +40,7 @@ import {Profile} from "@/service/dtoInterfaces";
 import ProfileView from "@/components/ProfileView.vue";
 import Button from "primevue/button";
 import Avatar from 'primevue/avatar'
+import {profileStore} from "@/stores/profileStore";
 
 const props = defineProps({
   user: {
@@ -53,14 +59,14 @@ function changeLock(): void {
 }
 
 function changeConfirmed(): void {
-  profile.value.confirmed = !profile.value.confirmed
-  serverApi.setTeacherConfirm(profile.value.id, profile.value.confirmed)
+  profile.value.published = !profile.value.published
+  serverApi.setUserPublished(profile.value.id, profile.value.published)
 }
 </script>
 
 <style scoped lang="scss">
 .user {
-  margin: 10px auto;
+  margin-bottom: 10px;
   height: 80px;
   width: 500px;
   border: 1px solid lightgrey;

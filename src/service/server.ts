@@ -155,9 +155,18 @@ async function getAllTeachers(): Promise<ProfileResponse[]> {
     return <ProfileResponse[]>await sendStandardRequest('/user/profile/teachers')
 }
 
-async function getConfirmedTeachers(): Promise<ProfileResponse[]> {
+async function getPublishedTeachers(): Promise<ProfileResponse[]> {
     const teachers = await getAllTeachers()
-    return teachers.filter(teacher => teacher.confirmed)
+    return teachers.filter(teacher => teacher.published)
+}
+
+async function getAllAdmins(): Promise<ProfileResponse[]> {
+    return <ProfileResponse[]>await sendStandardRequest('/user/profile/admins')
+}
+
+async function getPublishedAdmins(): Promise<ProfileResponse[]> {
+    const admins = await getAllAdmins()
+    return admins.filter(admin => admin.published)
 }
 
 async function getAllCourses(): Promise<Course[]> {
@@ -193,8 +202,8 @@ async function setUserLock(userId: number, lock: boolean): Promise<Status> {
     return <Status>await sendRequestWithToken(`/user/admin/block/${userId}?lock=${lock}`, {method: 'PUT'})
 }
 
-async function setTeacherConfirm(userId: number, confirm: boolean): Promise<Status> {
-    return <Status>await sendRequestWithToken(`/user/admin/confirm/${userId}?confirm=${confirm}`, {method: 'PUT'})
+async function setUserPublished(userId: number, published: boolean): Promise<Status> {
+    return <Status>await sendRequestWithToken(`/user/admin/publish/${userId}?publish=${published}`, {method: 'PUT'})
 }
 
 export default {
@@ -212,12 +221,14 @@ export default {
     removeFile,
     adminRegister,
     getAllTeachers,
-    getConfirmedTeachers,
+    getPublishedTeachers,
+    getAllAdmins,
+    getPublishedAdmins,
     getAllCourses,
     getUserCourses,
     getAnotherProfile,
     getLinkOnImage,
     getAllProfiles,
     setUserLock,
-    setTeacherConfirm
+    setUserPublished
 }

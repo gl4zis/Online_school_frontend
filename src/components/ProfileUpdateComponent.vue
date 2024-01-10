@@ -29,17 +29,18 @@
                         @edit="editing = true"
                         @cancel="resetData"
                         @confirm="updateProfile"/>
-      <template v-if="profileStore.profile?.role === 'TEACHER'">
+      <template v-if="profileStore.profile?.role !== 'STUDENT'">
         <Divider/>
         <div class="form">
-          <MultiSelect :options="subjects"
+          <MultiSelect v-if="profileStore.profile?.role === 'TEACHER'"
+                       :options="subjects"
                        v-model="currSubjects"
                        placeholder="Subjects"
                        display="chip"
                        :disabled="!teachEditing"/>
           <Textarea v-model="description"
                     :disabled="!teachEditing"
-                    placeholder="Text something about your skills or job experience"/>
+                    placeholder="Text something about you"/>
         </div>
         <EditButtonsBlock :editing="teachEditing"
                           @edit="teachEditing = true"
