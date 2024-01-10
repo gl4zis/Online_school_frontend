@@ -53,18 +53,17 @@ import {ref, Ref} from "vue";
 import {profileStore} from "@/stores/profileStore";
 import {FileRequest} from "@/service/dtoInterfaces";
 import serverApi from "@/service/server";
-import {useToast} from "primevue/usetoast";
 import EditButtonsBlock from "@/components/EditButtonsBlock.vue";
 import toastApi from '@/service/toast'
 import ImageUploader from "@/components/ImageUploader.vue";
 import UniqueInput from "@/components/UniqueInput.vue";
 import Image from 'primevue/image'
 import defaultUserIcon from '@/assets/user_icon.jpg'
+import {logoutUser} from "@/service/utils";
 
-const toast = useToast()
 const editing: Ref<boolean> = ref(false)
 
-const userPhoto: Ref<any> = ref(serverApi.getLinkOnImage(profileStore.profile?.photoId, 250))
+const userPhoto: Ref<any> = ref(serverApi.getLinkOnImage(profileStore.profile?.photoId))
 
 const usernameInput: Ref<typeof UniqueInput | null> = ref(null)
 const username = ref(profileStore.profile?.username)
@@ -86,13 +85,13 @@ function resetData(): void {
 
 async function updateAccount(): Promise<void> {
   if (!usernameInput.value?.isValid() || !emailInput.value?.isValid()) {
-    toastApi.validationError(toast)
+    toastApi.validationError()
     return
   }
 
   if (!profileStore.profile) {
-    toastApi.strangeError(toast, 'Please relogin')
-    resetData()
+    toastApi.strangeError('Please login again')
+    logoutUser()
     return
   }
 
@@ -107,10 +106,10 @@ async function updateAccount(): Promise<void> {
     usernameInput.value?.reset()
     emailInput.value?.reset()
   } else {
-    toastApi.strangeError(toast)
-    resetData()
+    toastApi.strangeError(res.message)
   }
 
+  resetData()
   editing.value = false
 }
 
@@ -124,7 +123,7 @@ function resetPasswords(): void {
 
 async function changePassword(): Promise<void> {
   if (newPasswordValidation.value) {
-    toastApi.validationError(toast)
+    toastApi.validationError()
     return
   }
 
@@ -134,9 +133,9 @@ async function changePassword(): Promise<void> {
   })
 
   if (resp.status === 200)
-    toastApi.success(toast, 'You changed your password')
+    toastApi.success('You changed your password')
   else {
-    toastApi.strangeError(toast)
+    toastApi.strangeError(resp.message)
   }
 
   resetPasswords()
@@ -149,7 +148,7 @@ async function removePhoto(): Promise<void> {
   let res = await serverApi.removeFile(profileStore.profile.photoId)
 
   if (res.status !== 200) {
-    toastApi.strangeError(toast)
+    toastApi.strangeError(res.message)
     return
   }
 
@@ -159,16 +158,17 @@ async function removePhoto(): Promise<void> {
   res = await serverApi.updateSelfProfile(updatedProfile)
 
   if (res.status === 200) {
-    toastApi.success(toast, 'Photo was removed')
+    toastApi.success('Photo was removed')
     profileStore.updateProfile(updatedProfile)
     userPhoto.value = ''
   } else
-    toastApi.strangeError(toast)
+    toastApi.strangeError(res.message)
 }
 
 async function changePhoto(req: FileRequest): Promise<void> {
   if (!profileStore.profile) {
-    toastApi.strangeError(toast)
+    toastApi.strangeError('Please sign in again')
+    logoutUser()
     return
   }
 
@@ -177,7 +177,7 @@ async function changePhoto(req: FileRequest): Promise<void> {
     res = await serverApi.removeFile(profileStore.profile.photoId)
 
     if (res.status !== 200) {
-      toastApi.strangeError(toast)
+      toastApi.strangeError(res.message)
       return
     }
   }
@@ -185,7 +185,7 @@ async function changePhoto(req: FileRequest): Promise<void> {
   res = await serverApi.createFile(req)
 
   if (res.status !== 200) {
-    toastApi.strangeError(toast)
+    toastApi.strangeError(res.message)
     return
   }
 
@@ -195,11 +195,11 @@ async function changePhoto(req: FileRequest): Promise<void> {
   res = await serverApi.updateSelfProfile(updatedProfile)
 
   if (res.status === 200) {
-    toastApi.success(toast, 'Photo was changed')
+    toastApi.success('Photo was changed')
     profileStore.updateProfile(updatedProfile)
-    userPhoto.value = serverApi.getLinkOnImage(profileStore.profile?.photoId, 250)
+    userPhoto.value = serverApi.getLinkOnImage(profileStore.profile?.photoId)
   } else
-    toastApi.strangeError(toast)
+    toastApi.strangeError(res.message)
 }
 </script>
 

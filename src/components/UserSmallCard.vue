@@ -2,7 +2,7 @@
   <div class="user">
     <div class="info">
       <div class="head">
-        <Avatar :image="serverApi.getLinkOnImage(profile.photoId, 100) || defaultUser"
+        <Avatar :image="serverApi.getLinkOnImage(profile.photoId) || defaultUser"
                 shape="circle" class="m-2"/>
         <b>{{ profile.username }}</b>
       </div>
@@ -17,8 +17,8 @@
                 label="Profile"
                 @click="profileDialog.show()"/>
         <Button size="small"
-                :label="lockLabel"
-                severity="danger"
+                :label="profile.locked ? 'Unlock' : 'Block'"
+                :severity="profile.locked ? 'info' : 'danger'"
                 @click="changeLock"/>
       </template>
       <Button v-if="profile.role !== 'Student'"
@@ -35,7 +35,7 @@
 <script setup lang="ts">
 import serverApi from "@/service/server";
 import defaultUser from "@/assets/user_icon.jpg";
-import {PropType, defineProps, ref, Ref, computed} from "vue";
+import {PropType, defineProps, ref, Ref} from "vue";
 import {Profile} from "@/service/dtoInterfaces";
 import ProfileView from "@/components/ProfileView.vue";
 import Button from "primevue/button";
@@ -51,7 +51,6 @@ const props = defineProps({
 
 const profileDialog = ref()
 const profile: Ref<Profile> = ref(props.user)
-const lockLabel = computed(() => profile.value.locked ? 'Unlock' : 'Block')
 
 function changeLock(): void {
   profile.value.locked = !profile.value.locked

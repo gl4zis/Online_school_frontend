@@ -50,7 +50,7 @@ function addExtraButton(): void {
     items.value.push({
       label: 'Admin Page',
       icon: 'pi pi-calculator',
-      command: () => router.push('/admin')
+      command: () => router.push('/admin/users')
     })
 
   if (profileStore.profile?.role === 'TEACHER')

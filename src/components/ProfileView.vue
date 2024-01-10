@@ -59,7 +59,7 @@ defineExpose({
   show
 })
 
-const photo = ref(serverApi.getLinkOnImage(props.profile?.photoId, 100))
+const photo = ref(serverApi.getLinkOnImage(props.profile?.photoId))
 const showing = ref(false)
 
 const courses = ref()

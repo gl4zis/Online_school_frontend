@@ -1,10 +1,10 @@
 <template>
   <h2>Contact details</h2>
-  <div class="flex justify-content-evenly flex-wrap">
-    <div class="flex justify-content-evenly" v-for="profile in admins" :key="profile.id">
-      <img :src="serverApi.getLinkOnImage(profile.photoId, 250) || userImage" width="250" alt="Admin Logo"/>
+  <div class="flex justify-content-between flex-wrap p-4">
+    <div class="flex card" v-for="profile in admins" :key="profile.id">
+      <img :src="serverApi.getLinkOnImage(profile.photoId) || userImage" width="250" alt="Admin Logo"/>
       <div class="ml-4 text-left info">
-        <h3>{{ profile.firstname }} {{ profile.username }}</h3>
+        <h3>{{ profile.firstname }} {{ profile.lastname }}</h3>
         <p>{{ profile.description }}</p>
         <span v-if="profile.email">Email: <b>{{ profile.email }}</b></span>
       </div>
@@ -23,7 +23,11 @@ serverApi.getPublishedAdmins().then(resp => admins.value = resp)
 </script>
 
 <style scoped lang="scss">
-.info {
-  width: 240px;
+.card {
+  margin-bottom: 20px;
+
+  .info {
+    width: 240px;
+  }
 }
 </style>

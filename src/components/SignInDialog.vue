@@ -48,7 +48,6 @@ import BackButton from "@/components/BackButton.vue";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
 import serverApi from "@/service/server";
 import toastApi from "@/service/toast"
-import {useToast} from "primevue/usetoast";
 import FormInput from "@/components/FormInput.vue";
 import {isCredentialsValid} from "@/service/validation";
 import {authStore} from "@/stores/authStore";
@@ -60,8 +59,6 @@ const showing = ref(false)
 
 const username = ref('')
 const password = ref('')
-
-const toast = useToast()
 
 defineExpose({
   show
@@ -89,7 +86,7 @@ async function signIn(): Promise<void> {
   }
 
   if (!isCredentialsValid(credentials)) {
-    toastApi.invalidCredentials(toast)
+    toastApi.invalidCredentials()
     return
   }
 
@@ -104,15 +101,17 @@ async function signIn(): Promise<void> {
       close()
     } else {
       authStore.resetTokens()
-      toastApi.noConnection(toast)
+      toastApi.noConnection()
     }
   } else if (tokens.status === 400 || tokens.status === 401)
-    toastApi.invalidCredentials(toast)
-  else
-    toastApi.noConnection(toast)
+    toastApi.invalidCredentials()
+  else if (tokens.status === 403) {
+    toastApi.strangeError('Your account was locked. Please, contact with administration')
+    close()
+  } else
+    toastApi.noConnection()
 
   loading.value = false
-
 }
 </script>
 

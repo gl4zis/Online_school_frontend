@@ -23,7 +23,7 @@ const props = defineProps({
   }
 })
 
-const photo: Ref<any> = ref(serverApi.getLinkOnImage(props.teacher?.photoId, 400))
+const photo: Ref<any> = ref(serverApi.getLinkOnImage(props.teacher?.photoId))
 const profileDialog = ref()
 </script>
 

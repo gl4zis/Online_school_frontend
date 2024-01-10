@@ -10,8 +10,9 @@ import 'primevue/resources/primevue.min.css'
 import 'primeflex/primeflex.min.css';
 import 'primeicons/primeicons.css'
 
-createApp(App)
-    .use(router)
+export const app = createApp(App)
+
+app.use(router)
     .use(PrimeVue)
     .use(ToastService)
     .use(ConfirmationService)

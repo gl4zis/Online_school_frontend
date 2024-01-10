@@ -6,6 +6,9 @@
         <span class="ml-2">{{ item.label }}</span>
       </a>
     </template>
+    <template #end>
+      <ProfileButton/>
+    </template>
   </Menubar>
 </template>
 
@@ -13,6 +16,7 @@
 import {ref} from "vue";
 import Menubar from 'primevue/menubar';
 import router from "@/router";
+import ProfileButton from "@/components/ProfileButton.vue";
 
 const items = ref([
   {

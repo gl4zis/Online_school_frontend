@@ -27,9 +27,9 @@ import {ref, Ref, watch} from "vue";
 import SignIn from "@/components/SignInDialog.vue";
 import SignUp from '@/components/SignUpDialog.vue'
 
-const userIcon: Ref<any> = ref(serverApi.getLinkOnImage(profileStore.profile?.photoId, 100))
+const userIcon: Ref<any> = ref(serverApi.getLinkOnImage(profileStore.profile?.photoId))
 watch(profileStore,
-    (store) => userIcon.value = serverApi.getLinkOnImage(store.profile?.photoId, 100),
+    (store) => userIcon.value = serverApi.getLinkOnImage(store.profile?.photoId),
     {deep: true})
 
 const signInComp = ref()

@@ -1,4 +1,6 @@
 import router from "@/router";
+import {profileStore} from "@/stores/profileStore";
+import {authStore} from "@/stores/authStore";
 
 export function dateToString(date: Date | undefined): string | undefined {
     if (!date)
@@ -46,4 +48,10 @@ export function goToElement(elementId: string): void {
             behavior: 'smooth'
         })
     }
+}
+
+export function logoutUser(path?: string): void {
+    profileStore.resetProfile()
+    authStore.resetTokens()
+    router.push(path || '/')
 }

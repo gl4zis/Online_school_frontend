@@ -1,5 +1,6 @@
 export interface Status {
-    status: number
+    status: number,
+    message: string
 }
 
 export interface JwtResponse extends Status {

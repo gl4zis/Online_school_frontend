@@ -12,6 +12,7 @@ import {
     AdminRegisterData,
     Course, Profile
 } from "@/service/dtoInterfaces";
+import {logoutUser} from "@/service/utils";
 
 const GATEWAY_ADDRESS = 'http://localhost:8765'
 
@@ -41,15 +42,19 @@ async function sendStandardRequest(route: string, options?: RequestInit): Promis
 }
 
 async function sendRequestWithToken(route: string, options?: RequestInit): Promise<object> {
-    if (!authStore.tokens) {
-        return { status: 401 }
+
+    const needReLogin = (): object => {
+        logoutUser()
+        return { status: 403, message: 'Please sign in again' }
     }
+
+    if (!authStore.tokens)
+        return needReLogin()
 
     if (Date.now() + 5000 > authStore.tokens.expiredAt) {
         const newTokens: JwtResponse = await updateTokens(authStore.tokens.refresh)
-        if (newTokens.status !== 200) {
-            return { status: 401 }
-        }
+        if (newTokens.status !== 200)
+            return needReLogin()
 
         authStore.setTokens(newTokens)
     }
@@ -182,12 +187,9 @@ async function getUserCourses({id, role}: Profile): Promise<Course[]> {
     return <Course[]>await sendStandardRequest(`/course/${id}?role=${role}`)
 }
 
-function getLinkOnImage(id?: string, size?: number): string {
+function getLinkOnImage(id?: string): string {
     if (id) {
-        if (size)
-            return `${GATEWAY_ADDRESS}/file/${id}?size=${size}`
-        else
-            return `${GATEWAY_ADDRESS}/file/${id}`
+        return `${GATEWAY_ADDRESS}/file/${id}`
     }
 
     return ''

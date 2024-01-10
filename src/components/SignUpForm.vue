@@ -42,10 +42,9 @@ import {
 } from "@/service/validation";
 import FormInput from "@/components/FormInput.vue";
 import {Ref, ref, defineProps, defineEmits} from "vue";
-import {ROLE, roles} from "@/service/dtoInterfaces";
+import {ROLE, roles, Status} from "@/service/dtoInterfaces";
 import serverApi from "@/service/server";
 import toastApi from "@/service/toast";
-import {useToast} from "primevue/usetoast";
 import SelectButton from "primevue/selectbutton";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
 import UniqueInput from "@/components/UniqueInput.vue";
@@ -66,7 +65,6 @@ const role: Ref<ROLE> = ref('TEACHER');
 const roleOptions = ref(roles);
 
 const loading = ref(false)
-const toast = useToast()
 
 const usernameInput: Ref<typeof UniqueInput | null> = ref(null)
 const username = ref('')
@@ -91,7 +89,7 @@ function isFormValid(): boolean {
 
 async function signUp(): Promise<void> {
   if (!isFormValid()) {
-    toastApi.validationError(toast)
+    toastApi.validationError()
     return
   }
 
@@ -105,17 +103,17 @@ async function signUp(): Promise<void> {
     role: role.value
   }
 
-  const resp = props.selfReg ?
+  const resp: Status = props.selfReg ?
       await serverApi.regStudentAccount(req) : await serverApi.adminRegister(req)
 
   if (resp.status === 503)
-    toastApi.noConnection(toast)
+    toastApi.noConnection()
   else if (resp.status === 403)
-    toastApi.noAccess(toast)
+    toastApi.noAccess()
   else if (resp.status !== 200)
-    toastApi.strangeError(toast)
+    toastApi.strangeError(resp.message)
   else {
-    toastApi.registered(toast, username.value)
+    toastApi.registered(username.value)
     if (props.selfReg)
       await selfRegContinue(resp)
   }

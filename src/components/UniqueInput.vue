@@ -15,7 +15,6 @@ import {profileStore} from "@/stores/profileStore";
 import {MessageResponse} from "@/service/dtoInterfaces";
 import serverApi from '@/service/server'
 import toastApi from "@/service/toast";
-import {useToast} from "primevue/usetoast";
 
 export type paramType = 'username' | 'email'
 
@@ -38,8 +37,6 @@ defineExpose({
     return !validMessage.value
   }
 })
-
-const toast = useToast()
 
 const icon = ref('')
 const validMessage = ref('')
@@ -86,7 +83,7 @@ async function checkUniqueness(): Promise<void> {
 
   if (res.status !== 200) {
     icon.value = ''
-    toastApi.noConnection(toast)
+    toastApi.noConnection()
     return
   }
 

@@ -43,7 +43,7 @@ serverApi.getAnotherProfile(props.course.teacherId).then(resp => {
     teacher.value = resp.firstname + ' ' + resp.lastname
 })
 
-const image: Ref<any> = ref(serverApi.getLinkOnImage(props.course?.imageId, props.size === 'normal' ? 350 : 250))
+const image: Ref<any> = ref(serverApi.getLinkOnImage(props.course?.imageId))
 </script>
 
 <style scoped lang="scss">

@@ -57,7 +57,6 @@ import FormInput from "@/components/FormInput.vue";
 import Card from "primevue/card";
 import {ref, Ref} from "vue";
 import EditButtonsBlock from "@/components/EditButtonsBlock.vue";
-import {useToast} from "primevue/usetoast";
 import toastApi from '@/service/toast'
 import {profileStore} from "@/stores/profileStore";
 import serverApi from "@/service/server";
@@ -65,10 +64,9 @@ import Calendar from "primevue/calendar";
 import Textarea from 'primevue/textarea';
 import MultiSelect from 'primevue/multiselect';
 import Divider from "primevue/divider";
-import {dateToString} from "@/service/utils";
+import {dateToString, logoutUser} from "@/service/utils";
 import {subjects} from "@/service/dtoInterfaces";
 
-const toast = useToast()
 const editing: Ref<boolean> = ref(false)
 const teachEditing: Ref<boolean> = ref(false)
 
@@ -105,13 +103,13 @@ function resetData(): void {
 
 async function updateProfile(): Promise<void> {
   if (!profileStore.profile) {
-    toastApi.strangeError(toast, 'Please relogin')
-    resetData()
+    toastApi.strangeError('Please sign in again')
+    logoutUser()
     return
   }
 
   if (firstnameValidation.value || lastnameValidation.value || middleNameValidation.value) {
-    toastApi.validationError(toast)
+    toastApi.validationError()
     return
   }
 
@@ -126,7 +124,7 @@ async function updateProfile(): Promise<void> {
   if (res.status === 200)
     profileStore.updateProfile(updatedProfile)
   else {
-    toastApi.strangeError(toast)
+    toastApi.strangeError(res.message)
     resetData()
   }
 
@@ -141,8 +139,8 @@ function resetTeachData(): void {
 
 async function updateTeachProfile(): Promise<void> {
   if (!profileStore.profile) {
-    toastApi.strangeError(toast, 'Please relogin')
-    resetData()
+    toastApi.strangeError('Please sign in again')
+    logoutUser()
     return
   }
 
@@ -155,7 +153,7 @@ async function updateTeachProfile(): Promise<void> {
   if (res.status === 200)
     profileStore.updateProfile(updatedProfile)
   else {
-    toastApi.strangeError(toast)
+    toastApi.strangeError(res.message)
     resetTeachData()
   }
 

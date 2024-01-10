@@ -33,6 +33,7 @@ import {authStore} from "@/stores/authStore";
 import router from "@/router";
 import Button from "primevue/button";
 import AccountUpdateComponent from "@/components/AccountUpdateComponent.vue";
+import {logoutUser} from "@/service/utils";
 
 const confirm = useConfirm()
 
@@ -40,11 +41,7 @@ function logoutConfirm(): void {
   confirm.require({
     message: 'Are you sure you want logout from your account?',
     header: 'Logout',
-    accept: () => {
-      profileStore.resetProfile()
-      authStore.resetTokens()
-      router.push('/')
-    }
+    accept: logoutUser
   })
 }
 
