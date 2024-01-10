@@ -1,6 +1,6 @@
 <template>
   <h2>Contact details</h2>
-  <div class="flex justify-content-between flex-wrap p-4">
+  <div class="flex justify-content-between flex-wrap p-6">
     <div class="flex card" v-for="profile in admins" :key="profile.id">
       <img :src="serverApi.getLinkOnImage(profile.photoId) || userImage" width="250" alt="Admin Logo"/>
       <div class="ml-4 text-left info">

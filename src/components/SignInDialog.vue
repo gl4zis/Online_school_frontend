@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:visible="showing" modal>
+  <Dialog :visible="true" modal>
     <template #container>
       <Card class="form">
         <template #header>
@@ -11,7 +11,7 @@
         <template #subtitle>
           <p>
             Don't have account?
-            <MyLink :callback="signUp" text="Sign Up"/>
+            <MyLink path="/sign-up" text="Sign Up"/>
           </p>
         </template>
         <template #content>
@@ -42,7 +42,7 @@
 import Dialog from 'primevue/dialog'
 import Card from 'primevue/card';
 import Button from 'primevue/button';
-import {ref, defineExpose, defineEmits} from "vue";
+import {ref} from "vue";
 import MyLink from "@/components/MyLink.vue";
 import BackButton from "@/components/BackButton.vue";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
@@ -53,30 +53,14 @@ import {isCredentialsValid} from "@/service/validation";
 import {authStore} from "@/stores/authStore";
 import {Credentials, JwtResponse, ProfileResponse} from "@/service/dtoInterfaces";
 import {profileStore} from "@/stores/profileStore";
+import router from "@/router";
 
 const loading = ref(false)
-const showing = ref(false)
 
 const username = ref('')
 const password = ref('')
-
-defineExpose({
-  show
-})
-
-const emit = defineEmits(['signUp'])
-
-function signUp(): void {
-  close()
-  emit('signUp')
-}
-
 function close(): void {
-  showing.value = false
-}
-
-function show(): void {
-  showing.value = true
+  router.push('/')
 }
 
 async function signIn(): Promise<void> {

@@ -12,8 +12,6 @@
       Sign In
     </template>
   </Button>
-  <SignIn ref="signInComp" @sign-up="signUp"/>
-  <SignUp ref="signUpComp"/>
 </template>
 
 <script setup lang="ts">
@@ -24,26 +22,17 @@ import router from "@/router";
 import {profileStore} from "@/stores/profileStore";
 import serverApi from '@/service/server'
 import {ref, Ref, watch} from "vue";
-import SignIn from "@/components/SignInDialog.vue";
-import SignUp from '@/components/SignUpDialog.vue'
 
 const userIcon: Ref<any> = ref(serverApi.getLinkOnImage(profileStore.profile?.photoId))
 watch(profileStore,
     (store) => userIcon.value = serverApi.getLinkOnImage(store.profile?.photoId),
     {deep: true})
 
-const signInComp = ref()
-const signUpComp = ref()
-
-function signUp(): void {
-  signUpComp.value.show()
-}
-
 function action(): void {
   if (profileStore.profile?.username)
     router.push('/profile')
   else
-    signInComp.value.show()
+    router.push('/sign-in')
 }
 </script>
 

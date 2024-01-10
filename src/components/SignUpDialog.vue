@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:visible="showing" modal>
+  <Dialog :visible="true" modal>
     <template #container>
       <Card class="form">
         <template #header>
@@ -31,24 +31,13 @@ import BackButton from "@/components/BackButton.vue";
 import MyLink from "@/components/MyLink.vue";
 import Card from "primevue/card";
 import {goToPageAndElement} from "@/service/utils";
-import {ref, defineExpose} from "vue";
-
-const showing = ref(false)
-
-defineExpose({
-  show
-})
+import router from "@/router";
 
 function close(): void {
-  showing.value = false
-}
-
-function show(): void {
-  showing.value = true
+  router.push('/')
 }
 
 function goToContacts(): void {
-  close()
   goToPageAndElement('/', 'contacts')
 }
 </script>

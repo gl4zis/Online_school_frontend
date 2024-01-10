@@ -82,9 +82,10 @@ function isFormValid(): boolean {
   passwordValidation.value = passwordValidMessage(password.value)
   firstnameValidation.value = notNullNameValidMessage(firstname.value)
   lastnameValidation.value = notNullNameValidMessage(lastname.value)
+  const usernameIsValid = usernameInput.value?.isValid()
 
   return !(firstnameValidation.value + lastnameValidation.value +
-      passwordValidation.value) && usernameInput.value?.isValid()
+      passwordValidation.value) && usernameIsValid
 }
 
 async function signUp(): Promise<void> {

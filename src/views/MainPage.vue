@@ -50,6 +50,7 @@
       <section id="contacts">
         <ContactsBlock/>
       </section>
+      <router-view/>
     </template>
   </MainLayout>
 </template>

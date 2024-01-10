@@ -33,7 +33,7 @@ const emit = defineEmits(['update:modelValue'])
 defineExpose({
   reset,
   isValid: (): boolean => {
-    validate(false)
+    validate(true)
     return !validMessage.value
   }
 })
@@ -50,15 +50,19 @@ const ICON_FAIL = 'pi pi-times'
 function onInputValidation(event: InputEvent): void {
   curVal.value = event.target?.value
   emit('update:modelValue', curVal.value)
-  validate(true)
+  validate(true, 500)
 }
 
-function validate(checkUnique: boolean): void {
+function validate(checkUnique: boolean, delay?: number): void {
   clearTimeout(checkId)
   validMessage.value = props.paramType === 'username' ?
       usernameValidMessage(curVal.value) : emailValidMessage(curVal.value)
-  if (checkUnique && !validMessage.value)
-    checkId = setTimeout(checkUniqueness, 500)
+  if (checkUnique && !validMessage.value) {
+    if (delay)
+      checkId = setTimeout(checkUniqueness, delay)
+    else
+      checkUniqueness()
+  }
 }
 
 async function checkUniqueness(): Promise<void> {

@@ -7,11 +7,23 @@ import AdminPage from "@/views/AdminPage.vue";
 import TeacherPage from "@/views/TeacherPage.vue";
 import AdminCourses from "@/components/AdminCourses.vue";
 import AdminUsers from "@/components/AdminUsers.vue";
+import SignInDialog from "@/components/SignInDialog.vue";
+import SignUpDialog from "@/components/SignUpDialog.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
-        component: MainPage
+        component: MainPage,
+        children: [
+            {
+                path: 'sign-in',
+                component: SignInDialog
+            },
+            {
+                path: 'sign-up',
+                component: SignUpDialog
+            }
+        ]
     },
     {
         path: '/profile',

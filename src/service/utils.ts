@@ -53,5 +53,5 @@ export function goToElement(elementId: string): void {
 export function logoutUser(path?: string): void {
     profileStore.resetProfile()
     authStore.resetTokens()
-    router.push(path || '/')
+    router.push(path || '/sign-in')
 }
