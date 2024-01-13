@@ -1,6 +1,6 @@
 <template>
   <h2>Contact details</h2>
-  <div class="flex justify-content-between flex-wrap p-6">
+  <div class="flex justify-content-between flex-wrap p-6" v-if="admins?.length">
     <div class="flex card" v-for="profile in admins" :key="profile.id">
       <img :src="serverApi.getLinkOnImage(profile.photoId) || userImage" width="250" alt="Admin Logo"/>
       <div class="ml-4 text-left info">
@@ -10,6 +10,7 @@
       </div>
     </div>
   </div>
+  <div v-else>Not actual information</div>
 </template>
 
 <script setup lang="ts">
@@ -19,7 +20,7 @@ import {ProfileResponse} from "@/service/dtoInterfaces";
 import userImage from "@/assets/user_icon.jpg"
 
 const admins: Ref<ProfileResponse[] | undefined> = ref()
-serverApi.getPublishedAdmins().then(resp => admins.value = resp)
+serverApi.publishedAdminProfiles().then(resp => admins.value = resp)
 </script>
 
 <style scoped lang="scss">

@@ -21,7 +21,7 @@
                 :severity="profile.locked ? 'info' : 'danger'"
                 @click="changeLock"/>
       </template>
-      <Button v-if="profile.role !== 'Student'"
+      <Button v-if="profile.role !== 'STUDENT' && !profile.locked"
               size="small"
               :icon="profile.published ? 'pi pi-minus' : 'pi pi-plus'"
               :severity="profile.published ? 'warning' : 'success'"
@@ -35,12 +35,14 @@
 <script setup lang="ts">
 import serverApi from "@/service/server";
 import defaultUser from "@/assets/user_icon.jpg";
-import {PropType, defineProps, ref, Ref} from "vue";
+import {PropType, defineProps, defineEmits, ref, Ref} from "vue";
 import {Profile} from "@/service/dtoInterfaces";
 import ProfileView from "@/components/ProfileView.vue";
 import Button from "primevue/button";
 import Avatar from 'primevue/avatar'
 import {profileStore} from "@/stores/profileStore";
+
+const emit = defineEmits(['change'])
 
 const props = defineProps({
   user: {
@@ -55,11 +57,13 @@ const profile: Ref<Profile> = ref(props.user)
 function changeLock(): void {
   profile.value.locked = !profile.value.locked
   serverApi.setUserLock(profile.value.id, profile.value.locked)
+  emit('change')
 }
 
 function changeConfirmed(): void {
   profile.value.published = !profile.value.published
   serverApi.setUserPublished(profile.value.id, profile.value.published)
+  emit('change')
 }
 </script>
 

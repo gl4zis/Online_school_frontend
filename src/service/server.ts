@@ -118,10 +118,6 @@ async function updateSelfProfile(profile: ProfileUpdateRequest): Promise<Message
     return <MessageResponse>await sendRequestWithToken('/user/profile', options)
 }
 
-async function getFile(id: number): Promise<MessageResponse> {
-    return <MessageResponse>await sendStandardRequest('/file/' + id)
-}
-
 async function changePassword(passwords: Passwords): Promise<Status> {
     const options: RequestInit = {method: 'POST', body: JSON.stringify(passwords)}
 
@@ -156,24 +152,6 @@ async function adminRegister(reg: AdminRegisterData): Promise<Status> {
     return <Status>await sendRequestWithToken('/user/admin/signup', options)
 }
 
-async function getAllTeachers(): Promise<ProfileResponse[]> {
-    return <ProfileResponse[]>await sendStandardRequest('/user/profile/teachers')
-}
-
-async function getPublishedTeachers(): Promise<ProfileResponse[]> {
-    const teachers = await getAllTeachers()
-    return teachers.filter(teacher => teacher.published)
-}
-
-async function getAllAdmins(): Promise<ProfileResponse[]> {
-    return <ProfileResponse[]>await sendStandardRequest('/user/profile/admins')
-}
-
-async function getPublishedAdmins(): Promise<ProfileResponse[]> {
-    const admins = await getAllAdmins()
-    return admins.filter(admin => admin.published)
-}
-
 async function getAllCourses(): Promise<Course[]> {
     return <Course[]>await sendStandardRequest('/course/all')
 }
@@ -197,7 +175,15 @@ function getLinkOnImage(id?: string): string {
 
 // Admin access
 async function getAllProfiles(): Promise<ProfileResponse[]> {
-    return <ProfileResponse[]>await sendRequestWithToken('/user/admin/users')
+       return <ProfileResponse[]>await sendRequestWithToken('/user/admin/users')
+}
+
+async function publishedAdminProfiles(): Promise<ProfileResponse[]> {
+    return <ProfileResponse[]>await sendStandardRequest('/user/profile/admins')
+}
+
+async function publishedTeacherProfiles(): Promise<ProfileResponse[]> {
+    return <ProfileResponse[]>await sendStandardRequest('/user/profile/teachers')
 }
 
 async function setUserLock(userId: number, lock: boolean): Promise<Status> {
@@ -210,27 +196,23 @@ async function setUserPublished(userId: number, published: boolean): Promise<Sta
 
 export default {
     login,
-    updateTokens,
     usernameUnique,
     emailUnique,
     regStudentAccount,
     deleteSelfAccount,
     getSelfProfile,
     updateSelfProfile,
-    getFile,
     changePassword,
     createFile,
     removeFile,
     adminRegister,
-    getAllTeachers,
-    getPublishedTeachers,
-    getAllAdmins,
-    getPublishedAdmins,
     getAllCourses,
     getUserCourses,
     getAnotherProfile,
     getLinkOnImage,
     getAllProfiles,
+    publishedAdminProfiles,
+    publishedTeacherProfiles,
     setUserLock,
     setUserPublished
 }

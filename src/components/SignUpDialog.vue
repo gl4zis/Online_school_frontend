@@ -17,7 +17,7 @@
           </p>
         </template>
         <template #content>
-          <SignUpForm @end="close()"/>
+          <SignUpForm @end="close"/>
         </template>
       </Card>
     </template>

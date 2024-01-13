@@ -13,6 +13,9 @@ body, html {
   margin: 0;
   width: 100%;
   height: 100%;
+}
+
+body {
   background-image: url("assets/background.jpg");
   background-attachment: fixed;
   -webkit-background-size: cover;

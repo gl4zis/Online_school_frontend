@@ -9,6 +9,7 @@ import AdminCourses from "@/components/AdminCourses.vue";
 import AdminUsers from "@/components/AdminUsers.vue";
 import SignInDialog from "@/components/SignInDialog.vue";
 import SignUpDialog from "@/components/SignUpDialog.vue";
+import AdminRegister from "@/components/AdminRegister.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -37,7 +38,11 @@ const routes: Array<RouteRecordRaw> = [
         children: [
             {
                 path: 'users',
-                component: AdminUsers
+                component: AdminUsers,
+                children: [{
+                    path: 'sign-up',
+                    component: AdminRegister
+                }]
             },
             {
                 path: 'courses',

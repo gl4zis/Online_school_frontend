@@ -36,7 +36,6 @@
                        :options="subjects"
                        v-model="currSubjects"
                        placeholder="Subjects"
-                       display="chip"
                        :disabled="!teachEditing"/>
           <Textarea v-model="description"
                     :disabled="!teachEditing"

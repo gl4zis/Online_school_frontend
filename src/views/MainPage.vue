@@ -30,22 +30,26 @@
         <Carousel :value="courses"
                   :num-visible="5"
                   :responsive-options="courseCarOption"
-                  circular>
+                  circular
+                  v-if="courses?.length">
           <template #item="{data}">
             <CourseCard :course="data"/>
           </template>
         </Carousel>
+        <div v-else>Courses are not available now</div>
       </section>
       <section id="teachers">
         <h2>Our Teachers</h2>
         <Carousel :value="teachers"
                   :num-visible="5"
                   :responsive-options="teacherCarOption"
-                  circular>
+                  circular
+                  v-if="teachers?.length">
           <template #item="{data}">
             <TeacherCard :teacher="data"/>
           </template>
         </Carousel>
+        <div v-else>Teacher list is not available now</div>
       </section>
       <section id="contacts">
         <ContactsBlock/>
@@ -71,7 +75,7 @@ import MainHeader from "@/components/MainHeader.vue";
 import ContactsBlock from "@/components/ContactsBlock.vue";
 
 const teachers: Ref<ProfileResponse[] | undefined> = ref()
-serverApi.getPublishedTeachers().then(data => teachers.value = data)
+serverApi.publishedTeacherProfiles().then(data => teachers.value = data)
 
 const teacherCarOption = ref([
   {
