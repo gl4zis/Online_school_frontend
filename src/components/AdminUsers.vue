@@ -29,7 +29,7 @@ import Divider from "primevue/divider";
 
 let allUsers: ProfileResponse[] | undefined
 let actualFilters: UserFilters = {}
-const users: Ref<ProfileResponse[] | undefined>  = ref()
+const users: Ref<ProfileResponse[] | undefined> = ref()
 getUsers()
 
 function getUsers(): void {
@@ -48,9 +48,9 @@ function filterUsers(filters: UserFilters): void {
 
   if (filters.regex) {
     users.value = users.value?.filter(user =>
-      user.username.toLowerCase().includes(filters.regex?.toLowerCase()) ||
-      user.firstname.toLowerCase().includes(filters.regex?.toLowerCase()) ||
-      user.lastname.toLowerCase().includes(filters.regex?.toLowerCase())
+        user.username.toLowerCase().includes(filters.regex?.toLowerCase()) ||
+        user.firstname.toLowerCase().includes(filters.regex?.toLowerCase()) ||
+        user.lastname.toLowerCase().includes(filters.regex?.toLowerCase())
     )
   }
 

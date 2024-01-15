@@ -1,23 +1,30 @@
 <template>
-  <Dialog v-model:visible="showing" modal @close="showing = false">
+  <Dialog :visible="true" modal :closable="false">
     <template #header>
-      <Avatar :image="photo || defaultUserImage" size="xlarge" shape="circle"/>
+      <div class="head">
+        <Avatar :image="photo || defaultUserImage" size="xlarge" shape="circle"/>
+        <Button icon="pi pi-times"
+                severity="danger"
+                text
+                rounded
+                @click="back"/>
+      </div>
     </template>
     <div class="body">
-      <h2>{{ profile.firstname }} {{ profile.middleName }} {{ profile.lastname }}</h2>
+      <h2>{{ profile?.firstname }} {{ profile?.middleName }} {{ profile?.lastname }}</h2>
       <h3>
-        <template v-if="profile.birthdate">{{ calculateAge(new Date(profile.birthdate)) }} years, </template>
-        {{ profile.role.toLowerCase() }}
+        <template v-if="profile?.birthdate">{{ calculateAge(new Date(profile?.birthdate)) }} years,</template>
+        {{ profile?.role.toLowerCase() }}
       </h3>
-      <div v-if="profile.email">Email: <b>{{ profile.email }}</b></div>
-      <div class="teacher" v-if="profile.role === 'TEACHER'">
-        <div>{{ profile.description }}</div>
+      <div v-if="profile?.email">Email: <b>{{ profile?.email }}</b></div>
+      <div class="teacher" v-if="profile?.role === 'TEACHER'">
+        <div>{{ profile?.description }}</div>
         <div class="subjects" v-if="profile.subjects?.length">
           <h4>My Subjects</h4>
           <Chip v-for="(subject, idx) in profile.subjects" :key="idx" :label="subject"/>
         </div>
       </div>
-      <template v-if="courses.length">
+      <template v-if="courses?.length">
         <h4>My Courses</h4>
         <Carousel :value="courses"
                   :num-visible="1">
@@ -29,7 +36,7 @@
     </div>
     <template #footer>
       <div class="foot">
-        <Button label="Back" icon="pi pi-arrow-left" @click="showing = false"/>
+        <Button label="Back" icon="pi pi-arrow-left" @click="back"/>
       </div>
     </template>
   </Dialog>
@@ -42,36 +49,44 @@ import Button from 'primevue/button'
 import defaultUserImage from "@/assets/user_icon.jpg";
 import Avatar from "primevue/avatar";
 import Dialog from "primevue/dialog";
-import {PropType, defineProps, defineExpose, ref} from "vue";
-import {Profile} from "@/service/dtoInterfaces";
+import {defineProps, ref, Ref} from "vue";
+import {ProfileResponse} from "@/service/dtoInterfaces";
 import serverApi from "@/service/server";
 import {calculateAge} from "@/service/utils";
 import CourseCard from "@/components/CourseCard.vue";
+import router from "@/router";
 
 const props = defineProps({
-  profile: {
-    type: Object as PropType<Profile>,
+  id: {
+    type: String,
     required: true
   }
 })
 
-defineExpose({
-  show
+const profile: Ref<ProfileResponse | undefined> = ref()
+const photo = ref()
+const courses = ref()
+serverApi.getAnotherProfile(Number(props.id)).then(user => {
+  profile.value = user
+  photo.value = serverApi.getLinkOnImage(profile.value?.photoId)
+
+  if (profile.value?.role === 'STUDENT' || profile.value?.role === 'TEACHER')
+    serverApi.getUserCourses(profile.value).then(resp => courses.value = resp)
 })
 
-const photo = ref(serverApi.getLinkOnImage(props.profile?.photoId))
-const showing = ref(false)
-
-const courses = ref()
-if (props.profile?.role === 'STUDENT' || props.profile?.role === 'TEACHER')
-  serverApi.getUserCourses(props.profile).then(resp => courses.value = resp)
-
-function show(): void {
-  showing.value = true
+function back(): void {
+  router.back()
 }
 </script>
 
 <style scoped lang="scss">
+.head {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .body {
   display: flex;
   flex-direction: column;

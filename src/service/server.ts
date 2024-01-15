@@ -1,16 +1,17 @@
 import {authStore} from "@/stores/authStore";
 import {
+    AdminRegisterData,
+    Course,
     Credentials,
-    MessageResponse,
+    FileRequest,
     JwtResponse,
+    MessageResponse,
+    Passwords,
+    Profile,
     ProfileResponse,
     ProfileUpdateRequest,
     SignUpData,
-    Passwords,
-    Status,
-    FileRequest,
-    AdminRegisterData,
-    Course, Profile
+    Status
 } from "@/service/dtoInterfaces";
 import {logoutUser} from "@/service/utils";
 
@@ -21,8 +22,8 @@ async function getDataFromResponse(resp: Response): Promise<object> {
         const data = await resp.json()
         data.status = resp.status
         return data
-    } catch(err) {
-        return { status: resp.status }
+    } catch (err) {
+        return {status: resp.status}
     }
 }
 
@@ -45,7 +46,7 @@ async function sendRequestWithToken(route: string, options?: RequestInit): Promi
 
     const needReLogin = (): object => {
         logoutUser()
-        return { status: 403, message: 'Please sign in again' }
+        return {status: 403, message: 'Please sign in again'}
     }
 
     if (!authStore.tokens)
@@ -161,8 +162,12 @@ async function getAnotherProfile(id: number): Promise<ProfileResponse> {
     return <ProfileResponse>await sendStandardRequest('/user/profile/' + id)
 }
 
+async function getCourseById(id: number): Promise<Course> {
+    return <Course>await sendStandardRequest(`/course/${id}`)
+}
+
 async function getUserCourses({id, role}: Profile): Promise<Course[]> {
-    return <Course[]>await sendStandardRequest(`/course/${id}?role=${role}`)
+    return <Course[]>await sendStandardRequest(`/course/by-user/${id}?role=${role}`)
 }
 
 function getLinkOnImage(id?: string): string {
@@ -175,7 +180,7 @@ function getLinkOnImage(id?: string): string {
 
 // Admin access
 async function getAllProfiles(): Promise<ProfileResponse[]> {
-       return <ProfileResponse[]>await sendRequestWithToken('/user/admin/users')
+    return <ProfileResponse[]>await sendRequestWithToken('/user/admin/users')
 }
 
 async function publishedAdminProfiles(): Promise<ProfileResponse[]> {
@@ -207,6 +212,7 @@ export default {
     removeFile,
     adminRegister,
     getAllCourses,
+    getCourseById,
     getUserCourses,
     getAnotherProfile,
     getLinkOnImage,

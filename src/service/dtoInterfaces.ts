@@ -42,7 +42,8 @@ export interface Profile extends ProfileUpdateRequest {
     published?: boolean
 }
 
-export interface ProfileResponse extends Profile, Status {}
+export interface ProfileResponse extends Profile, Status {
+}
 
 export interface Passwords {
     oldPassword: string,

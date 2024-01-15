@@ -36,12 +36,9 @@
 </template>
 
 <script setup lang="ts">
-import {
-  notNullNameValidMessage,
-  passwordValidMessage
-} from "@/service/validation";
+import {notNullNameValidMessage, passwordValidMessage} from "@/service/validation";
 import FormInput from "@/components/FormInput.vue";
-import {Ref, ref, defineProps, defineEmits} from "vue";
+import {defineEmits, defineProps, Ref, ref} from "vue";
 import {ROLE, roles, Status} from "@/service/dtoInterfaces";
 import serverApi from "@/service/server";
 import toastApi from "@/service/toast";

@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import Button from "primevue/button";
-import {defineProps, defineEmits} from 'vue';
+import {defineEmits, defineProps} from 'vue';
 
 defineEmits(['edit', 'cancel', 'confirm'])
 defineProps({

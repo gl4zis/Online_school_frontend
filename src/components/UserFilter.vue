@@ -38,7 +38,7 @@
 
 <script setup lang="ts">
 import InputText from "primevue/inputtext";
-import {ref, defineEmits} from "vue";
+import {defineEmits, ref} from "vue";
 import RadioButton from "primevue/radiobutton";
 import TriStateCheckbox from "primevue/tristatecheckbox";
 import {ROLE, roles, SUBJECT, subjects} from "@/service/dtoInterfaces";

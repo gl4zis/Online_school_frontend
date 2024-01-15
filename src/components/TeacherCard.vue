@@ -1,20 +1,19 @@
 <template>
-  <div class="card" @click="profileDialog.show()">
+  <div class="card" @click="router.push('profile/' + teacher.id)">
     <Image :src="photo || defaultUserImage" width="400" @error="photo = defaultUserImage"/>
     <div class="back">
       <h3><i>{{ teacher.firstname }} {{ teacher.lastname }}</i></h3>
     </div>
-    <ProfileView ref="profileDialog" :profile="teacher"/>
   </div>
 </template>
 
 <script setup lang="ts">
 import Image from 'primevue/image'
-import {ref, defineProps, PropType, Ref} from "vue";
+import {defineProps, PropType, ref, Ref} from "vue";
 import serverApi from "@/service/server";
 import {ProfileResponse} from "@/service/dtoInterfaces";
 import defaultUserImage from '@/assets/user_icon.jpg'
-import ProfileView from "@/components/ProfileView.vue";
+import router from "@/router";
 
 const props = defineProps({
   teacher: {
@@ -24,7 +23,6 @@ const props = defineProps({
 })
 
 const photo: Ref<any> = ref(serverApi.getLinkOnImage(props.teacher?.photoId))
-const profileDialog = ref()
 </script>
 
 <style scoped lang="scss">

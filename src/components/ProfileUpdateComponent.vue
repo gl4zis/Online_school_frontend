@@ -51,7 +51,6 @@
 </template>
 
 <script setup lang="ts">
-import {nameValidMessage, notNullNameValidMessage} from "@/service/validation";
 import FormInput from "@/components/FormInput.vue";
 import Card from "primevue/card";
 import {ref, Ref} from "vue";

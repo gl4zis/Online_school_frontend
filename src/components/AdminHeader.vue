@@ -2,7 +2,7 @@
   <Menubar :model="items" class="menu">
     <template #item="{ item, props }">
       <a class="m-2" v-bind="props.action">
-        <span :class="item.icon" />
+        <span :class="item.icon"/>
         <span class="ml-2">{{ item.label }}</span>
       </a>
     </template>

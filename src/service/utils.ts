@@ -19,7 +19,7 @@ export function dateToString(date: Date | undefined): string | undefined {
     return `${year}-${month}-${day}`
 }
 
-export function calculateAge (birthDate: Date): number {
+export function calculateAge(birthDate: Date): number {
     const now: Date = new Date();
 
     let years: number = (now.getFullYear() - birthDate.getFullYear());

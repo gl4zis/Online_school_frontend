@@ -20,9 +20,9 @@
                      ref="emailInput"/>
       </div>
       <EditButtonsBlock :editing="editing"
-                          @edit="editing = true"
-                          @cancel="resetData"
-                          @confirm="updateAccount"/>
+                        @edit="editing = true"
+                        @cancel="resetData"
+                        @confirm="updateAccount"/>
       <Divider/>
       <div class="form">
         <FormInput v-model="oldPassword"

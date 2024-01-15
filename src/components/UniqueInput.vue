@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import FormInput from "@/components/FormInput.vue";
-import {defineProps, defineEmits, defineExpose, ref, PropType, Ref} from 'vue'
+import {defineEmits, defineExpose, defineProps, PropType, ref, Ref} from 'vue'
 import {emailValidMessage, usernameValidMessage} from "@/service/validation";
 import {profileStore} from "@/stores/profileStore";
 import {MessageResponse} from "@/service/dtoInterfaces";

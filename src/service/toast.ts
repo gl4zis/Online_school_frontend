@@ -1,4 +1,4 @@
-import { app } from "@/main";
+import {app} from "@/main";
 
 function noConnection(): void {
     app.config.globalProperties.$toast

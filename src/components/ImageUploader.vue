@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import Button from 'primevue/button';
 import FileUpload from "primevue/fileupload";
-import {ref, Ref, defineEmits} from "vue";
+import {defineEmits, Ref, ref} from "vue";
 import ImageCropper from "@/components/ImageCropper.vue";
 import {FileRequest} from "@/service/dtoInterfaces";
 

@@ -12,8 +12,8 @@
       </template>
       <template #content>
         <div class="content">
-          <AccountUpdateComponent />
-          <ProfileUpdateComponent />
+          <AccountUpdateComponent/>
+          <ProfileUpdateComponent/>
         </div>
       </template>
     </Card>

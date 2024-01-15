@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import {Cropper} from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css';
-import {defineProps, defineEmits, ref} from 'vue'
+import {defineEmits, defineProps, ref} from 'vue'
 import CenterContent from "@/layouts/CenterContent.vue";
 import Button from "primevue/button";
 import Card from "primevue/card";

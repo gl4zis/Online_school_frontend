@@ -15,7 +15,7 @@
       <template v-else>
         <Button size="small"
                 label="Profile"
-                @click="profileDialog.show()"/>
+                @click="router.push('users/profile/' + profile.id)"/>
         <Button size="small"
                 :label="profile.locked ? 'Unlock' : 'Block'"
                 :severity="profile.locked ? 'info' : 'danger'"
@@ -28,19 +28,18 @@
               :title="profile.published ? 'Remove from main page' : 'Add in main page'"
               @click="changeConfirmed"/>
     </div>
-    <ProfileView ref="profileDialog" :profile="profile"/>
   </div>
 </template>
 
 <script setup lang="ts">
 import serverApi from "@/service/server";
 import defaultUser from "@/assets/user_icon.jpg";
-import {PropType, defineProps, defineEmits, ref, Ref} from "vue";
+import {defineEmits, defineProps, PropType, ref, Ref} from "vue";
 import {Profile} from "@/service/dtoInterfaces";
-import ProfileView from "@/components/ProfileView.vue";
 import Button from "primevue/button";
 import Avatar from 'primevue/avatar'
 import {profileStore} from "@/stores/profileStore";
+import router from "@/router";
 
 const emit = defineEmits(['change'])
 
