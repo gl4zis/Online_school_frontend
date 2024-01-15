@@ -58,6 +58,7 @@ export interface AdminRegisterData extends SignUpData {
 }
 
 export interface Course {
+    id: number
     name: string,
     subject: SUBJECT,
     price: number,
@@ -65,8 +66,8 @@ export interface Course {
     description: string,
     imageId?: string,
     studentIds: number[],
-    teacherId: number
-    // plus lessons
+    teacherId: number,
+    lessonIds: number[]
 }
 
 export const roles: string[] = ['ADMIN', 'TEACHER', 'STUDENT']

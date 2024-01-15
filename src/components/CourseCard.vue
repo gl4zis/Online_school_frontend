@@ -1,19 +1,18 @@
 <template>
-  <div class="card" :class="{ 'normal': size === 'normal', 'small': size === 'small' }">
+  <div class="card" @click="courseBuyCard.show()">
     <div class="corner">
       <div class="arrow">
         →
       </div>
     </div>
-    <Image :src="image" @error="image = courseImage" :width="size === 'small' ? 250 : 350"/>
+    <Image :src="image" @error="image = courseImage"/>
     <div class="info">
       <h3>{{ course.name }}</h3>
-      <p v-if="size === 'normal'">{{ course.summary }}</p>
-      <Chip :label="course.subject"/>
-      <p v-if="size === 'normal'">Teacher: <b>{{ teacher }}</b></p>
+      <p>{{ course.summary }}</p>
       <p>Only: <i>{{ course.price }}</i> rubles!</p>
     </div>
   </div>
+  <CourseBuyCard ref="courseBuyCard" :course="course"/>
 </template>
 
 <script setup lang="ts">
@@ -22,18 +21,12 @@ import {Course} from "@/service/dtoInterfaces";
 import Image from 'primevue/image'
 import courseImage from '@/assets/course_image.jpg'
 import serverApi from '@/service/server'
-import Chip from 'primevue/chip';
-
-type Size = 'normal' | 'small'
+import CourseBuyCard from "@/components/CourseBuyCard.vue";
 
 const props = defineProps({
   course: {
     type: Object as PropType<Course>,
     required: true
-  },
-  size: {
-    type: String as PropType<Size>,
-    default: 'normal'
   }
 })
 
@@ -43,7 +36,8 @@ serverApi.getAnotherProfile(props.course.teacherId).then(resp => {
     teacher.value = resp.firstname + ' ' + resp.lastname
 })
 
-const image: Ref<any> = ref(serverApi.getLinkOnImage(props.course?.imageId))
+const image: Ref<any> = ref(serverApi.getLinkOnImage(props.course.imageId))
+const courseBuyCard = ref()
 </script>
 
 <style scoped lang="scss">
@@ -58,50 +52,25 @@ const image: Ref<any> = ref(serverApi.getLinkOnImage(props.course?.imageId))
   padding: 10px;
   margin: 10px auto;
   transition: box-shadow, translate 0.3s ease-out;
-
-  &.normal {
-    width: 350px;
-    height: 550px;
-
-    .corner {
-      width: 50px;
-      height: 50px;
-      border-radius: 0 5px 0 50px;
-
-      .arrow {
-        margin-top: 5px;
-        margin-left: 8px;
-        font-size: 18pt;
-      }
-    }
-  }
-
-  &.small {
-    width: 250px;
-    height: 350px;
-
-    .corner {
-      width: 30px;
-      height: 30px;
-      border-radius: 0 5px 0 30px;
-
-      .arrow {
-        margin-top: 3px;
-        margin-left: 12px;
-        font-size: 14pt;
-      }
-    }
-  }
+  width: 300px;
+  height: 400px;
 
   .corner {
     position: absolute;
     top: 0;
     right: 0;
     background-color: $primary-color;
+    width: 50px;
+    height: 50px;
+    border-radius: 0 5px 0 50px;
 
     .arrow {
+      margin-top: 5px;
+      margin-left: 8px;
+      font-size: 18pt;
       color: white;
       font-family: courier, sans, serif;
+      text-align: center;
     }
   }
 

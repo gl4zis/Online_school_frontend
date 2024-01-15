@@ -22,7 +22,7 @@
         <Carousel :value="courses"
                   :num-visible="1">
           <template #item="{data}">
-            <CourseCard :course="data" size="small"/>
+            <CourseCard :course="data"/>
           </template>
         </Carousel>
       </template>
@@ -76,8 +76,8 @@ function show(): void {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 400px;
-  height: 400px;
+  width: 450px;
+  height: 450px;
 
   h2, h3 {
     margin-bottom: 15px;
