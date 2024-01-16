@@ -19,7 +19,7 @@
               @click="changePublished"/>
     </div>
   </div>
-  <CourseBuyCard :course="course" ref="courseDialog"/>
+  <CourseBuyCard :course="course" :can-buy="false" ref="courseDialog"/>
 </template>
 
 <script setup lang="ts">
@@ -31,7 +31,7 @@ import Image from "primevue/image";
 import Button from "primevue/button";
 import CourseBuyCard from "@/components/CourseBuyCard.vue";
 
-const emit = defineEmits(['change'])
+const emit = defineEmits(['change', 'remove'])
 
 const props = defineProps({
   course: {
@@ -52,8 +52,7 @@ function changePublished(): void {
 }
 
 function remove(): void {
-  serverApi.removeCourse(actualCourse.value.id)
-  emit('change')
+  serverApi.removeCourse(actualCourse.value.id).then(() => emit('remove'))
 }
 </script>
 
@@ -72,6 +71,7 @@ function remove(): void {
     display: flex;
     align-items: center;
     width: 50%;
+    text-align: left;
   }
 
   .buttons {

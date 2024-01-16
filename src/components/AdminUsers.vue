@@ -34,13 +34,17 @@ getUsers()
 
 function getUsers(): void {
   serverApi.getAllProfiles().then(resp => {
-    users.value = resp
-    allUsers = users.value
+    allUsers = resp
+    filterUsers(actualFilters)
   })
 }
 
 function filterUsers(filters: UserFilters): void {
   actualFilters = filters
+  users.value = allUsers
+  if (!filters)
+    return
+
   if (filters.role)
     users.value = allUsers?.filter(user => user.role === filters.role)
   else

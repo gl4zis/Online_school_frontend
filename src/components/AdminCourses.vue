@@ -1,7 +1,11 @@
 <template>
   <div class="main">
     <div class="course-list">
-      <CourseSmallCard v-for="course in courses" :key="course.id" :course="course"/>
+      <CourseSmallCard v-for="course in courses"
+                       :key="course.id"
+                       :course="course"
+                       @change="filterCourses(actualFilters)"
+                       @remove="getCourses"/>
     </div>
     <div class="side-panel">
       <div class="func">
@@ -10,7 +14,7 @@
                 severity="success"
                 @click="router.push('users/sign-up')"/>
         <Divider/>
-        <!-- Filter -->
+        <CourseFilter @filter="filterCourses"/>
       </div>
     </div>
   </div>
@@ -24,9 +28,40 @@ import {Course} from "@/service/dtoInterfaces";
 import router from "@/router";
 import Button from "primevue/button";
 import Divider from "primevue/divider";
+import CourseFilter, {CourseFilters} from "@/components/CourseFilter.vue";
 
+let allCourses: Course[] | undefined
+let actualFilters: CourseFilters
 const courses: Ref<Course[] | undefined> = ref()
-serverApi.getAllCourses().then(resp => courses.value = resp)
+getCourses()
+
+function getCourses() {
+  serverApi.getAllCourses().then(resp => {
+    allCourses = resp
+    filterCourses(actualFilters)
+  })
+}
+
+function filterCourses(filters: CourseFilters): void {
+  actualFilters = filters
+  courses.value = allCourses
+
+  if (!filters)
+    return
+
+  if (filters.regex)
+    courses.value = courses.value?.filter(course =>
+      course.name.toLowerCase().includes(filters.regex.toLowerCase())
+    )
+
+  if (filters.subject)
+    courses.value = courses.value?.filter(course => course.subject == filters.subject)
+
+  if (filters.published)
+    courses.value = courses.value?.filter(course => course.published)
+  else if (filters.published === false)
+    courses.value = courses.value?.filter(course => !course.published)
+}
 </script>
 
 <style scoped lang="scss">

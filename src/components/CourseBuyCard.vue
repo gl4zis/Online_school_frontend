@@ -31,7 +31,8 @@
         <template v-else>students</template>
         have already signed up!
       </span>
-      <Button :label="'BUY only for ' + course.price + ' rubles'"
+      <Button v-if="canBuy"
+              :label="'BUY only for ' + course.price + ' rubles'"
               severity="success"
               @click="buy"
               :disabled="profileStore.profile?.role !== 'STUDENT'"/>
@@ -56,6 +57,10 @@ const props = defineProps({
   course: {
     type: Object as PropType<Course>,
     required: true
+  },
+  canBuy: {
+    type: Boolean,
+    default: true
   }
 })
 
