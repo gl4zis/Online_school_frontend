@@ -1,14 +1,7 @@
 <template>
-  <Dialog :visible="true" modal :closable="false">
+  <Dialog v-model:visible="showing" modal>
     <template #header>
-      <div class="head">
-        <Avatar :image="photo || defaultUserImage" size="xlarge" shape="circle"/>
-        <Button icon="pi pi-times"
-                severity="danger"
-                text
-                rounded
-                @click="back"/>
-      </div>
+      <Avatar :image="photo || defaultUserImage" size="xlarge" shape="circle"/>
     </template>
     <div class="body">
       <h2>{{ profile?.firstname }} {{ profile?.middleName }} {{ profile?.lastname }}</h2>
@@ -49,33 +42,36 @@ import Button from 'primevue/button'
 import defaultUserImage from "@/assets/user_icon.jpg";
 import Avatar from "primevue/avatar";
 import Dialog from "primevue/dialog";
-import {defineProps, ref, Ref} from "vue";
-import {ProfileResponse} from "@/service/dtoInterfaces";
+import {defineExpose, defineProps, PropType, ref} from "vue";
+import {Profile} from "@/service/dtoInterfaces";
 import serverApi from "@/service/server";
 import {calculateAge} from "@/service/utils";
 import CourseCard from "@/components/CourseCard.vue";
-import router from "@/router";
 
 const props = defineProps({
-  id: {
-    type: String,
+  profile: {
+    type: Object as PropType<Profile>,
     required: true
   }
 })
 
-const profile: Ref<ProfileResponse | undefined> = ref()
-const photo = ref()
-const courses = ref()
-serverApi.getAnotherProfile(Number(props.id)).then(user => {
-  profile.value = user
-  photo.value = serverApi.getLinkOnImage(profile.value?.photoId)
-
-  if (profile.value?.role === 'STUDENT' || profile.value?.role === 'TEACHER')
-    serverApi.getUserCourses(profile.value).then(resp => courses.value = resp)
+defineExpose({
+  show
 })
 
+const showing = ref(false)
+
+const photo = ref(serverApi.getLinkOnImage(props.profile.photoId))
+const courses = ref()
+if (props.profile.role === 'STUDENT' || props.profile.role === 'TEACHER')
+  serverApi.getUserCourses(props.profile).then(resp => courses.value = resp)
+
 function back(): void {
-  router.back()
+  showing.value = false
+}
+
+function show(): void {
+  showing.value = true
 }
 </script>
 

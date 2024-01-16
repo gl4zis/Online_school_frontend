@@ -15,7 +15,7 @@
       <template v-else>
         <Button size="small"
                 label="Profile"
-                @click="router.push('users/profile/' + profile.id)"/>
+                @click="profileView.show()"/>
         <Button size="small"
                 :label="profile.locked ? 'Unlock' : 'Block'"
                 :severity="profile.locked ? 'info' : 'danger'"
@@ -26,9 +26,10 @@
               :icon="profile.published ? 'pi pi-minus' : 'pi pi-plus'"
               :severity="profile.published ? 'warning' : 'success'"
               :title="profile.published ? 'Remove from main page' : 'Add in main page'"
-              @click="changeConfirmed"/>
+              @click="changePublished"/>
     </div>
   </div>
+  <ProfileView :profile="profile" ref="profileView"/>
 </template>
 
 <script setup lang="ts">
@@ -39,7 +40,7 @@ import {Profile} from "@/service/dtoInterfaces";
 import Button from "primevue/button";
 import Avatar from 'primevue/avatar'
 import {profileStore} from "@/stores/profileStore";
-import router from "@/router";
+import ProfileView from "@/components/ProfileView.vue";
 
 const emit = defineEmits(['change'])
 
@@ -50,7 +51,8 @@ const props = defineProps({
   }
 })
 
-const profileDialog = ref()
+const profileView = ref()
+
 const profile: Ref<Profile> = ref(props.user)
 
 function changeLock(): void {
@@ -59,7 +61,7 @@ function changeLock(): void {
   emit('change')
 }
 
-function changeConfirmed(): void {
+function changePublished(): void {
   profile.value.published = !profile.value.published
   serverApi.setUserPublished(profile.value.id, profile.value.published)
   emit('change')

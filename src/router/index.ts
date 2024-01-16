@@ -10,8 +10,6 @@ import AdminUsers from "@/components/AdminUsers.vue";
 import SignInDialog from "@/components/SignInDialog.vue";
 import SignUpDialog from "@/components/SignUpDialog.vue";
 import AdminRegister from "@/components/AdminRegister.vue";
-import ProfileView from "@/components/ProfileView.vue";
-import CourseBuyCard from "@/components/CourseBuyCard.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -25,16 +23,6 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: 'sign-up',
                 component: SignUpDialog
-            },
-            {
-                path: 'profile/:id',
-                component: ProfileView,
-                props: true
-            },
-            {
-                path: 'course/:id',
-                component: CourseBuyCard,
-                props: true
             }
         ]
     },
@@ -55,11 +43,6 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         path: 'sign-up',
                         component: AdminRegister
-                    },
-                    {
-                        path: 'profile/:id',
-                        component: ProfileView,
-                        props: true
                     }
                 ]
             },

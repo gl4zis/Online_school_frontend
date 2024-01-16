@@ -1,10 +1,11 @@
 <template>
-  <div class="card" @click="router.push('profile/' + teacher.id)">
+  <div class="card" @click="profileView.show()">
     <Image :src="photo || defaultUserImage" width="400" @error="photo = defaultUserImage"/>
     <div class="back">
       <h3><i>{{ teacher.firstname }} {{ teacher.lastname }}</i></h3>
     </div>
   </div>
+  <ProfileView :profile="teacher" ref="profileView"/>
 </template>
 
 <script setup lang="ts">
@@ -13,7 +14,7 @@ import {defineProps, PropType, ref, Ref} from "vue";
 import serverApi from "@/service/server";
 import {ProfileResponse} from "@/service/dtoInterfaces";
 import defaultUserImage from '@/assets/user_icon.jpg'
-import router from "@/router";
+import ProfileView from "@/components/ProfileView.vue";
 
 const props = defineProps({
   teacher: {
@@ -23,6 +24,7 @@ const props = defineProps({
 })
 
 const photo: Ref<any> = ref(serverApi.getLinkOnImage(props.teacher?.photoId))
+const profileView = ref()
 </script>
 
 <style scoped lang="scss">

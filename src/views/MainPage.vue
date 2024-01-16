@@ -107,7 +107,7 @@ const teacherCarOption = ref([
 ])
 
 const courses: Ref<Course[] | undefined> = ref()
-serverApi.getAllCourses().then(data => courses.value = data)
+serverApi.getPublishedCourses().then(data => courses.value = data)
 
 const courseCarOption = ref([
   {

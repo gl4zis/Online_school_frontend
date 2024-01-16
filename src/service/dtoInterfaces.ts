@@ -66,6 +66,7 @@ export interface Course {
     summary: string,
     description: string,
     imageId?: string,
+    published: boolean,
     studentIds: number[],
     teacherId: number,
     lessonIds: number[]

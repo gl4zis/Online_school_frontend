@@ -154,7 +154,11 @@ async function adminRegister(reg: AdminRegisterData): Promise<Status> {
 }
 
 async function getAllCourses(): Promise<Course[]> {
-    return <Course[]>await sendStandardRequest('/course/all')
+    return <Course[]>await sendRequestWithToken('/course/all')
+}
+
+async function getPublishedCourses(): Promise<Course[]> {
+    return <Course[]>await sendStandardRequest('/course/published')
 }
 
 // 400, 404 (Incorrect id)
@@ -168,6 +172,14 @@ async function getCourseById(id: number): Promise<Course> {
 
 async function getUserCourses({id, role}: Profile): Promise<Course[]> {
     return <Course[]>await sendStandardRequest(`/course/by-user/${id}?role=${role}`)
+}
+
+async function setCoursePublished(id: number, publish: boolean): Promise<Status> {
+    return <Status>await sendRequestWithToken(`/course/${id}?published=${publish}`, {method: 'PUT'})
+}
+
+async function removeCourse(id: number): Promise<Status> {
+    return <Status>await sendRequestWithToken(`/course/${id}`, {method: 'DELETE'})
 }
 
 function getLinkOnImage(id?: string): string {
@@ -212,8 +224,11 @@ export default {
     removeFile,
     adminRegister,
     getAllCourses,
+    getPublishedCourses,
     getCourseById,
     getUserCourses,
+    setCoursePublished,
+    removeCourse,
     getAnotherProfile,
     getLinkOnImage,
     getAllProfiles,

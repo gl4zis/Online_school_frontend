@@ -1,5 +1,5 @@
 <template>
-  <div class="card" @click="router.push('/course/' + course.id)">
+  <div class="card" @click="courseDialog.show()">
     <div class="corner">
       <div class="arrow">
         →
@@ -12,6 +12,7 @@
       <p>Only: <i>{{ course.price }}</i> rubles!</p>
     </div>
   </div>
+  <CourseBuyCard :course="course" ref="courseDialog"/>
 </template>
 
 <script setup lang="ts">
@@ -20,7 +21,7 @@ import {Course} from "@/service/dtoInterfaces";
 import Image from 'primevue/image'
 import courseImage from '@/assets/course_image.jpg'
 import serverApi from '@/service/server'
-import router from "@/router";
+import CourseBuyCard from "@/components/CourseBuyCard.vue";
 
 const props = defineProps({
   course: {
@@ -28,6 +29,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const courseDialog = ref()
 
 const teacher = ref('')
 serverApi.getAnotherProfile(props.course.teacherId).then(resp => {
