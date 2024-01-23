@@ -7,7 +7,7 @@
                    handlers: {},
                    movable: false,
                    resizable: false,
-                   aspectRatio: aspectRatio,
+                   aspectRatio: aspectRatio
                  }"
                  :resize-image="{
                    adjustStencil: false
@@ -52,14 +52,12 @@ interface ChangeEvent {
 function change({canvas}: ChangeEvent): void {
   canvas.toBlob(blob => {
     if (blob)
-      blob.arrayBuffer().then(buffer => {
-        photoNow.value = new Uint8Array(buffer)
-      })
+      blob.arrayBuffer().then(buffer => photoNow.value = buffer)
   }, "image/jpeg", 1)
 }
 
 function end(): void {
-  emit('end', {data: [...photoNow.value]})
+  emit('end', {data: [...(new Int8Array(photoNow.value))]})
 }
 </script>
 

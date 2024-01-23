@@ -10,6 +10,9 @@ import AdminUsers from "@/components/AdminUsers.vue";
 import SignInDialog from "@/components/SignInDialog.vue";
 import SignUpDialog from "@/components/SignUpDialog.vue";
 import AdminRegister from "@/components/AdminRegister.vue";
+import TeacherCourses from "@/components/TeacherCourses.vue";
+import TeacherStudents from "@/components/TeacherStudents.vue";
+import CourseCreation from "@/components/CourseCreation.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -48,14 +51,30 @@ const routes: Array<RouteRecordRaw> = [
             },
             {
                 path: 'courses',
-                component: AdminCourses
+                component: AdminCourses,
+                children: [
+                    {
+                        path: 'new',
+                        component: CourseCreation
+                    }
+                ]
             }
         ]
     },
     {
         path: '/teacher',
         component: TeacherPage,
-        beforeEnter: (): boolean => profileStore.profile?.role === 'TEACHER'
+        beforeEnter: (): boolean => profileStore.profile?.role === 'TEACHER',
+        children: [
+            {
+                path: 'courses',
+                component: TeacherCourses
+            },
+            {
+                path: 'students',
+                component: TeacherStudents
+            }
+        ]
     },
     {
         path: '/my-courses',

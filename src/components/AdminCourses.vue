@@ -12,12 +12,13 @@
         <Button label="New Course"
                 icon="pi pi-plus"
                 severity="success"
-                @click="router.push('users/sign-up')"/>
+                @click="router.push('courses/new')"/>
         <Divider/>
         <CourseFilter @filter="filterCourses"/>
       </div>
     </div>
   </div>
+  <router-view/>
 </template>
 
 <script setup lang="ts">

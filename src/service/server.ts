@@ -175,7 +175,15 @@ async function getUserCourses({id, role}: Profile): Promise<Course[]> {
 }
 
 async function setCoursePublished(id: number, publish: boolean): Promise<Status> {
-    return <Status>await sendRequestWithToken(`/course/${id}?published=${publish}`, {method: 'PUT'})
+    const options: RequestInit = {
+        method: 'PUT',
+        body: JSON.stringify({
+            id: id,
+            published: publish
+        })
+    }
+
+    return <Status>await sendRequestWithToken('/course', options)
 }
 
 async function removeCourse(id: number): Promise<Status> {
@@ -204,11 +212,27 @@ async function publishedTeacherProfiles(): Promise<ProfileResponse[]> {
 }
 
 async function setUserLock(userId: number, lock: boolean): Promise<Status> {
-    return <Status>await sendRequestWithToken(`/user/admin/block/${userId}?lock=${lock}`, {method: 'PUT'})
+    const options: RequestInit = {
+        method: 'PUT',
+        body: JSON.stringify({
+            user: userId,
+            lock: lock
+        })
+    }
+
+    return <Status>await sendRequestWithToken('/user/admin/block', options)
 }
 
 async function setUserPublished(userId: number, published: boolean): Promise<Status> {
-    return <Status>await sendRequestWithToken(`/user/admin/publish/${userId}?publish=${published}`, {method: 'PUT'})
+    const options: RequestInit = {
+        method: 'PUT',
+        body: JSON.stringify({
+            user: userId,
+            published: published
+        })
+    }
+
+    return <Status>await sendRequestWithToken('/user/admin/publish', options)
 }
 
 export default {

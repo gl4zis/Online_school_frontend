@@ -172,17 +172,10 @@ async function changePhoto(req: FileRequest): Promise<void> {
     return
   }
 
-  let res
-  if (profileStore.profile?.photoId) {
-    res = await serverApi.removeFile(profileStore.profile.photoId)
+  if (profileStore.profile?.photoId)
+    await serverApi.removeFile(profileStore.profile.photoId)
 
-    if (res.status !== 200) {
-      toastApi.strangeError(res.message)
-      return
-    }
-  }
-
-  res = await serverApi.createFile(req)
+  let res = await serverApi.createFile(req)
 
   if (res.status !== 200) {
     toastApi.strangeError(res.message)
