@@ -50,14 +50,11 @@ interface ChangeEvent {
 }
 
 function change({canvas}: ChangeEvent): void {
-  canvas.toBlob(blob => {
-    if (blob)
-      blob.arrayBuffer().then(buffer => photoNow.value = buffer)
-  }, "image/jpeg", 1)
+  photoNow.value = canvas.toDataURL("image/jpeg")
 }
 
 function end(): void {
-  emit('end', {data: [...(new Int8Array(photoNow.value))]})
+  emit('end', {base64: photoNow.value})
 }
 </script>
 

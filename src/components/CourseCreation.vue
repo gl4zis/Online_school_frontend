@@ -1,7 +1,7 @@
 <template>
   <Dialog :visible="true" modal class="form" :closable="false">
     <template #header>
-      <BackButton :callback="removeImageAndQuit"/>
+      <BackButton/>
       <h2>New course</h2>
     </template>
       <div class="up-fields">
@@ -16,7 +16,7 @@
                      placeholder="Price"
                      :input-style="{width: '110px'}"/>
       </div>
-      <Image :src="serverApi.getLinkOnImage(imageId) || courseImage" width="400"/>
+      <Image :src="image || courseImage" width="400"/>
       <ImageUploader :removable="false" :aspect-ratio="7/5" @update="setPhoto"/>
       <div class="down-fields">
         <Dropdown :options="subjects"
@@ -86,7 +86,7 @@ const nameInput = ref()
 
 const name = ref()
 const price = ref()
-const imageId = ref()
+const image = ref()
 const subject = ref()
 const teachers = ref()
 const summary = ref()
@@ -97,24 +97,7 @@ serverApi.getAllProfiles().then(profiles =>
 const teacher = ref()
 
 async function setPhoto(req: FileRequest): Promise<void> {
-  if (imageId.value)
-    serverApi.removeFile(imageId.value)
-
-  imageId.value = undefined
-
-  const resp = await serverApi.createFile(req)
-
-  if (resp.status === 200)
-    imageId.value = resp.message
-  else
-    toastApi.strangeError("Can't load image")
-}
-
-function removeImageAndQuit(): void {
-  if (imageId.value)
-    serverApi.removeFile(imageId.value)
-
-  router.back()
+  image.value = req.base64
 }
 
 async function create(): Promise<void> {
@@ -130,10 +113,17 @@ async function create(): Promise<void> {
     return
   }
 
+  const imageId = await serverApi.createFile({base64: image.value})
+
+  if (imageId.status !== 200) {
+    toastApi.strangeError("Can't load file")
+    return
+  }
+
   const request: CourseCreateData = {
     name: name.value,
     price: price.value,
-    imageId: imageId.value,
+    imageId: imageId.message,
     subject: subject.value,
     summary: summary.value,
     description: description.value,
@@ -142,14 +132,14 @@ async function create(): Promise<void> {
 
   const resp = await serverApi.createCourse(request)
 
-  if (resp.status !== 200) {
+  if (resp.status !== 200)
     toastApi.strangeError("Can't create course")
-    removeImageAndQuit()
-  } else {
+  else {
     emit('new')
     toastApi.success("Course was created. Id: " + resp.message)
-    router.back()
   }
+
+  router.back()
 }
 </script>
 

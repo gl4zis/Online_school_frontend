@@ -51,7 +51,7 @@ export interface Passwords {
 }
 
 export interface FileRequest {
-    data: number[]
+    base64: string
 }
 
 export interface AdminRegisterData extends SignUpData {
