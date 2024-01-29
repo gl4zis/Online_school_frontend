@@ -4,52 +4,52 @@
       <BackButton/>
       <h2>New course</h2>
     </template>
-      <div class="up-fields">
-        <UniqueInput label="Name"
-                     param-type="course-name"
-                     v-model="name"
-                     class="name"
-                     ref="nameInput"/>
-        <InputNumber :min="0"
-                     :max="1E6"
-                     v-model="price"
-                     placeholder="Price"
-                     :input-style="{width: '110px'}"/>
-      </div>
-      <Image :src="image || courseImage" width="400"/>
-      <ImageUploader :removable="false" :aspect-ratio="7/5" @update="setPhoto"/>
-      <div class="down-fields">
-        <Dropdown :options="subjects"
-                  placeholder="Subject"
-                  filter
-                  v-model="subject"
-                  :input-style="{width: '150px', 'text-align': 'left'}"/>
-        <Dropdown :options="teachers"
-                  placeholder="Teacher"
-                  filter
-                  :option-label="(data) => data.lastname + ' ' + data.firstname"
-                  v-model="teacher"
-                  :input-style="{width: '150px', 'text-align': 'left'}">
-          <template #value="teacher">
-            <span v-if="teacher.value">{{ teacher.value.lastname }} {{ teacher.value.firstname }}</span>
-            <span v-else>{{ teacher.placeholder }}</span>
-          </template>
-          <template #option="teacher">
-            <div class="flex align-items-center">
-                <Avatar :image="serverApi.getLinkOnImage(teacher.option.photoId) || userIcon"
-                        size="small"
-                        shape="circle"
-                        class="mr-2"/>
-                {{ teacher.option.lastname }} {{ teacher.option.firstname }}
-            </div>
-          </template>
-        </Dropdown>
-      </div>
-      <span class="p-float-label">
+    <div class="up-fields">
+      <UniqueInput label="Name"
+                   param-type="course-name"
+                   v-model="name"
+                   class="name"
+                   ref="nameInput"/>
+      <InputNumber :min="0"
+                   :max="1E6"
+                   v-model="price"
+                   placeholder="Price"
+                   :input-style="{width: '110px'}"/>
+    </div>
+    <Image :src="image || courseImage" width="400"/>
+    <ImageUploader :removable="false" :aspect-ratio="7/5" @update="setPhoto"/>
+    <div class="down-fields">
+      <Dropdown :options="subjects"
+                placeholder="Subject"
+                filter
+                v-model="subject"
+                :input-style="{width: '150px', 'text-align': 'left'}"/>
+      <Dropdown :options="teachers"
+                placeholder="Teacher"
+                filter
+                :option-label="(data) => data.lastname + ' ' + data.firstname"
+                v-model="teacher"
+                :input-style="{width: '150px', 'text-align': 'left'}">
+        <template #value="teacher">
+          <span v-if="teacher.value">{{ teacher.value.lastname }} {{ teacher.value.firstname }}</span>
+          <span v-else>{{ teacher.placeholder }}</span>
+        </template>
+        <template #option="teacher">
+          <div class="flex align-items-center">
+            <Avatar :image="serverApi.getLinkOnImage(teacher.option.photoId) || userIcon"
+                    size="small"
+                    shape="circle"
+                    class="mr-2"/>
+            {{ teacher.option.lastname }} {{ teacher.option.firstname }}
+          </div>
+        </template>
+      </Dropdown>
+    </div>
+    <span class="p-float-label">
         <Textarea v-model="summary" rows="2" class="mb-3" style="width: 100%" auto-resize/>
         <label>Summary (Not more 2 sentences)</label>
       </span>
-      <span class="p-float-label">
+    <span class="p-float-label">
         <Textarea v-model="description" rows="4" style="width: 100%" auto-resize/>
         <label>Description</label>
       </span>
@@ -66,7 +66,7 @@ import Dialog from "primevue/dialog";
 import BackButton from "@/components/BackButton.vue";
 import ImageUploader from "@/components/ImageUploader.vue";
 import Image from "primevue/image";
-import {ref, defineEmits} from "vue";
+import {defineEmits, ref} from "vue";
 import courseImage from '@/assets/course_image.jpg'
 import {CourseCreateData, FileRequest, subjects} from "@/service/dtoInterfaces";
 import UniqueInput from "@/components/UniqueInput.vue";

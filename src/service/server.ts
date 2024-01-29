@@ -1,7 +1,8 @@
 import {authStore} from "@/stores/authStore";
 import {
     AdminRegisterData,
-    Course, CourseCreateData,
+    Course,
+    CourseCreateData,
     Credentials,
     FileRequest,
     JwtResponse,
@@ -84,11 +85,6 @@ async function updateTokens(refresh: string): Promise<JwtResponse> {
 }
 
 // 400 (Validation)
-async function usernameUnique(username: string): Promise<MessageResponse> {
-    return <MessageResponse>await sendStandardRequest('/user/unique?username=' + username)
-}
-
-// 400 (Validation)
 async function emailUnique(email: string): Promise<MessageResponse> {
     return <MessageResponse>await sendStandardRequest('/user/unique?email=' + email)
 }
@@ -97,7 +93,7 @@ async function courseNameUnique(name: string): Promise<MessageResponse> {
     return <MessageResponse>await sendStandardRequest(`/course/name-unique/${name}`)
 }
 
-// 400 (Validation, UsernameIsTaken)
+// 400 (Validation)
 async function regStudentAccount(credentials: SignUpData): Promise<JwtResponse> {
     const options: RequestInit = {method: 'POST', body: JSON.stringify(credentials)}
 
@@ -247,7 +243,6 @@ async function setUserPublished(userId: number, published: boolean): Promise<Sta
 
 export default {
     login,
-    usernameUnique,
     emailUnique,
     courseNameUnique,
     regStudentAccount,

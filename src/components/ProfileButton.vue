@@ -1,12 +1,12 @@
 <template>
   <Button text class="mr-4 button" @click="action">
-    <template v-if="profileStore.profile?.username">
+    <template v-if="authStore.tokens">
       <Avatar :image="userIcon || defaultUser"
               @error="userIcon = defaultUser"
               size="large"
               shape="circle"
               class="mr-3"/>
-      {{ profileStore.profile?.username }}
+      {{ profileStore.profile?.firstname }} {{ profileStore.profile?.lastname }}
     </template>
     <template v-else>
       Sign In
@@ -22,6 +22,7 @@ import router from "@/router";
 import {profileStore} from "@/stores/profileStore";
 import serverApi from '@/service/server'
 import {ref, Ref, watch} from "vue";
+import {authStore} from "@/stores/authStore";
 
 const userIcon: Ref<any> = ref(serverApi.getLinkOnImage(profileStore.profile?.photoId))
 watch(profileStore,
@@ -29,7 +30,7 @@ watch(profileStore,
     {deep: true})
 
 function action(): void {
-  if (profileStore.profile?.username)
+  if (authStore.tokens)
     router.push('/profile')
   else
     router.push('/sign-in')

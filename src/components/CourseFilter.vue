@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import InputText from "primevue/inputtext";
-import {ref, defineEmits} from "vue";
+import {defineEmits, ref} from "vue";
 import TriStateCheckbox from "primevue/tristatecheckbox";
 import Dropdown from 'primevue/dropdown';
 import {SUBJECT, subjects} from "@/service/dtoInterfaces";

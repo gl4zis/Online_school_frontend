@@ -52,7 +52,6 @@ function filterUsers(filters: UserFilters): void {
 
   if (filters.regex) {
     users.value = users.value?.filter(user =>
-        user.username.toLowerCase().includes(filters.regex?.toLowerCase()) ||
         user.firstname.toLowerCase().includes(filters.regex?.toLowerCase()) ||
         user.lastname.toLowerCase().includes(filters.regex?.toLowerCase())
     )

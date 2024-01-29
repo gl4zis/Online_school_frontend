@@ -10,7 +10,7 @@ export interface JwtResponse extends Status {
 }
 
 export interface Credentials {
-    username: string,
+    email: string,
     password: string
 }
 
@@ -24,8 +24,7 @@ export interface MessageResponse extends Status {
 }
 
 export interface ProfileUpdateRequest {
-    username: string,
-    email?: string,
+    email: string,
     firstname: string,
     lastname: string,
     middleName?: string,

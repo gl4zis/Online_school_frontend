@@ -6,12 +6,6 @@
                      @update="changePhoto"/>
       <Divider/>
       <div class="form">
-        <UniqueInput param-type="username"
-                     v-model="username"
-                     :disabled="!editing"
-                     :check-self="true"
-                     label="Username"
-                     ref="usernameInput"/>
         <UniqueInput param-type="email"
                      v-model="email"
                      :disabled="!editing"
@@ -66,9 +60,6 @@ const editing: Ref<boolean> = ref(false)
 
 const userPhoto: Ref<any> = ref(serverApi.getLinkOnImage(profileStore.profile?.photoId))
 
-const usernameInput: Ref<typeof UniqueInput | null> = ref(null)
-const username = ref(profileStore.profile?.username)
-
 const emailInput: Ref<typeof UniqueInput | null> = ref(null)
 const email = ref(profileStore.profile?.email)
 
@@ -80,12 +71,11 @@ const newPasswordValidation: Ref<string> = ref('')
 
 function resetData(): void {
   editing.value = false
-  usernameInput.value?.reset(profileStore.profile?.username)
   emailInput.value?.reset(profileStore.profile?.email)
 }
 
 async function updateAccount(): Promise<void> {
-  if (!usernameInput.value?.isValid() || !emailInput.value?.isValid()) {
+  if (!emailInput.value?.isValid() || !email.value) {
     toastApi.validationError()
     return
   }
@@ -97,14 +87,12 @@ async function updateAccount(): Promise<void> {
   }
 
   const updatedProfile = {...profileStore.profile}
-  updatedProfile.username = username.value || ''
   updatedProfile.email = email.value
 
   const res = await serverApi.updateSelfProfile(updatedProfile)
 
   if (res.status === 200) {
     profileStore.updateProfile(updatedProfile)
-    usernameInput.value?.reset()
     emailInput.value?.reset()
   } else {
     toastApi.strangeError(res.message)
@@ -116,7 +104,6 @@ async function updateAccount(): Promise<void> {
 
 function resetPasswords(): void {
   pEditing.value = false
-
   oldPassword.value = ''
   newPassword.value = ''
   newPasswordValidation.value = ''

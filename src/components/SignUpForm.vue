@@ -1,10 +1,10 @@
 <template>
   <div class="content">
-    <UniqueInput param-type="username"
-                 v-model="username"
+    <UniqueInput param-type="email"
+                 v-model="email"
                  :disabled="loading"
-                 label="Username"
-                 ref="usernameInput"/>
+                 label="Email"
+                 ref="emailInput"/>
     <FormInput v-model="password"
                :disabled="loading"
                :valid-error="passwordValidation"
@@ -39,7 +39,7 @@
 import {notNullNameValidMessage, passwordValidMessage} from "@/service/validation";
 import FormInput from "@/components/FormInput.vue";
 import {defineEmits, defineProps, Ref, ref} from "vue";
-import {ROLE, roles, Status} from "@/service/dtoInterfaces";
+import {AdminRegisterData, ROLE, roles, Status} from "@/service/dtoInterfaces";
 import serverApi from "@/service/server";
 import toastApi from "@/service/toast";
 import SelectButton from "primevue/selectbutton";
@@ -63,8 +63,8 @@ const roleOptions = ref(roles);
 
 const loading = ref(false)
 
-const usernameInput: Ref<typeof UniqueInput | null> = ref(null)
-const username = ref('')
+const emailInput: Ref<typeof UniqueInput | null> = ref(null)
+const email = ref('')
 
 const password = ref('')
 const passwordValidation = ref('')
@@ -79,10 +79,10 @@ function isFormValid(): boolean {
   passwordValidation.value = passwordValidMessage(password.value)
   firstnameValidation.value = notNullNameValidMessage(firstname.value)
   lastnameValidation.value = notNullNameValidMessage(lastname.value)
-  const usernameIsValid = usernameInput.value?.isValid()
+  const emailIsValid = emailInput.value?.isValid()
 
   return !(firstnameValidation.value + lastnameValidation.value +
-      passwordValidation.value) && usernameIsValid
+      passwordValidation.value) && emailIsValid
 }
 
 async function signUp(): Promise<void> {
@@ -93,8 +93,8 @@ async function signUp(): Promise<void> {
 
   loading.value = true
 
-  const req = {
-    username: username.value,
+  const req: AdminRegisterData = {
+    email: email.value,
     password: password.value,
     firstname: firstname.value,
     lastname: lastname.value,
@@ -111,7 +111,7 @@ async function signUp(): Promise<void> {
   else if (resp.status !== 200)
     toastApi.strangeError(resp.message)
   else {
-    toastApi.registered(username.value)
+    toastApi.registered()
     if (props.selfReg)
       await selfRegContinue(resp)
   }
@@ -129,7 +129,7 @@ async function selfRegContinue(resp: any): Promise<void> {
   const profile = await serverApi.getSelfProfile()
   profileStore.updateProfile({
     id: profile.id,
-    username: username.value,
+    email: email.value,
     firstname: firstname.value,
     lastname: lastname.value,
     role: profile.role,
@@ -138,8 +138,8 @@ async function selfRegContinue(resp: any): Promise<void> {
 }
 
 function clearForm(): void {
-  username.value = ''
-  usernameInput.value?.reset()
+  email.value = ''
+  emailInput.value?.reset()
   password.value = ''
   firstname.value = ''
   lastname.value = ''

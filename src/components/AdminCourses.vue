@@ -52,7 +52,7 @@ function filterCourses(filters: CourseFilters): void {
 
   if (filters.regex)
     courses.value = courses.value?.filter(course =>
-      course.name.toLowerCase().includes(filters.regex.toLowerCase())
+        course.name.toLowerCase().includes(filters.regex.toLowerCase())
     )
 
   if (filters.subject)

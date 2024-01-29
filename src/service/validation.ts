@@ -1,23 +1,12 @@
 import {Credentials} from "@/service/dtoInterfaces";
 
-const USERNAME_REGEX = /^\w{3,20}$/
 const PASSWORD_REGEXES = [/^\S+$/, /\d+/, /[a-z]+/, /[A-Z]+/]
 const NAME_REGEX = /^[\s\wа-яА-Я,.\-']{2,50}$/
 const EMAIL_REGEX = /^\w+@\w+\.\w{2,5}$/
 
 export function isCredentialsValid(credentials: Credentials): boolean {
-    return (USERNAME_REGEX.test(credentials.username) || EMAIL_REGEX.test(credentials.username)) &&
+    return EMAIL_REGEX.test(credentials.email) &&
         PASSWORD_REGEXES.every(regex => regex.test(credentials.password))
-}
-
-export function usernameValidMessage(username: string | undefined): string {
-    if (!username)
-        return "Shouldn't be empty"
-    if (username.length < 3 || username.length > 20)
-        return 'Length should be between 3 and 20'
-    if (!USERNAME_REGEX.test(username))
-        return 'Allows only 0-9, A-z, _'
-    return ''
 }
 
 export function passwordValidMessage(password: string): string {

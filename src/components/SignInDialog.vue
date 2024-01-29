@@ -16,9 +16,9 @@
         </template>
         <template #content>
           <div class="content">
-            <FormInput v-model="username"
+            <FormInput v-model="email"
                        :disabled="loading"
-                       label="Username | Email"/>
+                       label="Email"/>
             <FormInput v-model="password"
                        :disabled="loading"
                        :feedback="false"
@@ -57,7 +57,7 @@ import router from "@/router";
 
 const loading = ref(false)
 
-const username = ref('')
+const email = ref('')
 const password = ref('')
 
 function close(): void {
@@ -66,7 +66,7 @@ function close(): void {
 
 async function signIn(): Promise<void> {
   const credentials: Credentials = {
-    username: username.value,
+    email: email.value,
     password: password.value
   }
 

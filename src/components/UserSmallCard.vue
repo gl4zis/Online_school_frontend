@@ -4,9 +4,9 @@
       <div class="head">
         <Avatar :image="serverApi.getLinkOnImage(profile.photoId) || defaultUser"
                 shape="circle" class="m-2"/>
-        <b>{{ profile.username }}</b>
+        <i>{{ profile.role }}</i>
       </div>
-      <span>{{ profile.firstname }} {{ profile.lastname }}, <i>{{ profile.role }}</i></span>
+      <span>{{ profile.firstname }} {{ profile.lastname }}</span>
     </div>
     <div class="buttons">
       <template v-if="profileStore.profile?.id === profile.id">
@@ -83,7 +83,7 @@ function changePublished(): void {
     .head {
       display: flex;
 
-      b {
+      i {
         margin: 14px 0;
       }
     }

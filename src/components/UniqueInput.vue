@@ -10,13 +10,13 @@
 <script setup lang="ts">
 import FormInput from "@/components/FormInput.vue";
 import {defineEmits, defineExpose, defineProps, PropType, ref, Ref} from 'vue'
-import {emailValidMessage, usernameValidMessage} from "@/service/validation";
+import {emailValidMessage} from "@/service/validation";
 import {profileStore} from "@/stores/profileStore";
 import {MessageResponse} from "@/service/dtoInterfaces";
 import serverApi from '@/service/server'
 import toastApi from "@/service/toast";
 
-export type paramType = 'username' | 'email' | 'course-name'
+export type paramType = 'email' | 'course-name'
 
 const props = defineProps({
   modelValue: String,
@@ -58,9 +58,7 @@ function validate(delay?: number): void {
   clearTimeout(checkId)
   validMessage.value = ''
 
-  if (props.paramType === 'username')
-    validMessage.value = usernameValidMessage(curVal.value)
-  else if (props.paramType === 'email')
+  if (props.paramType === 'email')
     validMessage.value = emailValidMessage(curVal.value)
 
   if (!validMessage.value) {
@@ -76,11 +74,7 @@ async function checkUniqueness(): Promise<void> {
     return
 
   if (props.checkSelf) {
-    if (props.paramType === 'username' &&
-        profileStore.profile?.username === curVal.value) {
-      icon.value = ICON_OK
-      return
-    } else if (props.paramType === 'email' &&
+    if (props.paramType === 'email' &&
         profileStore.profile?.email === curVal.value) {
       icon.value = ICON_OK
       return
@@ -89,16 +83,11 @@ async function checkUniqueness(): Promise<void> {
 
   icon.value = ICON_LOAD
   let res: MessageResponse
-  switch (props.paramType) {
-    case 'username':
-      res = await serverApi.usernameUnique(curVal.value)
-      break
-    case 'email':
-      res = await serverApi.emailUnique(curVal.value)
-      break
-    case 'course-name':
-      res = await serverApi.courseNameUnique(curVal.value)
-  }
+
+  if (props.paramType === 'email')
+    res = await serverApi.emailUnique(curVal.value)
+  else
+    res = await serverApi.courseNameUnique(curVal.value)
 
   if (res.status !== 200) {
     icon.value = ''

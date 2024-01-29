@@ -12,12 +12,12 @@ function validationError(message?: string): void {
 
 function invalidCredentials(): void {
     app.config.globalProperties.$toast
-        .add({severity: 'warn', life: 3000, summary: 'Invalid username or password'})
+        .add({severity: 'warn', life: 3000, summary: 'Invalid email or password'})
 }
 
-function registered(username: string): void {
+function registered(): void {
     app.config.globalProperties.$toast
-        .add({severity: 'success', life: 3000, summary: 'Success', detail: `User ${username} was registered`})
+        .add({severity: 'success', life: 3000, summary: 'Success', detail: `User was registered`})
 }
 
 function strangeError(message?: string): void {
