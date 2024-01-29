@@ -1,7 +1,7 @@
 import {authStore} from "@/stores/authStore";
 import {
     AdminRegisterData,
-    Course,
+    Course, CourseCreateData,
     Credentials,
     FileRequest,
     JwtResponse,
@@ -93,6 +93,10 @@ async function emailUnique(email: string): Promise<MessageResponse> {
     return <MessageResponse>await sendStandardRequest('/user/unique?email=' + email)
 }
 
+async function courseNameUnique(name: string): Promise<MessageResponse> {
+    return <MessageResponse>await sendStandardRequest(`/course/name-unique/${name}`)
+}
+
 // 400 (Validation, UsernameIsTaken)
 async function regStudentAccount(credentials: SignUpData): Promise<JwtResponse> {
     const options: RequestInit = {method: 'POST', body: JSON.stringify(credentials)}
@@ -151,6 +155,12 @@ async function adminRegister(reg: AdminRegisterData): Promise<Status> {
     const options: RequestInit = {method: 'POST', body: JSON.stringify(reg)}
 
     return <Status>await sendRequestWithToken('/user/admin/signup', options)
+}
+
+async function createCourse(req: CourseCreateData): Promise<MessageResponse> {
+    const options: RequestInit = {method: 'POST', body: JSON.stringify(req)}
+
+    return <MessageResponse>await sendRequestWithToken('/course', options)
 }
 
 async function getAllCourses(): Promise<Course[]> {
@@ -239,6 +249,7 @@ export default {
     login,
     usernameUnique,
     emailUnique,
+    courseNameUnique,
     regStudentAccount,
     deleteSelfAccount,
     getSelfProfile,
@@ -250,6 +261,7 @@ export default {
     getAllCourses,
     getPublishedCourses,
     getCourseById,
+    createCourse,
     getUserCourses,
     setCoursePublished,
     removeCourse,

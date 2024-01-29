@@ -58,17 +58,20 @@ export interface AdminRegisterData extends SignUpData {
     role: ROLE
 }
 
-export interface Course {
-    id: number
+export interface CourseCreateData {
     name: string,
     subject: SUBJECT,
     price: number,
     summary: string,
     description: string,
     imageId?: string,
+    teacherId: number
+}
+
+export interface Course extends CourseCreateData {
+    id: number
     published: boolean,
     studentIds: number[],
-    teacherId: number,
     lessonIds: number[]
 }
 

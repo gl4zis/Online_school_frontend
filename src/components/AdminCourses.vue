@@ -18,7 +18,7 @@
       </div>
     </div>
   </div>
-  <router-view/>
+  <router-view @new="getCourses"/>
 </template>
 
 <script setup lang="ts">

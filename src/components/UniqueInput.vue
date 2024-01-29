@@ -16,7 +16,7 @@ import {MessageResponse} from "@/service/dtoInterfaces";
 import serverApi from '@/service/server'
 import toastApi from "@/service/toast";
 
-export type paramType = 'username' | 'email'
+export type paramType = 'username' | 'email' | 'course-name'
 
 const props = defineProps({
   modelValue: String,
@@ -33,7 +33,8 @@ const emit = defineEmits(['update:modelValue'])
 defineExpose({
   reset,
   isValid: (): boolean => {
-    validate(true)
+    if (!validMessage.value)
+      validate()
     return !validMessage.value
   }
 })
@@ -50,14 +51,19 @@ const ICON_FAIL = 'pi pi-times'
 function onInputValidation(event: InputEvent): void {
   curVal.value = event.target?.value
   emit('update:modelValue', curVal.value)
-  validate(true, 500)
+  validate(500)
 }
 
-function validate(checkUnique: boolean, delay?: number): void {
+function validate(delay?: number): void {
   clearTimeout(checkId)
-  validMessage.value = props.paramType === 'username' ?
-      usernameValidMessage(curVal.value) : emailValidMessage(curVal.value)
-  if (checkUnique && !validMessage.value) {
+  validMessage.value = ''
+
+  if (props.paramType === 'username')
+    validMessage.value = usernameValidMessage(curVal.value)
+  else if (props.paramType === 'email')
+    validMessage.value = emailValidMessage(curVal.value)
+
+  if (!validMessage.value) {
     if (delay)
       checkId = setTimeout(checkUniqueness, delay)
     else
@@ -82,8 +88,17 @@ async function checkUniqueness(): Promise<void> {
   }
 
   icon.value = ICON_LOAD
-  const res: MessageResponse = props.paramType === 'username' ?
-      await serverApi.usernameUnique(curVal.value) : await serverApi.emailUnique(curVal.value)
+  let res: MessageResponse
+  switch (props.paramType) {
+    case 'username':
+      res = await serverApi.usernameUnique(curVal.value)
+      break
+    case 'email':
+      res = await serverApi.emailUnique(curVal.value)
+      break
+    case 'course-name':
+      res = await serverApi.courseNameUnique(curVal.value)
+  }
 
   if (res.status !== 200) {
     icon.value = ''

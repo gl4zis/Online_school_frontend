@@ -27,7 +27,8 @@
       <div class="form">
         <FormInput v-model="oldPassword"
                    :disabled="!pEditing"
-                   hidden :feedback="false"
+                   hidden
+                   :feedback="false"
                    label="Old Password"/>
         <FormInput v-model="newPassword"
                    :disabled="!pEditing"

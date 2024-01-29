@@ -1,7 +1,12 @@
 <template>
   <div class="card">
     <div class="info">
-      <Image :src="image || defaultCourse" @error="image = defaultCourse" width="70"/>
+      <Image :src="image || defaultCourse"
+             @error="image = defaultCourse"
+             :image-style="{
+               'width': '70px',
+               'border-radius': '5px',
+               'margin': '0 5px'}"/>
       <b>{{ actualCourse.name }}</b>
     </div>
     <div class="buttons">

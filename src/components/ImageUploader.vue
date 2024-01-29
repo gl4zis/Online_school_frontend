@@ -1,7 +1,12 @@
 <template>
   <div class="buttons">
-    <Button icon="pi pi-times" size="small" rounded severity="danger" @click="$emit('remove')"/>
-    <FileUpload choose-label="Change photo"
+    <Button v-if="removable"
+            icon="pi pi-times"
+            size="small"
+            rounded
+            severity="danger"
+            @click="$emit('remove')"/>
+    <FileUpload choose-label="Choose photo"
                 mode="basic"
                 accept="image/*"
                 customUpload
@@ -11,15 +16,27 @@
   <ImageCropper v-if="cropping"
                 :photo="cropPhoto"
                 @end="emitUpdate"
+                :aspect-ratio="aspectRatio"
                 class="cropper"/>
 </template>
 
 <script setup lang="ts">
 import Button from 'primevue/button';
 import FileUpload from "primevue/fileupload";
-import {defineEmits, Ref, ref} from "vue";
+import {defineEmits, defineProps, Ref, ref} from "vue";
 import ImageCropper from "@/components/ImageCropper.vue";
 import {FileRequest} from "@/service/dtoInterfaces";
+
+defineProps({
+  removable: {
+    type: Boolean,
+    default: true
+  },
+  aspectRatio: {
+    type: Number,
+    default: 1
+  }
+})
 
 const emit = defineEmits(['remove', 'update'])
 

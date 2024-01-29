@@ -5,9 +5,9 @@ function noConnection(): void {
         .add({severity: 'error', life: 3000, summary: 'NO CONNECTION'})
 }
 
-function validationError(): void {
+function validationError(message?: string): void {
     app.config.globalProperties.$toast
-        .add({severity: 'warn', life: 3000, summary: 'Validation error'})
+        .add({severity: 'warn', life: 3000, summary: message || 'Validation error'})
 }
 
 function invalidCredentials(): void {
