@@ -33,11 +33,11 @@
       </section>
       <section id="courses">
         <h2>Our Courses</h2>
-        <Carousel :value="courses"
+        <Carousel :value="mainStore.courses"
                   :num-visible="5"
                   :responsive-options="courseCarOption"
                   circular
-                  v-if="courses?.length">
+                  v-if="mainStore.courses?.length">
           <template #item="{data}">
             <CourseCard :course="data"/>
           </template>
@@ -46,11 +46,11 @@
       </section>
       <section id="teachers">
         <h2>Our Teachers</h2>
-        <Carousel :value="teachers"
+        <Carousel :value="mainStore.teachers"
                   :num-visible="5"
                   :responsive-options="teacherCarOption"
                   circular
-                  v-if="teachers?.length">
+                  v-if="mainStore.teachers?.length">
           <template #item="{data}">
             <TeacherCard :teacher="data"/>
           </template>
@@ -69,19 +69,17 @@
 import MainLayout from "@/layouts/MainLayout.vue";
 import Image from 'primevue/image'
 import Carousel from 'primevue/carousel';
-import {Ref, ref} from "vue";
-import serverApi from '@/service/server'
+import {ref} from "vue";
 import TeacherCard from "@/components/TeacherCard.vue";
-import {Course, ProfileResponse} from "@/service/dtoInterfaces";
 import adImage1 from '@/assets/ad_image_1.jpg'
 import adImage2 from '@/assets/ad_image_2.jpg'
 import adImage3 from '@/assets/ad_image_3.jpg'
 import CourseCard from "@/components/CourseCard.vue";
 import MainHeader from "@/components/MainHeader.vue";
 import ContactsBlock from "@/components/ContactsBlock.vue";
+import {mainStore} from "@/stores/mainStore";
 
-const teachers: Ref<ProfileResponse[] | undefined> = ref()
-serverApi.publishedTeacherProfiles().then(data => teachers.value = data)
+mainStore.getState()
 
 const teacherCarOption = ref([
   {
@@ -105,9 +103,6 @@ const teacherCarOption = ref([
     numScroll: 1
   }
 ])
-
-const courses: Ref<Course[] | undefined> = ref()
-serverApi.getPublishedCourses().then(data => courses.value = data)
 
 const courseCarOption = ref([
   {

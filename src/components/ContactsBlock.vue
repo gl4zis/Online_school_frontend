@@ -1,7 +1,7 @@
 <template>
   <h2>Contact details</h2>
-  <div class="flex justify-content-between flex-wrap p-6" v-if="admins?.length">
-    <div class="flex card" v-for="profile in admins" :key="profile.id">
+  <div class="flex justify-content-between flex-wrap p-6" v-if="mainStore.admins?.length">
+    <div class="flex card" v-for="profile in mainStore.admins" :key="profile.id">
       <img :src="serverApi.getLinkOnImage(profile.photoId) || userImage" width="250" alt="Admin Logo"/>
       <div class="ml-4 text-left info">
         <h3>{{ profile.firstname }} {{ profile.lastname }}</h3>
@@ -14,13 +14,9 @@
 </template>
 
 <script setup lang="ts">
-import {Ref, ref} from "vue";
 import serverApi from "@/service/server";
-import {ProfileResponse} from "@/service/dtoInterfaces";
 import userImage from "@/assets/user_icon.jpg"
-
-const admins: Ref<ProfileResponse[] | undefined> = ref()
-serverApi.publishedAdminProfiles().then(resp => admins.value = resp)
+import {mainStore} from "@/stores/mainStore";
 </script>
 
 <style scoped lang="scss">

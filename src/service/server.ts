@@ -8,7 +8,6 @@ import {
     JwtResponse,
     MessageResponse,
     Passwords,
-    Profile,
     ProfileResponse,
     ProfileUpdateRequest,
     SignUpData,
@@ -176,8 +175,9 @@ async function getCourseById(id: number): Promise<Course> {
     return <Course>await sendStandardRequest(`/course/${id}`)
 }
 
-async function getUserCourses({id, role}: Profile): Promise<Course[]> {
-    return <Course[]>await sendStandardRequest(`/course/by-user/${id}?role=${role}`)
+
+async function getStudentCourses(id: number): Promise<Course[]> {
+    return <Course[]>await sendStandardRequest(`/course/by-user/${id}?role=STUDENT`)
 }
 
 async function setCoursePublished(id: number, publish: boolean): Promise<Status> {
@@ -197,11 +197,9 @@ async function removeCourse(id: number): Promise<Status> {
 }
 
 function getLinkOnImage(id?: string): string {
-    if (id) {
+    if (id)
         return `${GATEWAY_ADDRESS}/file/${id}`
-    }
-
-    return ''
+    else return ''
 }
 
 // Admin access
@@ -257,7 +255,7 @@ export default {
     getPublishedCourses,
     getCourseById,
     createCourse,
-    getUserCourses,
+    getStudentCourses,
     setCoursePublished,
     removeCourse,
     getAnotherProfile,

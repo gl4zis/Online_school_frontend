@@ -32,12 +32,6 @@ const props = defineProps({
 
 const courseDialog = ref()
 
-const teacher = ref('')
-serverApi.getAnotherProfile(props.course.teacherId).then(resp => {
-  if (resp.status === 200)
-    teacher.value = resp.firstname + ' ' + resp.lastname
-})
-
 const image: Ref<any> = ref(serverApi.getLinkOnImage(props.course.imageId))
 </script>
 

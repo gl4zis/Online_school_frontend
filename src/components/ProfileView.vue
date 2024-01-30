@@ -47,6 +47,7 @@ import {Profile} from "@/service/dtoInterfaces";
 import serverApi from "@/service/server";
 import {calculateAge} from "@/service/utils";
 import CourseCard from "@/components/CourseCard.vue";
+import {mainStore} from "@/stores/mainStore";
 
 const props = defineProps({
   profile: {
@@ -63,8 +64,11 @@ const showing = ref(false)
 
 const photo = ref(serverApi.getLinkOnImage(props.profile.photoId))
 const courses = ref()
-if (props.profile.role === 'STUDENT' || props.profile.role === 'TEACHER')
-  serverApi.getUserCourses(props.profile).then(resp => courses.value = resp)
+
+if (props.profile.role === 'TEACHER')
+  courses.value = mainStore.findTeacherCourses(props.profile.id)
+else if (props.profile.role === 'STUDENT')
+  serverApi.getStudentCourses(props.profile.id).then(resp => courses.value = resp)
 
 function back(): void {
   showing.value = false

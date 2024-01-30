@@ -43,7 +43,7 @@
 <script setup lang="ts">
 import Dialog from "primevue/dialog";
 import {defineExpose, defineProps, PropType, Ref, ref} from 'vue'
-import {Course, ProfileResponse} from "@/service/dtoInterfaces";
+import {Course, Profile} from "@/service/dtoInterfaces";
 import serverApi from "@/service/server";
 import defaultCourseImage from "@/assets/course_image.jpg"
 import defaultUserImage from "@/assets/user_icon.jpg"
@@ -52,6 +52,7 @@ import Image from "primevue/image";
 import Avatar from "primevue/avatar";
 import Button from "primevue/button";
 import {profileStore} from "@/stores/profileStore";
+import {mainStore} from "@/stores/mainStore";
 
 const props = defineProps({
   course: {
@@ -71,12 +72,8 @@ defineExpose({
 const showing = ref(false)
 
 const image: Ref<any> = ref(serverApi.getLinkOnImage(props.course.imageId))
-const teacher: Ref<ProfileResponse | undefined> = ref()
+const teacher: Ref<Profile | undefined> = ref(mainStore.findTeacherById(props.course?.teacherId))
 const teacherPhoto: Ref<any> = ref()
-serverApi.getAnotherProfile(props.course.teacherId).then(profile => {
-  teacher.value = profile
-  teacherPhoto.value = serverApi.getLinkOnImage(teacher.value?.photoId)
-})
 
 function buy(): void {
   return
